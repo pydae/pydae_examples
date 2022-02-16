@@ -42,6 +42,19 @@ sp_jac_trap_xy_eval= jacs.lib.sp_jac_trap_xy_eval
 sp_jac_trap_up_eval= jacs.lib.sp_jac_trap_up_eval        
 sp_jac_trap_num_eval= jacs.lib.sp_jac_trap_num_eval
 
+sp_Fu_run_up_eval = jacs.lib.sp_Fu_run_up_eval
+sp_Gu_run_up_eval = jacs.lib.sp_Gu_run_up_eval
+sp_Hx_run_up_eval = jacs.lib.sp_Hx_run_up_eval
+sp_Hy_run_up_eval = jacs.lib.sp_Hy_run_up_eval
+sp_Hu_run_up_eval = jacs.lib.sp_Hu_run_up_eval
+sp_Fu_run_xy_eval = jacs.lib.sp_Fu_run_xy_eval
+sp_Gu_run_xy_eval = jacs.lib.sp_Gu_run_xy_eval
+sp_Hx_run_xy_eval = jacs.lib.sp_Hx_run_xy_eval
+sp_Hy_run_xy_eval = jacs.lib.sp_Hy_run_xy_eval
+sp_Hu_run_xy_eval = jacs.lib.sp_Hu_run_xy_eval
+
+
+
 import json
 
 sin = np.sin
@@ -66,19 +79,19 @@ class grid_trafo_2bus_class:
         self.imax = 100 
         self.N_x = 1
         self.N_y = 92 
-        self.N_z = 40 
+        self.N_z = 45 
         self.N_store = 10000 
-        self.params_list = ['a_AC2', 'b_AC2', 'c_AC2', 'C_a_AC2', 'C_b_AC2', 'C_c_AC2', 'K_dc_DC2', 'a_AC4', 'b_AC4', 'c_AC4', 'coef_a_AC4', 'coef_b_AC4', 'coef_c_AC4'] 
-        self.params_values_list  = [2.92, 0.45, 0.027, 0.3333333333333333, 0.3333333333333333, 0.3333333333333333, 1e-06, 2.92, 0.45, 0.027, 0.3333333333333333, 0.3333333333333333, 0.3333333333333333] 
-        self.inputs_ini_list = ['v_AC1_a_r', 'v_AC1_a_i', 'v_AC1_b_r', 'v_AC1_b_i', 'v_AC1_c_r', 'v_AC1_c_i', 'v_DC2_a_i', 'v_DC2_b_r', 'v_DC2_b_i', 'v_DC2_c_r', 'v_DC2_c_i', 'i_AC3_a_r', 'i_AC3_a_i', 'i_AC3_b_r', 'i_AC3_b_i', 'i_AC3_c_r', 'i_AC3_c_i', 'i_AC3_n_r', 'i_AC3_n_i', 'i_AC4_a_r', 'i_AC4_a_i', 'i_AC4_b_r', 'i_AC4_b_i', 'i_AC4_c_r', 'i_AC4_c_i', 'i_AC4_n_r', 'i_AC4_n_i', 'i_DC4_a_r', 'i_DC4_a_i', 'i_DC4_b_r', 'i_DC4_b_i', 'i_DC4_c_r', 'i_DC4_c_i', 'i_DC4_n_r', 'i_DC4_n_i', 'i_AC2_a_r', 'i_AC2_a_i', 'i_AC2_b_r', 'i_AC2_b_i', 'i_AC2_c_r', 'i_AC2_c_i', 'i_AC2_n_r', 'i_AC2_n_i', 'i_DC2_n_r', 'i_DC2_n_i', 'p_load_AC3_a', 'q_load_AC3_a', 'p_load_AC3_b', 'q_load_AC3_b', 'p_load_AC3_c', 'q_load_AC3_c', 'p_load_AC4_a', 'q_load_AC4_a', 'p_load_AC4_b', 'q_load_AC4_b', 'p_load_AC4_c', 'q_load_AC4_c', 'p_load_DC4_a', 'q_load_DC4_a', 'p_load_DC4_b', 'q_load_DC4_b', 'p_load_DC4_c', 'q_load_DC4_c', 'v_dc_DC2', 'q_vsc_AC2', 'p_vsc_AC4', 'q_vsc_AC4', 'u_dummy'] 
-        self.inputs_ini_values_list  = [11547.0, 0.0, -5773.499999999997, -9999.995337498915, -5773.5000000000055, 9999.99533749891, 0.0, 1e-05, 0.0, 1e-05, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, -0.0, -0.0, 0.0, 0.0, 0.0, 0.0, -0.0, -0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 800.0, 0.0, 0.0, 0.0, 1.0] 
-        self.inputs_run_list = ['v_AC1_a_r', 'v_AC1_a_i', 'v_AC1_b_r', 'v_AC1_b_i', 'v_AC1_c_r', 'v_AC1_c_i', 'v_DC2_a_i', 'v_DC2_b_r', 'v_DC2_b_i', 'v_DC2_c_r', 'v_DC2_c_i', 'i_AC3_a_r', 'i_AC3_a_i', 'i_AC3_b_r', 'i_AC3_b_i', 'i_AC3_c_r', 'i_AC3_c_i', 'i_AC3_n_r', 'i_AC3_n_i', 'i_AC4_a_r', 'i_AC4_a_i', 'i_AC4_b_r', 'i_AC4_b_i', 'i_AC4_c_r', 'i_AC4_c_i', 'i_AC4_n_r', 'i_AC4_n_i', 'i_DC4_a_r', 'i_DC4_a_i', 'i_DC4_b_r', 'i_DC4_b_i', 'i_DC4_c_r', 'i_DC4_c_i', 'i_DC4_n_r', 'i_DC4_n_i', 'i_AC2_a_r', 'i_AC2_a_i', 'i_AC2_b_r', 'i_AC2_b_i', 'i_AC2_c_r', 'i_AC2_c_i', 'i_AC2_n_r', 'i_AC2_n_i', 'i_DC2_n_r', 'i_DC2_n_i', 'p_load_AC3_a', 'q_load_AC3_a', 'p_load_AC3_b', 'q_load_AC3_b', 'p_load_AC3_c', 'q_load_AC3_c', 'p_load_AC4_a', 'q_load_AC4_a', 'p_load_AC4_b', 'q_load_AC4_b', 'p_load_AC4_c', 'q_load_AC4_c', 'p_load_DC4_a', 'q_load_DC4_a', 'p_load_DC4_b', 'q_load_DC4_b', 'p_load_DC4_c', 'q_load_DC4_c', 'v_dc_DC2', 'q_vsc_AC2', 'p_vsc_AC4', 'q_vsc_AC4', 'u_dummy'] 
-        self.inputs_run_values_list = [11547.0, 0.0, -5773.499999999997, -9999.995337498915, -5773.5000000000055, 9999.99533749891, 0.0, 1e-05, 0.0, 1e-05, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, -0.0, -0.0, 0.0, 0.0, 0.0, 0.0, -0.0, -0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 800.0, 0.0, 0.0, 0.0, 1.0] 
-        self.outputs_list = ['i_t_AC1_AC2_1_a_r', 'i_t_AC1_AC2_1_a_i', 'i_t_AC1_AC2_1_b_r', 'i_t_AC1_AC2_1_b_i', 'i_t_AC1_AC2_1_c_r', 'i_t_AC1_AC2_1_c_i', 'i_t_AC1_AC2_2_a_r', 'i_t_AC1_AC2_2_a_i', 'i_t_AC1_AC2_2_b_r', 'i_t_AC1_AC2_2_b_i', 'i_t_AC1_AC2_2_c_r', 'i_t_AC1_AC2_2_c_i', 'i_t_AC1_AC2_2_n_r', 'i_t_AC1_AC2_2_n_i', 'i_l_AC2_AC3_a_r', 'i_l_AC2_AC3_a_i', 'i_l_AC2_AC3_b_r', 'i_l_AC2_AC3_b_i', 'i_l_AC2_AC3_c_r', 'i_l_AC2_AC3_c_i', 'i_l_AC2_AC3_n_r', 'i_l_AC2_AC3_n_i', 'i_l_AC3_AC4_a_r', 'i_l_AC3_AC4_a_i', 'i_l_AC3_AC4_b_r', 'i_l_AC3_AC4_b_i', 'i_l_AC3_AC4_c_r', 'i_l_AC3_AC4_c_i', 'i_l_AC3_AC4_n_r', 'i_l_AC3_AC4_n_i', 'i_l_DC2_DC4_a_r', 'i_l_DC2_DC4_a_i', 'i_l_DC2_DC4_b_r', 'i_l_DC2_DC4_b_i', 'i_l_DC2_DC4_c_r', 'i_l_DC2_DC4_c_i', 'i_l_DC2_DC4_n_r', 'i_l_DC2_DC4_n_i', 'p_ac_AC2', 'p_loss_AC2'] 
+        self.params_list = ['a_AC2', 'b_AC2', 'c_AC2', 'C_a_AC2', 'C_b_AC2', 'C_c_AC2', 'R_dc_DC2', 'K_dc_DC2', 'a_AC4', 'b_AC4', 'c_AC4', 'coef_a_AC4', 'coef_b_AC4', 'coef_c_AC4'] 
+        self.params_values_list  = [2.92, 0.45, 0.027, 0.3333333333333333, 0.3333333333333333, 0.3333333333333333, 1e-06, 1e-06, 2.92, 0.45, 0.027, 0.3333333333333333, 0.3333333333333333, 0.3333333333333333] 
+        self.inputs_ini_list = ['v_AC1_a_r', 'v_AC1_a_i', 'v_AC1_b_r', 'v_AC1_b_i', 'v_AC1_c_r', 'v_AC1_c_i', 'v_DC2_a_r', 'v_DC2_a_i', 'v_DC2_b_r', 'v_DC2_b_i', 'v_DC2_c_r', 'v_DC2_c_i', 'p_load_AC3_a', 'q_load_AC3_a', 'p_load_AC3_b', 'q_load_AC3_b', 'p_load_AC3_c', 'q_load_AC3_c', 'p_load_AC4_a', 'q_load_AC4_a', 'p_load_AC4_b', 'q_load_AC4_b', 'p_load_AC4_c', 'q_load_AC4_c', 'p_load_DC4_a', 'q_load_DC4_a', 'p_load_DC4_b', 'q_load_DC4_b', 'p_load_DC4_c', 'q_load_DC4_c', 'v_dc_DC2_ref', 'q_vsc_AC2', 'p_vsc_AC4', 'q_vsc_AC4', 'u_dummy'] 
+        self.inputs_ini_values_list  = [11547.0, 0.0, -5773.499999999997, -9999.995337498915, -5773.5000000000055, 9999.99533749891, 800.0, 0.0, 1e-05, 0.0, 1e-05, 0.0, -0.0, 0.0, 0.0, -0.0, -0.0, -0.0, -0.0, 0.0, 0.0, -0.0, -0.0, -0.0, -0.0, -0.0, -0.0, -0.0, -0.0, -0.0, 800.0, 0.0, 0.0, 0.0, 0] 
+        self.inputs_run_list = ['v_AC1_a_r', 'v_AC1_a_i', 'v_AC1_b_r', 'v_AC1_b_i', 'v_AC1_c_r', 'v_AC1_c_i', 'v_DC2_a_r', 'v_DC2_a_i', 'v_DC2_b_r', 'v_DC2_b_i', 'v_DC2_c_r', 'v_DC2_c_i', 'p_load_AC3_a', 'q_load_AC3_a', 'p_load_AC3_b', 'q_load_AC3_b', 'p_load_AC3_c', 'q_load_AC3_c', 'p_load_AC4_a', 'q_load_AC4_a', 'p_load_AC4_b', 'q_load_AC4_b', 'p_load_AC4_c', 'q_load_AC4_c', 'p_load_DC4_a', 'q_load_DC4_a', 'p_load_DC4_b', 'q_load_DC4_b', 'p_load_DC4_c', 'q_load_DC4_c', 'v_dc_DC2_ref', 'q_vsc_AC2', 'p_vsc_AC4', 'q_vsc_AC4', 'u_dummy'] 
+        self.inputs_run_values_list = [11547.0, 0.0, -5773.499999999997, -9999.995337498915, -5773.5000000000055, 9999.99533749891, 800.0, 0.0, 1e-05, 0.0, 1e-05, 0.0, -0.0, 0.0, 0.0, -0.0, -0.0, -0.0, -0.0, 0.0, 0.0, -0.0, -0.0, -0.0, -0.0, -0.0, -0.0, -0.0, -0.0, -0.0, 800.0, 0.0, 0.0, 0.0, 0] 
+        self.outputs_list = ['i_t_AC1_AC2_1_a_r', 'i_t_AC1_AC2_1_a_i', 'i_t_AC1_AC2_1_b_r', 'i_t_AC1_AC2_1_b_i', 'i_t_AC1_AC2_1_c_r', 'i_t_AC1_AC2_1_c_i', 'p_t_AC1_AC2_1', 'q_t_AC1_AC2_1', 'i_t_AC1_AC2_2_a_r', 'i_t_AC1_AC2_2_a_i', 'i_t_AC1_AC2_2_b_r', 'i_t_AC1_AC2_2_b_i', 'i_t_AC1_AC2_2_c_r', 'i_t_AC1_AC2_2_c_i', 'i_t_AC1_AC2_2_n_r', 'i_t_AC1_AC2_2_n_i', 'i_l_AC2_AC3_a_r', 'i_l_AC2_AC3_a_i', 'i_l_AC2_AC3_b_r', 'i_l_AC2_AC3_b_i', 'i_l_AC2_AC3_c_r', 'i_l_AC2_AC3_c_i', 'i_l_AC2_AC3_n_r', 'i_l_AC2_AC3_n_i', 'i_l_AC3_AC4_a_r', 'i_l_AC3_AC4_a_i', 'i_l_AC3_AC4_b_r', 'i_l_AC3_AC4_b_i', 'i_l_AC3_AC4_c_r', 'i_l_AC3_AC4_c_i', 'i_l_AC3_AC4_n_r', 'i_l_AC3_AC4_n_i', 'i_l_DC2_DC4_a_r', 'i_l_DC2_DC4_a_i', 'i_l_DC2_DC4_b_r', 'i_l_DC2_DC4_b_i', 'i_l_DC2_DC4_c_r', 'i_l_DC2_DC4_c_i', 'i_l_DC2_DC4_n_r', 'i_l_DC2_DC4_n_i', 'p_vsc_AC2', 'p_vsc_loss_AC2', 'p_vsc_AC4', 'p_vsc_loss_AC4', 'z_dummy'] 
         self.x_list = ['x_dummy'] 
-        self.y_run_list = ['v_AC3_a_r', 'v_AC3_a_i', 'v_AC3_b_r', 'v_AC3_b_i', 'v_AC3_c_r', 'v_AC3_c_i', 'v_AC3_n_r', 'v_AC3_n_i', 'v_AC4_a_r', 'v_AC4_a_i', 'v_AC4_b_r', 'v_AC4_b_i', 'v_AC4_c_r', 'v_AC4_c_i', 'v_AC4_n_r', 'v_AC4_n_i', 'v_DC4_a_r', 'v_DC4_a_i', 'v_DC4_b_r', 'v_DC4_b_i', 'v_DC4_c_r', 'v_DC4_c_i', 'v_DC4_n_r', 'v_DC4_n_i', 'v_AC2_a_r', 'v_AC2_a_i', 'v_AC2_b_r', 'v_AC2_b_i', 'v_AC2_c_r', 'v_AC2_c_i', 'v_AC2_n_r', 'v_AC2_n_i', 'v_DC2_n_r', 'v_DC2_n_i', 'i_l_DC2_DC4_a_r', 'i_l_DC2_DC4_a_i', 'i_l_DC2_DC4_b_r', 'i_l_DC2_DC4_b_i', 'i_l_DC2_DC4_c_r', 'i_l_DC2_DC4_c_i', 'i_l_DC2_DC4_n_r', 'i_l_DC2_DC4_n_i', 'i_load_AC3_a_r', 'i_load_AC3_a_i', 'i_load_AC3_b_r', 'i_load_AC3_b_i', 'i_load_AC3_c_r', 'i_load_AC3_c_i', 'i_load_AC3_n_r', 'i_load_AC3_n_i', 'i_load_AC4_a_r', 'i_load_AC4_a_i', 'i_load_AC4_b_r', 'i_load_AC4_b_i', 'i_load_AC4_c_r', 'i_load_AC4_c_i', 'i_load_AC4_n_r', 'i_load_AC4_n_i', 'i_load_DC4_a_r', 'i_load_DC4_a_i', 'i_load_DC4_b_r', 'i_load_DC4_b_i', 'i_load_DC4_c_r', 'i_load_DC4_c_i', 'i_load_DC4_n_r', 'i_load_DC4_n_i', 'p_a_d_AC2', 'p_b_d_AC2', 'p_c_d_AC2', 'p_n_d_AC2', 'i_vsc_AC2_a_r', 'i_vsc_AC2_a_i', 'i_vsc_AC2_b_r', 'i_vsc_AC2_b_i', 'i_vsc_AC2_c_r', 'i_vsc_AC2_c_i', 'i_vsc_AC2_n_r', 'i_vsc_AC2_n_i', 'p_vsc_DC2', 'v_DC2_a_r', 'i_vsc_AC4_a_r', 'i_vsc_AC4_a_i', 'i_vsc_AC4_b_r', 'i_vsc_AC4_b_i', 'i_vsc_AC4_c_r', 'i_vsc_AC4_c_i', 'i_vsc_AC4_n_r', 'i_vsc_AC4_n_i', 'i_vsc_DC4_a_r', 'i_vsc_DC4_n_r', 'p_vsc_DC4', 'p_vsc_loss_AC4'] 
+        self.y_run_list = ['v_AC3_a_r', 'v_AC3_a_i', 'v_AC3_b_r', 'v_AC3_b_i', 'v_AC3_c_r', 'v_AC3_c_i', 'v_AC3_n_r', 'v_AC3_n_i', 'v_AC4_a_r', 'v_AC4_a_i', 'v_AC4_b_r', 'v_AC4_b_i', 'v_AC4_c_r', 'v_AC4_c_i', 'v_AC4_n_r', 'v_AC4_n_i', 'v_DC4_a_r', 'v_DC4_a_i', 'v_DC4_b_r', 'v_DC4_b_i', 'v_DC4_c_r', 'v_DC4_c_i', 'v_DC4_n_r', 'v_DC4_n_i', 'v_AC2_a_r', 'v_AC2_a_i', 'v_AC2_b_r', 'v_AC2_b_i', 'v_AC2_c_r', 'v_AC2_c_i', 'v_AC2_n_r', 'v_AC2_n_i', 'v_DC2_n_r', 'v_DC2_n_i', 'i_l_DC2_DC4_a_r', 'i_l_DC2_DC4_a_i', 'i_l_DC2_DC4_b_r', 'i_l_DC2_DC4_b_i', 'i_l_DC2_DC4_c_r', 'i_l_DC2_DC4_c_i', 'i_l_DC2_DC4_n_r', 'i_l_DC2_DC4_n_i', 'i_load_AC3_a_r', 'i_load_AC3_a_i', 'i_load_AC3_b_r', 'i_load_AC3_b_i', 'i_load_AC3_c_r', 'i_load_AC3_c_i', 'i_load_AC3_n_r', 'i_load_AC3_n_i', 'i_load_AC4_a_r', 'i_load_AC4_a_i', 'i_load_AC4_b_r', 'i_load_AC4_b_i', 'i_load_AC4_c_r', 'i_load_AC4_c_i', 'i_load_AC4_n_r', 'i_load_AC4_n_i', 'i_load_DC4_a_r', 'i_load_DC4_a_i', 'i_load_DC4_b_r', 'i_load_DC4_b_i', 'i_load_DC4_c_r', 'i_load_DC4_c_i', 'i_load_DC4_n_r', 'i_load_DC4_n_i', 'p_a_d_AC2', 'p_b_d_AC2', 'p_c_d_AC2', 'p_n_d_AC2', 'i_vsc_AC2_a_r', 'i_vsc_AC2_a_i', 'i_vsc_AC2_b_r', 'i_vsc_AC2_b_i', 'i_vsc_AC2_c_r', 'i_vsc_AC2_c_i', 'i_vsc_AC2_n_r', 'i_vsc_AC2_n_i', 'i_dc_DC2', 'p_vsc_DC2', 'i_vsc_AC4_a_r', 'i_vsc_AC4_a_i', 'i_vsc_AC4_b_r', 'i_vsc_AC4_b_i', 'i_vsc_AC4_c_r', 'i_vsc_AC4_c_i', 'i_vsc_AC4_n_r', 'i_vsc_AC4_n_i', 'i_vsc_DC4_a_r', 'i_vsc_DC4_n_r', 'p_vsc_DC4', 'p_vsc_loss_AC4'] 
         self.xy_list = self.x_list + self.y_run_list 
-        self.y_ini_list = ['v_AC3_a_r', 'v_AC3_a_i', 'v_AC3_b_r', 'v_AC3_b_i', 'v_AC3_c_r', 'v_AC3_c_i', 'v_AC3_n_r', 'v_AC3_n_i', 'v_AC4_a_r', 'v_AC4_a_i', 'v_AC4_b_r', 'v_AC4_b_i', 'v_AC4_c_r', 'v_AC4_c_i', 'v_AC4_n_r', 'v_AC4_n_i', 'v_DC4_a_r', 'v_DC4_a_i', 'v_DC4_b_r', 'v_DC4_b_i', 'v_DC4_c_r', 'v_DC4_c_i', 'v_DC4_n_r', 'v_DC4_n_i', 'v_AC2_a_r', 'v_AC2_a_i', 'v_AC2_b_r', 'v_AC2_b_i', 'v_AC2_c_r', 'v_AC2_c_i', 'v_AC2_n_r', 'v_AC2_n_i', 'v_DC2_n_r', 'v_DC2_n_i', 'i_l_DC2_DC4_a_r', 'i_l_DC2_DC4_a_i', 'i_l_DC2_DC4_b_r', 'i_l_DC2_DC4_b_i', 'i_l_DC2_DC4_c_r', 'i_l_DC2_DC4_c_i', 'i_l_DC2_DC4_n_r', 'i_l_DC2_DC4_n_i', 'i_load_AC3_a_r', 'i_load_AC3_a_i', 'i_load_AC3_b_r', 'i_load_AC3_b_i', 'i_load_AC3_c_r', 'i_load_AC3_c_i', 'i_load_AC3_n_r', 'i_load_AC3_n_i', 'i_load_AC4_a_r', 'i_load_AC4_a_i', 'i_load_AC4_b_r', 'i_load_AC4_b_i', 'i_load_AC4_c_r', 'i_load_AC4_c_i', 'i_load_AC4_n_r', 'i_load_AC4_n_i', 'i_load_DC4_a_r', 'i_load_DC4_a_i', 'i_load_DC4_b_r', 'i_load_DC4_b_i', 'i_load_DC4_c_r', 'i_load_DC4_c_i', 'i_load_DC4_n_r', 'i_load_DC4_n_i', 'p_a_d_AC2', 'p_b_d_AC2', 'p_c_d_AC2', 'p_n_d_AC2', 'i_vsc_AC2_a_r', 'i_vsc_AC2_a_i', 'i_vsc_AC2_b_r', 'i_vsc_AC2_b_i', 'i_vsc_AC2_c_r', 'i_vsc_AC2_c_i', 'i_vsc_AC2_n_r', 'i_vsc_AC2_n_i', 'p_vsc_DC2', 'v_DC2_a_r', 'i_vsc_AC4_a_r', 'i_vsc_AC4_a_i', 'i_vsc_AC4_b_r', 'i_vsc_AC4_b_i', 'i_vsc_AC4_c_r', 'i_vsc_AC4_c_i', 'i_vsc_AC4_n_r', 'i_vsc_AC4_n_i', 'i_vsc_DC4_a_r', 'i_vsc_DC4_n_r', 'p_vsc_DC4', 'p_vsc_loss_AC4'] 
+        self.y_ini_list = ['v_AC3_a_r', 'v_AC3_a_i', 'v_AC3_b_r', 'v_AC3_b_i', 'v_AC3_c_r', 'v_AC3_c_i', 'v_AC3_n_r', 'v_AC3_n_i', 'v_AC4_a_r', 'v_AC4_a_i', 'v_AC4_b_r', 'v_AC4_b_i', 'v_AC4_c_r', 'v_AC4_c_i', 'v_AC4_n_r', 'v_AC4_n_i', 'v_DC4_a_r', 'v_DC4_a_i', 'v_DC4_b_r', 'v_DC4_b_i', 'v_DC4_c_r', 'v_DC4_c_i', 'v_DC4_n_r', 'v_DC4_n_i', 'v_AC2_a_r', 'v_AC2_a_i', 'v_AC2_b_r', 'v_AC2_b_i', 'v_AC2_c_r', 'v_AC2_c_i', 'v_AC2_n_r', 'v_AC2_n_i', 'v_DC2_n_r', 'v_DC2_n_i', 'i_l_DC2_DC4_a_r', 'i_l_DC2_DC4_a_i', 'i_l_DC2_DC4_b_r', 'i_l_DC2_DC4_b_i', 'i_l_DC2_DC4_c_r', 'i_l_DC2_DC4_c_i', 'i_l_DC2_DC4_n_r', 'i_l_DC2_DC4_n_i', 'i_load_AC3_a_r', 'i_load_AC3_a_i', 'i_load_AC3_b_r', 'i_load_AC3_b_i', 'i_load_AC3_c_r', 'i_load_AC3_c_i', 'i_load_AC3_n_r', 'i_load_AC3_n_i', 'i_load_AC4_a_r', 'i_load_AC4_a_i', 'i_load_AC4_b_r', 'i_load_AC4_b_i', 'i_load_AC4_c_r', 'i_load_AC4_c_i', 'i_load_AC4_n_r', 'i_load_AC4_n_i', 'i_load_DC4_a_r', 'i_load_DC4_a_i', 'i_load_DC4_b_r', 'i_load_DC4_b_i', 'i_load_DC4_c_r', 'i_load_DC4_c_i', 'i_load_DC4_n_r', 'i_load_DC4_n_i', 'p_a_d_AC2', 'p_b_d_AC2', 'p_c_d_AC2', 'p_n_d_AC2', 'i_vsc_AC2_a_r', 'i_vsc_AC2_a_i', 'i_vsc_AC2_b_r', 'i_vsc_AC2_b_i', 'i_vsc_AC2_c_r', 'i_vsc_AC2_c_i', 'i_vsc_AC2_n_r', 'i_vsc_AC2_n_i', 'i_dc_DC2', 'p_vsc_DC2', 'i_vsc_AC4_a_r', 'i_vsc_AC4_a_i', 'i_vsc_AC4_b_r', 'i_vsc_AC4_b_i', 'i_vsc_AC4_c_r', 'i_vsc_AC4_c_i', 'i_vsc_AC4_n_r', 'i_vsc_AC4_n_i', 'i_vsc_DC4_a_r', 'i_vsc_DC4_n_r', 'p_vsc_DC4', 'p_vsc_loss_AC4'] 
         self.xy_ini_list = self.x_list + self.y_ini_list 
         self.t = 0.0
         self.it = 0
@@ -120,11 +133,11 @@ class grid_trafo_2bus_class:
         self.sp_jac_ini = sspa.load_npz('grid_trafo_2bus_sp_jac_ini_num.npz')
         self.jac_ini = self.sp_jac_ini.toarray()
 
-        self.J_ini_d = np.array(self.sp_jac_ini_ia)*0.0
-        self.J_ini_i = np.array(self.sp_jac_ini_ia)
-        self.J_ini_p = np.array(self.sp_jac_ini_ja)
+        #self.J_ini_d = np.array(self.sp_jac_ini_ia)*0.0
+        #self.J_ini_i = np.array(self.sp_jac_ini_ia)
+        #self.J_ini_p = np.array(self.sp_jac_ini_ja)
         de_jac_ini_eval(self.jac_ini,x,y,self.u_ini,self.p,self.Dt)
-        sp_jac_ini_eval(self.J_ini_d,x,y,self.u_ini,self.p,self.Dt) 
+        sp_jac_ini_eval(self.sp_jac_ini.data,x,y,self.u_ini,self.p,self.Dt) 
         self.fill_factor_ini,self.drop_tol_ini,self.drop_rule_ini = 100,1e-10,'basic'       
 
 
@@ -150,11 +163,11 @@ class grid_trafo_2bus_class:
         self.sp_jac_trap = sspa.load_npz('grid_trafo_2bus_sp_jac_trap_num.npz')
         self.jac_trap = self.sp_jac_trap.toarray()
         
-        self.J_trap_d = np.array(self.sp_jac_trap_ia)*0.0
-        self.J_trap_i = np.array(self.sp_jac_trap_ia)
-        self.J_trap_p = np.array(self.sp_jac_trap_ja)
+        #self.J_trap_d = np.array(self.sp_jac_trap_ia)*0.0
+        #self.J_trap_i = np.array(self.sp_jac_trap_ia)
+        #self.J_trap_p = np.array(self.sp_jac_trap_ja)
         de_jac_trap_eval(self.jac_trap,x,y,self.u_run,self.p,self.Dt)
-        sp_jac_trap_eval(self.J_trap_d,x,y,self.u_run,self.p,self.Dt)
+        sp_jac_trap_eval(self.sp_jac_trap.data,x,y,self.u_run,self.p,self.Dt)
         self.fill_factor_trap,self.drop_tol_trap,self.drop_rule_trap = 100,1e-10,'basic' 
    
 
@@ -167,7 +180,11 @@ class grid_trafo_2bus_class:
 
         self.lmax_it_ini,self.ltol_ini,self.ldamp_ini=50,1e-8,1.0
 
-        
+        self.sp_Fu_run = sspa.load_npz('grid_trafo_2bus_Fu_run_num.npz')
+        self.sp_Gu_run = sspa.load_npz('grid_trafo_2bus_Gu_run_num.npz')
+        self.sp_Hx_run = sspa.load_npz('grid_trafo_2bus_Hx_run_num.npz')
+        self.sp_Hy_run = sspa.load_npz('grid_trafo_2bus_Hy_run_num.npz')
+        self.sp_Hu_run = sspa.load_npz('grid_trafo_2bus_Hu_run_num.npz')        
  
         
 
@@ -434,7 +451,7 @@ class grid_trafo_2bus_class:
                            self.N_x,self.N_y,
                            max_it=self.max_it,tol=self.itol)
         
-        if it < self.max_it:
+        if it < self.max_it-1:
             
             self.xy_ini = xy_ini
             self.N_iters = it
@@ -443,7 +460,7 @@ class grid_trafo_2bus_class:
             
             self.ini_convergence = True
             
-        if it >= self.max_it:
+        if it >= self.max_it-1:
             print(f'Maximum number of iterations (max_it = {self.max_it}) reached without convergence.')
             self.ini_convergence = False
             
@@ -546,9 +563,9 @@ class grid_trafo_2bus_class:
     
     def eval_preconditioner_trap(self):
     
-        sp_jac_trap_eval(self.J_trap_d,self.x,self.y_run,self.u_run,self.p,self.Dt)
+        sp_jac_trap_eval(self.sp_jac_trap.data,self.x,self.y_run,self.u_run,self.p,self.Dt)
     
-        self.sp_jac_trap.data = self.J_trap_d 
+        #self.sp_jac_trap.data = self.J_trap_d 
         
         csc_sp_jac_trap = sspa.csc_matrix(self.sp_jac_trap)
 
@@ -581,8 +598,7 @@ class grid_trafo_2bus_class:
         self.iparams_run = np.zeros(10,dtype=np.float64)
     
         t,it,it_store,xy = spdaesolver(t,t_end,it,it_store,xy,u,p,
-                                  self.jac_trap,
-                                  self.J_trap_d,self.J_trap_i,self.J_trap_p,
+                                  self.sp_jac_trap.data,self.sp_jac_trap.indices,self.sp_jac_trap.indptr,
                                   self.P_trap_d,self.P_trap_i,self.P_trap_p,self.perm_trap_r,self.perm_trap_c,
                                   self.Time,
                                   self.X,
@@ -625,18 +641,30 @@ class grid_trafo_2bus_class:
                 self.xy_0 = np.copy(self.xy_0_new)
             else:
                 self.load_xy_0(file_name = xy_0)
-    
+
         self.xy_ini = self.spss_ini()
-        self.ini2run()
-        #jac_run_ss_eval_xy(self.jac_run,self.x,self.y_run,self.u_run,self.p)
-        #jac_run_ss_eval_up(self.jac_run,self.x,self.y_run,self.u_run,self.p)
+
+
+        if self.N_iters < self.max_it:
+            
+            self.ini2run()           
+            self.ini_convergence = True
+            
+        if self.N_iters >= self.max_it:
+            print(f'Maximum number of iterations (max_it = {self.max_it}) reached without convergence.')
+            self.ini_convergence = False
+            
+        #jac_run_eval_xy(self.jac_run,self.x,self.y_run,self.u_run,self.p)
+        #jac_run_eval_up(self.jac_run,self.x,self.y_run,self.u_run,self.p)
+        
+        return self.ini_convergence
 
         
     def spss_ini(self):
         J_d,J_i,J_p = csr2pydae(self.sp_jac_ini)
         
         xy_ini,it,iparams = spsstate(self.xy,self.u_ini,self.p,
-                 J_d,J_i,J_p,
+                 self.sp_jac_ini.data,self.sp_jac_ini.indices,self.sp_jac_ini.indptr,
                  self.P_d,self.P_i,self.P_p,self.perm_r,self.perm_c,
                  self.N_x,self.N_y,
                  max_it=self.max_it,tol=self.itol,
@@ -654,7 +682,39 @@ class grid_trafo_2bus_class:
     #def import_cffi(self):
         
 
+    def eval_jac_u2z(self):
+
+        '''
+
+        0 =   J_run * xy + FG_u * u
+        z = Hxy_run * xy + H_u * u
+
+        xy = -1/J_run * FG_u * u
+        z = -Hxy_run/J_run * FG_u * u + H_u * u
+        z = (-Hxy_run/J_run * FG_u + H_u ) * u 
+        '''
         
+        sp_Fu_run_eval(self.sp_Fu_run.data,self.x,self.y_run,self.u_run,self.p,self.Dt)
+        sp_Gu_run_eval(self.sp_Gu_run.data,self.x,self.y_run,self.u_run,self.p,self.Dt)
+        sp_H_jacs_run_eval(self.sp_Hx_run.data,
+                        self.sp_Hy_run.data,
+                        self.sp_Hu_run.data,
+                        self.x,self.y_run,self.u_run,self.p,self.Dt)
+        sp_jac_run = self.sp_jac_run
+        sp_jac_run_eval(sp_jac_run.data,
+                        self.x,self.y_run,
+                        self.u_run,self.p,
+                        self.Dt)
+
+
+
+        Hxy_run = sspa.bmat([[self.sp_Hx_run,self.sp_Hy_run]])
+        FGu_run = sspa.bmat([[self.sp_Fu_run],[self.sp_Gu_run]])
+        
+
+        #((sspa.linalg.spsolve(s.sp_jac_ini,-Hxy_run)) @ FGu_run + sp_Hu_run )@s.u_ini
+
+        self.jac_u2z = Hxy_run @ sspa.linalg.spsolve(self.sp_jac_run,-FGu_run) + self.sp_Hu_run        
 
            
             
@@ -753,7 +813,7 @@ def sprichardson(A_d,A_i,A_p,b,P_d,P_i,P_p,perm_r,perm_c,x,iparams,damp=1.0,max_
     iparams[0] = it
     return x
     
-    
+
 
 @numba.njit()
 def spsstate(xy,u,p,
@@ -779,7 +839,7 @@ def spsstate(xy,u,p,
     p_c_ptr=ffi.from_buffer(np.ascontiguousarray(p))
     J_d_ptr=ffi.from_buffer(np.ascontiguousarray(J_d))
 
-    sp_jac_ini_num_eval(J_d_ptr,x_c_ptr,y_c_ptr,u_c_ptr,p_c_ptr,1.0)
+    #sp_jac_ini_num_eval(J_d_ptr,x_c_ptr,y_c_ptr,u_c_ptr,p_c_ptr,1.0)
     sp_jac_ini_up_eval(J_d_ptr,x_c_ptr,y_c_ptr,u_c_ptr,p_c_ptr,1.0)
     
     #sp_jac_ini_eval_up(J_d,x,y,u,p,0.0)
@@ -835,7 +895,7 @@ def daesolver(t,t_end,it,it_store,xy,u,p,jac_trap,T,X,Y,Z,iters,Dt,N_x,N_y,N_z,d
 
     jac_trap_ptr=ffi.from_buffer(np.ascontiguousarray(jac_trap))
     
-    de_jac_trap_num_eval(jac_trap_ptr,x_ptr,y_ptr,u_ptr,p_ptr,Dt)    
+    #de_jac_trap_num_eval(jac_trap_ptr,x_ptr,y_ptr,u_ptr,p_ptr,Dt)    
     de_jac_trap_up_eval(jac_trap_ptr,x_ptr,y_ptr,u_ptr,p_ptr,Dt) 
     de_jac_trap_xy_eval(jac_trap_ptr,x_ptr,y_ptr,u_ptr,p_ptr,Dt) 
     
@@ -908,7 +968,7 @@ def daesolver(t,t_end,it,it_store,xy,u,p,jac_trap,T,X,Y,Z,iters,Dt,N_x,N_y,N_z,d
     return t,it,it_store,xy
     
 @numba.njit() 
-def spdaesolver(t,t_end,it,it_store,xy,u,p,jac_trap,
+def spdaesolver(t,t_end,it,it_store,xy,u,p,
                 J_d,J_i,J_p,
                 P_d,P_i,P_p,perm_r,perm_c,
                 T,X,Y,Z,iters,Dt,N_x,N_y,N_z,decimation,
@@ -916,7 +976,6 @@ def spdaesolver(t,t_end,it,it_store,xy,u,p,jac_trap,
                 max_it=50,itol=1e-8,store=1,
                 lmax_it=20,ltol=1e-4,ldamp=1.0,mode=0):
 
-    fg = np.zeros((N_x+N_y,1),dtype=np.float64)
     fg_i = np.zeros((N_x+N_y),dtype=np.float64)
     x = xy[:N_x]
     y = xy[N_x:]
@@ -935,7 +994,7 @@ def spdaesolver(t,t_end,it,it_store,xy,u,p,jac_trap,
 
     J_d_ptr=ffi.from_buffer(np.ascontiguousarray(J_d))
     
-    sp_jac_trap_num_eval(J_d_ptr,x_ptr,y_ptr,u_ptr,p_ptr,Dt)    
+    #sp_jac_trap_num_eval(J_d_ptr,x_ptr,y_ptr,u_ptr,p_ptr,Dt)    
     sp_jac_trap_up_eval( J_d_ptr,x_ptr,y_ptr,u_ptr,p_ptr,Dt) 
     sp_jac_trap_xy_eval( J_d_ptr,x_ptr,y_ptr,u_ptr,p_ptr,Dt) 
     
@@ -1291,7 +1350,6 @@ def sp_jac_run_eval(sp_jac_run,x,y,u,p,Dt):
     u_c_ptr=ffi.from_buffer(np.ascontiguousarray(u))
     p_c_ptr=ffi.from_buffer(np.ascontiguousarray(p))
 
-    sp_jac_run_num_eval(sp_jac_run_ptr,x_c_ptr,y_c_ptr,u_c_ptr,p_c_ptr,Dt)
     sp_jac_run_up_eval( sp_jac_run_ptr,x_c_ptr,y_c_ptr,u_c_ptr,p_c_ptr,Dt)
     sp_jac_run_xy_eval( sp_jac_run_ptr,x_c_ptr,y_c_ptr,u_c_ptr,p_c_ptr,Dt)
     
@@ -1462,26 +1520,163 @@ def c_h_eval(z,x,y,u,p,Dt):
     
     return z
 
+@numba.njit("(float64[:],float64[:],float64[:],float64[:],float64[:],float64)")
+def sp_Fu_run_eval(jac,x,y,u,p,Dt):   
+    '''
+    Computes the dense full initialization jacobian:
+    
+    jac_ini = [[Fx_ini, Fy_ini],
+               [Gx_ini, Gy_ini]]
+                
+    for the given x,y,u,p vectors and Dt time increment.
+    
+    Parameters
+    ----------
+    de_jac_ini : (N, N) array_like
+                  Input data.
+    x : (N_x,) array_like
+        Vector with dynamical states.
+    y : (N_y,) array_like
+        Vector with algebraic states (ini problem).
+    u : (N_u,) array_like
+        Vector with inputs (ini problem). 
+    p : (N_p,) array_like
+        Vector with parameters. 
+        
+    with N = N_x+N_y
+ 
+    Returns
+    -------
+    
+    de_jac_ini : (N, N) array_like
+                  Updated matrix.    
+    
+    '''
+    
+    jac_ptr=ffi.from_buffer(np.ascontiguousarray(jac))
+    x_c_ptr=ffi.from_buffer(np.ascontiguousarray(x))
+    y_c_ptr=ffi.from_buffer(np.ascontiguousarray(y))
+    u_c_ptr=ffi.from_buffer(np.ascontiguousarray(u))
+    p_c_ptr=ffi.from_buffer(np.ascontiguousarray(p))
+
+    sp_Fu_run_up_eval( jac_ptr,x_c_ptr,y_c_ptr,u_c_ptr,p_c_ptr,Dt)
+    sp_Fu_run_xy_eval( jac_ptr,x_c_ptr,y_c_ptr,u_c_ptr,p_c_ptr,Dt)
+    
+    #return jac
+
+@numba.njit("(float64[:],float64[:],float64[:],float64[:],float64[:],float64)")
+def sp_Gu_run_eval(jac,x,y,u,p,Dt):   
+    '''
+    Computes the dense full initialization jacobian:
+    
+    jac_ini = [[Fx_ini, Fy_ini],
+               [Gx_ini, Gy_ini]]
+                
+    for the given x,y,u,p vectors and Dt time increment.
+    
+    Parameters
+    ----------
+    de_jac_ini : (N, N) array_like
+                  Input data.
+    x : (N_x,) array_like
+        Vector with dynamical states.
+    y : (N_y,) array_like
+        Vector with algebraic states (ini problem).
+    u : (N_u,) array_like
+        Vector with inputs (ini problem). 
+    p : (N_p,) array_like
+        Vector with parameters. 
+        
+    with N = N_x+N_y
+ 
+    Returns
+    -------
+    
+    de_jac_ini : (N, N) array_like
+                  Updated matrix.    
+    
+    '''
+    
+    jac_ptr=ffi.from_buffer(np.ascontiguousarray(jac))
+    x_c_ptr=ffi.from_buffer(np.ascontiguousarray(x))
+    y_c_ptr=ffi.from_buffer(np.ascontiguousarray(y))
+    u_c_ptr=ffi.from_buffer(np.ascontiguousarray(u))
+    p_c_ptr=ffi.from_buffer(np.ascontiguousarray(p))
+
+    sp_Gu_run_up_eval( jac_ptr,x_c_ptr,y_c_ptr,u_c_ptr,p_c_ptr,Dt)
+    sp_Gu_run_xy_eval( jac_ptr,x_c_ptr,y_c_ptr,u_c_ptr,p_c_ptr,Dt)
+    
+    #return jac
+
+@numba.njit("(float64[:],float64[:],float64[:],float64[:],float64[:],float64[:],float64[:],float64)")
+def sp_H_jacs_run_eval(H_x,H_y,H_u,x,y,u,p,Dt):   
+    '''
+    Computes the dense full initialization jacobian:
+    
+    jac_ini = [[Fx_ini, Fy_ini],
+               [Gx_ini, Gy_ini]]
+                
+    for the given x,y,u,p vectors and Dt time increment.
+    
+    Parameters
+    ----------
+    de_jac_ini : (N, N) array_like
+                  Input data.
+    x : (N_x,) array_like
+        Vector with dynamical states.
+    y : (N_y,) array_like
+        Vector with algebraic states (ini problem).
+    u : (N_u,) array_like
+        Vector with inputs (ini problem). 
+    p : (N_p,) array_like
+        Vector with parameters. 
+        
+    with N = N_x+N_y
+ 
+    Returns
+    -------
+    
+    de_jac_ini : (N, N) array_like
+                  Updated matrix.    
+    
+    '''
+    
+    H_x_ptr=ffi.from_buffer(np.ascontiguousarray(H_x))
+    H_y_ptr=ffi.from_buffer(np.ascontiguousarray(H_y))
+    H_u_ptr=ffi.from_buffer(np.ascontiguousarray(H_u))
+
+    x_c_ptr=ffi.from_buffer(np.ascontiguousarray(x))
+    y_c_ptr=ffi.from_buffer(np.ascontiguousarray(y))
+    u_c_ptr=ffi.from_buffer(np.ascontiguousarray(u))
+    p_c_ptr=ffi.from_buffer(np.ascontiguousarray(p))
+
+    sp_Hx_run_up_eval( H_x_ptr,x_c_ptr,y_c_ptr,u_c_ptr,p_c_ptr,Dt)
+    sp_Hx_run_xy_eval( H_x_ptr,x_c_ptr,y_c_ptr,u_c_ptr,p_c_ptr,Dt)
+    sp_Hy_run_up_eval( H_y_ptr,x_c_ptr,y_c_ptr,u_c_ptr,p_c_ptr,Dt)
+    sp_Hy_run_xy_eval( H_y_ptr,x_c_ptr,y_c_ptr,u_c_ptr,p_c_ptr,Dt)
+    sp_Hu_run_up_eval( H_u_ptr,x_c_ptr,y_c_ptr,u_c_ptr,p_c_ptr,Dt)
+    sp_Hu_run_xy_eval( H_u_ptr,x_c_ptr,y_c_ptr,u_c_ptr,p_c_ptr,Dt)
+
 def sp_jac_ini_vectors():
 
-    sp_jac_ini_ia = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 25, 26, 27, 28, 29, 30, 31, 32, 43, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 25, 26, 27, 28, 29, 30, 31, 32, 44, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 25, 26, 27, 28, 29, 30, 31, 32, 45, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 25, 26, 27, 28, 29, 30, 31, 32, 46, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 25, 26, 27, 28, 29, 30, 31, 32, 47, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 25, 26, 27, 28, 29, 30, 31, 32, 48, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 25, 26, 27, 28, 29, 30, 31, 32, 49, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 25, 26, 27, 28, 29, 30, 31, 32, 50, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 51, 81, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 52, 82, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 53, 83, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 54, 84, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 55, 85, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 56, 86, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 57, 87, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 58, 88, 17, 59, 80, 89, 18, 60, 19, 61, 20, 62, 21, 63, 22, 64, 23, 33, 65, 90, 24, 34, 66, 1, 2, 3, 4, 5, 6, 7, 8, 25, 26, 27, 28, 29, 30, 31, 32, 71, 1, 2, 3, 4, 5, 6, 7, 8, 25, 26, 27, 28, 29, 30, 31, 32, 72, 1, 2, 3, 4, 5, 6, 7, 8, 25, 26, 27, 28, 29, 30, 31, 32, 73, 1, 2, 3, 4, 5, 6, 7, 8, 25, 26, 27, 28, 29, 30, 31, 32, 74, 1, 2, 3, 4, 5, 6, 7, 8, 25, 26, 27, 28, 29, 30, 31, 32, 75, 1, 2, 3, 4, 5, 6, 7, 8, 25, 26, 27, 28, 29, 30, 31, 32, 76, 1, 2, 3, 4, 5, 6, 7, 8, 25, 26, 27, 28, 29, 30, 31, 32, 1, 2, 3, 4, 5, 6, 7, 8, 25, 26, 27, 28, 29, 30, 31, 32, 23, 33, 24, 34, 17, 35, 80, 18, 36, 19, 37, 20, 38, 21, 39, 22, 40, 35, 37, 39, 41, 36, 38, 40, 42, 1, 2, 7, 8, 43, 44, 3, 4, 7, 8, 45, 46, 5, 6, 7, 8, 47, 48, 1, 2, 7, 8, 43, 44, 3, 4, 7, 8, 45, 46, 5, 6, 7, 8, 47, 48, 43, 45, 47, 49, 44, 46, 48, 50, 9, 10, 15, 16, 51, 52, 11, 12, 15, 16, 53, 54, 13, 14, 15, 16, 55, 56, 9, 10, 15, 16, 51, 52, 11, 12, 15, 16, 53, 54, 13, 14, 15, 16, 55, 56, 51, 53, 55, 57, 52, 54, 56, 58, 17, 18, 23, 24, 59, 60, 19, 20, 23, 24, 61, 62, 21, 22, 23, 24, 63, 64, 17, 18, 23, 24, 59, 60, 19, 20, 23, 24, 61, 62, 21, 22, 23, 24, 63, 64, 59, 61, 63, 65, 60, 62, 64, 66, 67, 79, 68, 79, 69, 79, 31, 32, 70, 77, 78, 25, 26, 31, 32, 67, 71, 72, 77, 78, 25, 26, 31, 32, 71, 72, 27, 28, 31, 32, 68, 73, 74, 27, 28, 31, 32, 73, 74, 29, 30, 31, 32, 69, 75, 76, 29, 30, 31, 32, 75, 76, 71, 73, 75, 77, 72, 74, 76, 78, 33, 79, 80, 33, 79, 80, 9, 10, 15, 16, 81, 82, 9, 10, 15, 16, 81, 82, 11, 12, 15, 16, 83, 84, 11, 12, 15, 16, 83, 84, 13, 14, 15, 16, 85, 86, 13, 14, 15, 16, 85, 86, 81, 83, 85, 87, 82, 84, 86, 88, 17, 23, 89, 91, 17, 23, 90, 91, 91, 92, 81, 82, 83, 84, 85, 86, 87, 88, 92]
-    sp_jac_ini_ja = [0, 1, 26, 51, 76, 101, 126, 151, 176, 201, 219, 237, 255, 273, 291, 309, 327, 345, 349, 351, 353, 355, 357, 359, 363, 366, 383, 400, 417, 434, 451, 468, 484, 500, 502, 504, 507, 509, 511, 513, 515, 517, 521, 525, 531, 537, 543, 549, 555, 561, 565, 569, 575, 581, 587, 593, 599, 605, 609, 613, 619, 625, 631, 637, 643, 649, 653, 657, 659, 661, 663, 668, 677, 683, 690, 696, 703, 709, 713, 717, 720, 723, 729, 735, 741, 747, 753, 759, 763, 767, 771, 775, 777, 786]
+    sp_jac_ini_ia = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 25, 26, 27, 28, 29, 30, 31, 32, 43, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 25, 26, 27, 28, 29, 30, 31, 32, 44, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 25, 26, 27, 28, 29, 30, 31, 32, 45, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 25, 26, 27, 28, 29, 30, 31, 32, 46, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 25, 26, 27, 28, 29, 30, 31, 32, 47, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 25, 26, 27, 28, 29, 30, 31, 32, 48, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 25, 26, 27, 28, 29, 30, 31, 32, 49, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 25, 26, 27, 28, 29, 30, 31, 32, 50, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 51, 81, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 52, 82, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 53, 83, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 54, 84, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 55, 85, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 56, 86, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 57, 87, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 58, 88, 17, 59, 89, 18, 60, 19, 61, 20, 62, 21, 63, 22, 64, 23, 33, 65, 90, 24, 34, 66, 1, 2, 3, 4, 5, 6, 7, 8, 25, 26, 27, 28, 29, 30, 31, 32, 71, 1, 2, 3, 4, 5, 6, 7, 8, 25, 26, 27, 28, 29, 30, 31, 32, 72, 1, 2, 3, 4, 5, 6, 7, 8, 25, 26, 27, 28, 29, 30, 31, 32, 73, 1, 2, 3, 4, 5, 6, 7, 8, 25, 26, 27, 28, 29, 30, 31, 32, 74, 1, 2, 3, 4, 5, 6, 7, 8, 25, 26, 27, 28, 29, 30, 31, 32, 75, 1, 2, 3, 4, 5, 6, 7, 8, 25, 26, 27, 28, 29, 30, 31, 32, 76, 1, 2, 3, 4, 5, 6, 7, 8, 25, 26, 27, 28, 29, 30, 31, 32, 77, 1, 2, 3, 4, 5, 6, 7, 8, 25, 26, 27, 28, 29, 30, 31, 32, 78, 23, 33, 79, 24, 34, 17, 35, 18, 36, 19, 37, 20, 38, 21, 39, 22, 40, 35, 37, 39, 41, 36, 38, 40, 42, 1, 2, 7, 8, 43, 44, 3, 4, 7, 8, 45, 46, 5, 6, 7, 8, 47, 48, 1, 2, 7, 8, 43, 44, 3, 4, 7, 8, 45, 46, 5, 6, 7, 8, 47, 48, 43, 45, 47, 49, 44, 46, 48, 50, 9, 10, 15, 16, 51, 52, 11, 12, 15, 16, 53, 54, 13, 14, 15, 16, 55, 56, 9, 10, 15, 16, 51, 52, 11, 12, 15, 16, 53, 54, 13, 14, 15, 16, 55, 56, 51, 53, 55, 57, 52, 54, 56, 58, 17, 18, 23, 24, 59, 60, 19, 20, 23, 24, 61, 62, 21, 22, 23, 24, 63, 64, 17, 18, 23, 24, 59, 60, 19, 20, 23, 24, 61, 62, 21, 22, 23, 24, 63, 64, 59, 61, 63, 65, 60, 62, 64, 66, 67, 80, 68, 80, 69, 80, 31, 32, 70, 77, 78, 25, 26, 31, 32, 67, 71, 72, 77, 78, 25, 26, 31, 32, 71, 72, 27, 28, 31, 32, 68, 73, 74, 27, 28, 31, 32, 73, 74, 29, 30, 31, 32, 69, 75, 76, 79, 29, 30, 31, 32, 75, 76, 71, 73, 75, 77, 72, 74, 76, 78, 33, 79, 79, 80, 9, 10, 15, 16, 81, 82, 9, 10, 15, 16, 81, 82, 11, 12, 15, 16, 83, 84, 11, 12, 15, 16, 83, 84, 13, 14, 15, 16, 85, 86, 13, 14, 15, 16, 85, 86, 81, 83, 85, 87, 82, 84, 86, 88, 17, 23, 89, 91, 17, 23, 90, 91, 91, 92, 81, 82, 83, 84, 85, 86, 87, 88, 92]
+    sp_jac_ini_ja = [0, 1, 26, 51, 76, 101, 126, 151, 176, 201, 219, 237, 255, 273, 291, 309, 327, 345, 348, 350, 352, 354, 356, 358, 362, 365, 382, 399, 416, 433, 450, 467, 484, 501, 504, 506, 508, 510, 512, 514, 516, 518, 522, 526, 532, 538, 544, 550, 556, 562, 566, 570, 576, 582, 588, 594, 600, 606, 610, 614, 620, 626, 632, 638, 644, 650, 654, 658, 660, 662, 664, 669, 678, 684, 691, 697, 705, 711, 715, 719, 721, 723, 729, 735, 741, 747, 753, 759, 763, 767, 771, 775, 777, 786]
     sp_jac_ini_nia = 93
     sp_jac_ini_nja = 93
     return sp_jac_ini_ia, sp_jac_ini_ja, sp_jac_ini_nia, sp_jac_ini_nja 
 
 def sp_jac_run_vectors():
 
-    sp_jac_run_ia = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 25, 26, 27, 28, 29, 30, 31, 32, 43, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 25, 26, 27, 28, 29, 30, 31, 32, 44, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 25, 26, 27, 28, 29, 30, 31, 32, 45, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 25, 26, 27, 28, 29, 30, 31, 32, 46, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 25, 26, 27, 28, 29, 30, 31, 32, 47, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 25, 26, 27, 28, 29, 30, 31, 32, 48, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 25, 26, 27, 28, 29, 30, 31, 32, 49, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 25, 26, 27, 28, 29, 30, 31, 32, 50, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 51, 81, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 52, 82, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 53, 83, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 54, 84, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 55, 85, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 56, 86, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 57, 87, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 58, 88, 17, 59, 80, 89, 18, 60, 19, 61, 20, 62, 21, 63, 22, 64, 23, 33, 65, 90, 24, 34, 66, 1, 2, 3, 4, 5, 6, 7, 8, 25, 26, 27, 28, 29, 30, 31, 32, 71, 1, 2, 3, 4, 5, 6, 7, 8, 25, 26, 27, 28, 29, 30, 31, 32, 72, 1, 2, 3, 4, 5, 6, 7, 8, 25, 26, 27, 28, 29, 30, 31, 32, 73, 1, 2, 3, 4, 5, 6, 7, 8, 25, 26, 27, 28, 29, 30, 31, 32, 74, 1, 2, 3, 4, 5, 6, 7, 8, 25, 26, 27, 28, 29, 30, 31, 32, 75, 1, 2, 3, 4, 5, 6, 7, 8, 25, 26, 27, 28, 29, 30, 31, 32, 76, 1, 2, 3, 4, 5, 6, 7, 8, 25, 26, 27, 28, 29, 30, 31, 32, 1, 2, 3, 4, 5, 6, 7, 8, 25, 26, 27, 28, 29, 30, 31, 32, 23, 33, 24, 34, 17, 35, 80, 18, 36, 19, 37, 20, 38, 21, 39, 22, 40, 35, 37, 39, 41, 36, 38, 40, 42, 1, 2, 7, 8, 43, 44, 3, 4, 7, 8, 45, 46, 5, 6, 7, 8, 47, 48, 1, 2, 7, 8, 43, 44, 3, 4, 7, 8, 45, 46, 5, 6, 7, 8, 47, 48, 43, 45, 47, 49, 44, 46, 48, 50, 9, 10, 15, 16, 51, 52, 11, 12, 15, 16, 53, 54, 13, 14, 15, 16, 55, 56, 9, 10, 15, 16, 51, 52, 11, 12, 15, 16, 53, 54, 13, 14, 15, 16, 55, 56, 51, 53, 55, 57, 52, 54, 56, 58, 17, 18, 23, 24, 59, 60, 19, 20, 23, 24, 61, 62, 21, 22, 23, 24, 63, 64, 17, 18, 23, 24, 59, 60, 19, 20, 23, 24, 61, 62, 21, 22, 23, 24, 63, 64, 59, 61, 63, 65, 60, 62, 64, 66, 67, 79, 68, 79, 69, 79, 31, 32, 70, 77, 78, 25, 26, 31, 32, 67, 71, 72, 77, 78, 25, 26, 31, 32, 71, 72, 27, 28, 31, 32, 68, 73, 74, 27, 28, 31, 32, 73, 74, 29, 30, 31, 32, 69, 75, 76, 29, 30, 31, 32, 75, 76, 71, 73, 75, 77, 72, 74, 76, 78, 33, 79, 80, 33, 79, 80, 9, 10, 15, 16, 81, 82, 9, 10, 15, 16, 81, 82, 11, 12, 15, 16, 83, 84, 11, 12, 15, 16, 83, 84, 13, 14, 15, 16, 85, 86, 13, 14, 15, 16, 85, 86, 81, 83, 85, 87, 82, 84, 86, 88, 17, 23, 89, 91, 17, 23, 90, 91, 91, 92, 81, 82, 83, 84, 85, 86, 87, 88, 92]
-    sp_jac_run_ja = [0, 1, 26, 51, 76, 101, 126, 151, 176, 201, 219, 237, 255, 273, 291, 309, 327, 345, 349, 351, 353, 355, 357, 359, 363, 366, 383, 400, 417, 434, 451, 468, 484, 500, 502, 504, 507, 509, 511, 513, 515, 517, 521, 525, 531, 537, 543, 549, 555, 561, 565, 569, 575, 581, 587, 593, 599, 605, 609, 613, 619, 625, 631, 637, 643, 649, 653, 657, 659, 661, 663, 668, 677, 683, 690, 696, 703, 709, 713, 717, 720, 723, 729, 735, 741, 747, 753, 759, 763, 767, 771, 775, 777, 786]
+    sp_jac_run_ia = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 25, 26, 27, 28, 29, 30, 31, 32, 43, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 25, 26, 27, 28, 29, 30, 31, 32, 44, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 25, 26, 27, 28, 29, 30, 31, 32, 45, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 25, 26, 27, 28, 29, 30, 31, 32, 46, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 25, 26, 27, 28, 29, 30, 31, 32, 47, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 25, 26, 27, 28, 29, 30, 31, 32, 48, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 25, 26, 27, 28, 29, 30, 31, 32, 49, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 25, 26, 27, 28, 29, 30, 31, 32, 50, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 51, 81, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 52, 82, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 53, 83, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 54, 84, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 55, 85, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 56, 86, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 57, 87, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 58, 88, 17, 59, 89, 18, 60, 19, 61, 20, 62, 21, 63, 22, 64, 23, 33, 65, 90, 24, 34, 66, 1, 2, 3, 4, 5, 6, 7, 8, 25, 26, 27, 28, 29, 30, 31, 32, 71, 1, 2, 3, 4, 5, 6, 7, 8, 25, 26, 27, 28, 29, 30, 31, 32, 72, 1, 2, 3, 4, 5, 6, 7, 8, 25, 26, 27, 28, 29, 30, 31, 32, 73, 1, 2, 3, 4, 5, 6, 7, 8, 25, 26, 27, 28, 29, 30, 31, 32, 74, 1, 2, 3, 4, 5, 6, 7, 8, 25, 26, 27, 28, 29, 30, 31, 32, 75, 1, 2, 3, 4, 5, 6, 7, 8, 25, 26, 27, 28, 29, 30, 31, 32, 76, 1, 2, 3, 4, 5, 6, 7, 8, 25, 26, 27, 28, 29, 30, 31, 32, 77, 1, 2, 3, 4, 5, 6, 7, 8, 25, 26, 27, 28, 29, 30, 31, 32, 78, 23, 33, 79, 24, 34, 17, 35, 18, 36, 19, 37, 20, 38, 21, 39, 22, 40, 35, 37, 39, 41, 36, 38, 40, 42, 1, 2, 7, 8, 43, 44, 3, 4, 7, 8, 45, 46, 5, 6, 7, 8, 47, 48, 1, 2, 7, 8, 43, 44, 3, 4, 7, 8, 45, 46, 5, 6, 7, 8, 47, 48, 43, 45, 47, 49, 44, 46, 48, 50, 9, 10, 15, 16, 51, 52, 11, 12, 15, 16, 53, 54, 13, 14, 15, 16, 55, 56, 9, 10, 15, 16, 51, 52, 11, 12, 15, 16, 53, 54, 13, 14, 15, 16, 55, 56, 51, 53, 55, 57, 52, 54, 56, 58, 17, 18, 23, 24, 59, 60, 19, 20, 23, 24, 61, 62, 21, 22, 23, 24, 63, 64, 17, 18, 23, 24, 59, 60, 19, 20, 23, 24, 61, 62, 21, 22, 23, 24, 63, 64, 59, 61, 63, 65, 60, 62, 64, 66, 67, 80, 68, 80, 69, 80, 31, 32, 70, 77, 78, 25, 26, 31, 32, 67, 71, 72, 77, 78, 25, 26, 31, 32, 71, 72, 27, 28, 31, 32, 68, 73, 74, 27, 28, 31, 32, 73, 74, 29, 30, 31, 32, 69, 75, 76, 79, 29, 30, 31, 32, 75, 76, 71, 73, 75, 77, 72, 74, 76, 78, 33, 79, 79, 80, 9, 10, 15, 16, 81, 82, 9, 10, 15, 16, 81, 82, 11, 12, 15, 16, 83, 84, 11, 12, 15, 16, 83, 84, 13, 14, 15, 16, 85, 86, 13, 14, 15, 16, 85, 86, 81, 83, 85, 87, 82, 84, 86, 88, 17, 23, 89, 91, 17, 23, 90, 91, 91, 92, 81, 82, 83, 84, 85, 86, 87, 88, 92]
+    sp_jac_run_ja = [0, 1, 26, 51, 76, 101, 126, 151, 176, 201, 219, 237, 255, 273, 291, 309, 327, 345, 348, 350, 352, 354, 356, 358, 362, 365, 382, 399, 416, 433, 450, 467, 484, 501, 504, 506, 508, 510, 512, 514, 516, 518, 522, 526, 532, 538, 544, 550, 556, 562, 566, 570, 576, 582, 588, 594, 600, 606, 610, 614, 620, 626, 632, 638, 644, 650, 654, 658, 660, 662, 664, 669, 678, 684, 691, 697, 705, 711, 715, 719, 721, 723, 729, 735, 741, 747, 753, 759, 763, 767, 771, 775, 777, 786]
     sp_jac_run_nia = 93
     sp_jac_run_nja = 93
     return sp_jac_run_ia, sp_jac_run_ja, sp_jac_run_nia, sp_jac_run_nja 
 
 def sp_jac_trap_vectors():
 
-    sp_jac_trap_ia = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 25, 26, 27, 28, 29, 30, 31, 32, 43, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 25, 26, 27, 28, 29, 30, 31, 32, 44, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 25, 26, 27, 28, 29, 30, 31, 32, 45, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 25, 26, 27, 28, 29, 30, 31, 32, 46, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 25, 26, 27, 28, 29, 30, 31, 32, 47, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 25, 26, 27, 28, 29, 30, 31, 32, 48, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 25, 26, 27, 28, 29, 30, 31, 32, 49, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 25, 26, 27, 28, 29, 30, 31, 32, 50, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 51, 81, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 52, 82, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 53, 83, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 54, 84, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 55, 85, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 56, 86, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 57, 87, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 58, 88, 17, 59, 80, 89, 18, 60, 19, 61, 20, 62, 21, 63, 22, 64, 23, 33, 65, 90, 24, 34, 66, 1, 2, 3, 4, 5, 6, 7, 8, 25, 26, 27, 28, 29, 30, 31, 32, 71, 1, 2, 3, 4, 5, 6, 7, 8, 25, 26, 27, 28, 29, 30, 31, 32, 72, 1, 2, 3, 4, 5, 6, 7, 8, 25, 26, 27, 28, 29, 30, 31, 32, 73, 1, 2, 3, 4, 5, 6, 7, 8, 25, 26, 27, 28, 29, 30, 31, 32, 74, 1, 2, 3, 4, 5, 6, 7, 8, 25, 26, 27, 28, 29, 30, 31, 32, 75, 1, 2, 3, 4, 5, 6, 7, 8, 25, 26, 27, 28, 29, 30, 31, 32, 76, 1, 2, 3, 4, 5, 6, 7, 8, 25, 26, 27, 28, 29, 30, 31, 32, 1, 2, 3, 4, 5, 6, 7, 8, 25, 26, 27, 28, 29, 30, 31, 32, 23, 33, 24, 34, 17, 35, 80, 18, 36, 19, 37, 20, 38, 21, 39, 22, 40, 35, 37, 39, 41, 36, 38, 40, 42, 1, 2, 7, 8, 43, 44, 3, 4, 7, 8, 45, 46, 5, 6, 7, 8, 47, 48, 1, 2, 7, 8, 43, 44, 3, 4, 7, 8, 45, 46, 5, 6, 7, 8, 47, 48, 43, 45, 47, 49, 44, 46, 48, 50, 9, 10, 15, 16, 51, 52, 11, 12, 15, 16, 53, 54, 13, 14, 15, 16, 55, 56, 9, 10, 15, 16, 51, 52, 11, 12, 15, 16, 53, 54, 13, 14, 15, 16, 55, 56, 51, 53, 55, 57, 52, 54, 56, 58, 17, 18, 23, 24, 59, 60, 19, 20, 23, 24, 61, 62, 21, 22, 23, 24, 63, 64, 17, 18, 23, 24, 59, 60, 19, 20, 23, 24, 61, 62, 21, 22, 23, 24, 63, 64, 59, 61, 63, 65, 60, 62, 64, 66, 67, 79, 68, 79, 69, 79, 31, 32, 70, 77, 78, 25, 26, 31, 32, 67, 71, 72, 77, 78, 25, 26, 31, 32, 71, 72, 27, 28, 31, 32, 68, 73, 74, 27, 28, 31, 32, 73, 74, 29, 30, 31, 32, 69, 75, 76, 29, 30, 31, 32, 75, 76, 71, 73, 75, 77, 72, 74, 76, 78, 33, 79, 80, 33, 79, 80, 9, 10, 15, 16, 81, 82, 9, 10, 15, 16, 81, 82, 11, 12, 15, 16, 83, 84, 11, 12, 15, 16, 83, 84, 13, 14, 15, 16, 85, 86, 13, 14, 15, 16, 85, 86, 81, 83, 85, 87, 82, 84, 86, 88, 17, 23, 89, 91, 17, 23, 90, 91, 91, 92, 81, 82, 83, 84, 85, 86, 87, 88, 92]
-    sp_jac_trap_ja = [0, 1, 26, 51, 76, 101, 126, 151, 176, 201, 219, 237, 255, 273, 291, 309, 327, 345, 349, 351, 353, 355, 357, 359, 363, 366, 383, 400, 417, 434, 451, 468, 484, 500, 502, 504, 507, 509, 511, 513, 515, 517, 521, 525, 531, 537, 543, 549, 555, 561, 565, 569, 575, 581, 587, 593, 599, 605, 609, 613, 619, 625, 631, 637, 643, 649, 653, 657, 659, 661, 663, 668, 677, 683, 690, 696, 703, 709, 713, 717, 720, 723, 729, 735, 741, 747, 753, 759, 763, 767, 771, 775, 777, 786]
+    sp_jac_trap_ia = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 25, 26, 27, 28, 29, 30, 31, 32, 43, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 25, 26, 27, 28, 29, 30, 31, 32, 44, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 25, 26, 27, 28, 29, 30, 31, 32, 45, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 25, 26, 27, 28, 29, 30, 31, 32, 46, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 25, 26, 27, 28, 29, 30, 31, 32, 47, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 25, 26, 27, 28, 29, 30, 31, 32, 48, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 25, 26, 27, 28, 29, 30, 31, 32, 49, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 25, 26, 27, 28, 29, 30, 31, 32, 50, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 51, 81, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 52, 82, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 53, 83, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 54, 84, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 55, 85, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 56, 86, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 57, 87, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 58, 88, 17, 59, 89, 18, 60, 19, 61, 20, 62, 21, 63, 22, 64, 23, 33, 65, 90, 24, 34, 66, 1, 2, 3, 4, 5, 6, 7, 8, 25, 26, 27, 28, 29, 30, 31, 32, 71, 1, 2, 3, 4, 5, 6, 7, 8, 25, 26, 27, 28, 29, 30, 31, 32, 72, 1, 2, 3, 4, 5, 6, 7, 8, 25, 26, 27, 28, 29, 30, 31, 32, 73, 1, 2, 3, 4, 5, 6, 7, 8, 25, 26, 27, 28, 29, 30, 31, 32, 74, 1, 2, 3, 4, 5, 6, 7, 8, 25, 26, 27, 28, 29, 30, 31, 32, 75, 1, 2, 3, 4, 5, 6, 7, 8, 25, 26, 27, 28, 29, 30, 31, 32, 76, 1, 2, 3, 4, 5, 6, 7, 8, 25, 26, 27, 28, 29, 30, 31, 32, 77, 1, 2, 3, 4, 5, 6, 7, 8, 25, 26, 27, 28, 29, 30, 31, 32, 78, 23, 33, 79, 24, 34, 17, 35, 18, 36, 19, 37, 20, 38, 21, 39, 22, 40, 35, 37, 39, 41, 36, 38, 40, 42, 1, 2, 7, 8, 43, 44, 3, 4, 7, 8, 45, 46, 5, 6, 7, 8, 47, 48, 1, 2, 7, 8, 43, 44, 3, 4, 7, 8, 45, 46, 5, 6, 7, 8, 47, 48, 43, 45, 47, 49, 44, 46, 48, 50, 9, 10, 15, 16, 51, 52, 11, 12, 15, 16, 53, 54, 13, 14, 15, 16, 55, 56, 9, 10, 15, 16, 51, 52, 11, 12, 15, 16, 53, 54, 13, 14, 15, 16, 55, 56, 51, 53, 55, 57, 52, 54, 56, 58, 17, 18, 23, 24, 59, 60, 19, 20, 23, 24, 61, 62, 21, 22, 23, 24, 63, 64, 17, 18, 23, 24, 59, 60, 19, 20, 23, 24, 61, 62, 21, 22, 23, 24, 63, 64, 59, 61, 63, 65, 60, 62, 64, 66, 67, 80, 68, 80, 69, 80, 31, 32, 70, 77, 78, 25, 26, 31, 32, 67, 71, 72, 77, 78, 25, 26, 31, 32, 71, 72, 27, 28, 31, 32, 68, 73, 74, 27, 28, 31, 32, 73, 74, 29, 30, 31, 32, 69, 75, 76, 79, 29, 30, 31, 32, 75, 76, 71, 73, 75, 77, 72, 74, 76, 78, 33, 79, 79, 80, 9, 10, 15, 16, 81, 82, 9, 10, 15, 16, 81, 82, 11, 12, 15, 16, 83, 84, 11, 12, 15, 16, 83, 84, 13, 14, 15, 16, 85, 86, 13, 14, 15, 16, 85, 86, 81, 83, 85, 87, 82, 84, 86, 88, 17, 23, 89, 91, 17, 23, 90, 91, 91, 92, 81, 82, 83, 84, 85, 86, 87, 88, 92]
+    sp_jac_trap_ja = [0, 1, 26, 51, 76, 101, 126, 151, 176, 201, 219, 237, 255, 273, 291, 309, 327, 345, 348, 350, 352, 354, 356, 358, 362, 365, 382, 399, 416, 433, 450, 467, 484, 501, 504, 506, 508, 510, 512, 514, 516, 518, 522, 526, 532, 538, 544, 550, 556, 562, 566, 570, 576, 582, 588, 594, 600, 606, 610, 614, 620, 626, 632, 638, 644, 650, 654, 658, 660, 662, 664, 669, 678, 684, 691, 697, 705, 711, 715, 719, 721, 723, 729, 735, 741, 747, 753, 759, 763, 767, 771, 775, 777, 786]
     sp_jac_trap_nia = 93
     sp_jac_trap_nja = 93
     return sp_jac_trap_ia, sp_jac_trap_ja, sp_jac_trap_nia, sp_jac_trap_nja 

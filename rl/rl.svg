@@ -1,0 +1,326 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="210mm"
+   height="297mm"
+   viewBox="0 0 210 297"
+   version="1.1"
+   id="svg8897"
+   inkscape:version="1.1.1 (3bf5ae0d25, 2021-09-20)"
+   sodipodi:docname="rl.svg"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview8899"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:document-units="mm"
+     showgrid="false"
+     inkscape:zoom="4.204826"
+     inkscape:cx="217.01255"
+     inkscape:cy="456.26144"
+     inkscape:window-width="1284"
+     inkscape:window-height="803"
+     inkscape:window-x="61"
+     inkscape:window-y="0"
+     inkscape:window-maximized="0"
+     inkscape:current-layer="layer1" />
+  <defs
+     id="defs8894">
+    <marker
+       style="overflow:visible"
+       id="Arrow2Mend"
+       refX="0"
+       refY="0"
+       orient="auto"
+       inkscape:stockid="Arrow2Mend">
+      <path
+         d="M -5.5798962,-2.5815905 1.4126653,-0.01024849 -5.5798966,2.561093 c 1.117119,-1.518119 1.1106821,-3.5951692 4e-7,-5.1426835 z"
+         style="font-size:12px;fill-rule:evenodd;stroke-width:0.4;stroke-linejoin:round"
+         id="path8281"
+         inkscape:connector-curvature="0" />
+    </marker>
+  </defs>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1">
+    <g
+       inkscape:export-ydpi="300"
+       inkscape:export-xdpi="300"
+       inkscape:export-filename="/mnt/windows/Documents/public/jmmauricio6/EVOLUTION/webpage/source/tutorials/pyelec/phasor/png/circ_im_1.png"
+       id="g16333-4-0-5-2-4"
+       transform="matrix(0,-0.26458333,-0.26458333,0,172.94434,140.62028)">
+      <g
+         transform="matrix(0,1.2288159,-0.88958184,0,317.54963,350.32005)"
+         id="g70380-4-8-7-3-1">
+        <path
+           inkscape:connector-curvature="0"
+           id="path70382-3-0-2-5-3"
+           style="fill:none;stroke:#000000;stroke-width:1.02022;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:6;stroke-dasharray:none;stroke-opacity:1"
+           d="m 65.9168,243.05387 -1.7376,-4.05014 -3.470933,8.10027 -3.470934,-8.10027 -3.4752,8.10027 -3.470933,-8.10027 -3.469867,8.10027 -1.7376,-4.05013" />
+      </g>
+      <path
+         style="fill:none;stroke:#000000;stroke-width:1.06667px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+         d="m 101.33333,405.71966 v -3.2"
+         id="path16136-7-9-4-4-0-7"
+         inkscape:connector-curvature="0" />
+      <path
+         style="fill:none;stroke:#000000;stroke-width:1.06667px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+         d="m 101.33333,434.51966 v -3.2"
+         id="path16136-7-6-1-3-8-6-4"
+         inkscape:connector-curvature="0" />
+    </g>
+    <g
+       inkscape:export-ydpi="300"
+       inkscape:export-xdpi="300"
+       inkscape:export-filename="/mnt/windows/Documents/public/jmmauricio6/EVOLUTION/webpage/source/tutorials/pyelec/phasor/png/circ_im_1.png"
+       id="g16226-9-6-1-3-9"
+       transform="matrix(0,-0.26458333,-0.26458333,0,161.93767,143.72472)">
+      <g
+         id="g70330-65-4-4-7-6"
+         transform="translate(-57.179462,24.25953)">
+        <g
+           id="g70332-6-6-6-7-8"
+           transform="matrix(0,1.0533245,-1.0533245,0,68.675312,109.2631)">
+          <path
+             d="m 275.77493,-96.4288 c 1.1584,-5.78773 5.78774,-5.78773 6.94614,0"
+             style="fill:none;stroke:#000000;stroke-width:1.01267;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:6;stroke-dasharray:none;stroke-opacity:1"
+             id="path70334-9-5-8-6-6"
+             inkscape:connector-curvature="0" />
+        </g>
+        <g
+           id="g70336-3-2-0-2-0"
+           transform="matrix(0,1.0533245,-1.0533245,0,68.675312,109.2631)">
+          <path
+             d="m 275.77493,-96.4288 c -1.15413,5.783467 2.3168,5.783467 1.1584,0"
+             style="fill:none;stroke:#000000;stroke-width:1.01267;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:6;stroke-dasharray:none;stroke-opacity:1"
+             id="path70338-5-3-0-7-0"
+             inkscape:connector-curvature="0" />
+        </g>
+        <g
+           id="g70340-8-3-5-7-7"
+           transform="matrix(0,1.0533245,-1.0533245,0,68.675312,109.2631)">
+          <path
+             d="m 258.41707,-96.4288 c 1.1584,-5.78773 5.78666,-5.78773 6.9408,0"
+             style="fill:none;stroke:#000000;stroke-width:1.01267;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:6;stroke-dasharray:none;stroke-opacity:1"
+             id="path70342-53-1-4-8-1"
+             inkscape:connector-curvature="0" />
+        </g>
+        <g
+           id="g70344-8-6-9-0-9"
+           transform="matrix(0,1.0533245,-1.0533245,0,68.675312,109.2631)">
+          <path
+             d="m 264.20373,-96.4288 c 1.15414,-5.78773 5.78347,-5.78773 6.94187,0"
+             style="fill:none;stroke:#000000;stroke-width:1.01267;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:6;stroke-dasharray:none;stroke-opacity:1"
+             id="path70346-7-8-3-6-8"
+             inkscape:connector-curvature="0" />
+        </g>
+        <g
+           id="g70348-0-0-6-1-2"
+           transform="matrix(0,1.0533245,-1.0533245,0,68.675312,109.2631)">
+          <path
+             d="m 269.9872,-96.4288 c 1.1584,-5.78773 5.78773,-5.78773 6.94613,0"
+             style="fill:none;stroke:#000000;stroke-width:1.01267;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:6;stroke-dasharray:none;stroke-opacity:1"
+             id="path70350-7-4-3-0-7"
+             inkscape:connector-curvature="0" />
+        </g>
+        <g
+           id="g70352-9-2-0-6-0"
+           transform="matrix(0,1.0533245,-1.0533245,0,68.675312,109.2631)">
+          <path
+             d="m 264.20373,-96.4288 c -1.1584,5.783467 2.31254,5.783467 1.15414,0"
+             style="fill:none;stroke:#000000;stroke-width:1.01267;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:6;stroke-dasharray:none;stroke-opacity:1"
+             id="path70354-9-8-6-5-8"
+             inkscape:connector-curvature="0" />
+        </g>
+        <g
+           id="g70356-29-3-9-1-8"
+           transform="matrix(0,1.0533245,-1.0533245,0,68.675312,109.2631)">
+          <path
+             d="m 269.9872,-96.4288 c -1.15413,5.783467 2.3168,5.783467 1.1584,0"
+             style="fill:none;stroke:#000000;stroke-width:1.01267;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:6;stroke-dasharray:none;stroke-opacity:1"
+             id="path70358-8-4-8-6-5"
+             inkscape:connector-curvature="0" />
+        </g>
+        <g
+           id="g70360-3-8-0-6-7"
+           transform="matrix(0,1.25,-1.25,0,50.56323,58.438801)" />
+      </g>
+      <path
+         style="fill:none;stroke:#000000;stroke-width:1.06667px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+         d="m 113.06667,405.71966 v -3.2"
+         id="path16136-7-61-8-3-1-0-1"
+         inkscape:connector-curvature="0" />
+      <path
+         style="fill:none;stroke:#000000;stroke-width:1.06667px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+         d="m 113.06667,434.51966 v -3.2"
+         id="path16136-7-61-0-78-3-6-5-5"
+         inkscape:connector-curvature="0" />
+    </g>
+    <path
+       inkscape:export-ydpi="300"
+       inkscape:export-xdpi="300"
+       inkscape:export-filename="/mnt/windows/Documents/public/jmmauricio6/EVOLUTION/webpage/source/tutorials/pyelec/phasor/png/circ_im_1.png"
+       style="fill:none;stroke:#000000;stroke-width:0.282223px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="m 55.43768,113.80917 h 3.104443"
+       id="path10633-3-4-6-8"
+       inkscape:connector-curvature="0" />
+    <path
+       inkscape:export-ydpi="300"
+       inkscape:export-xdpi="300"
+       inkscape:export-filename="/mnt/windows/Documents/public/jmmauricio6/EVOLUTION/webpage/source/tutorials/pyelec/phasor/png/circ_im_1.png"
+       inkscape:connector-curvature="0"
+       id="path70906-66-1-2-6-6-3-4"
+       d="m 54.920894,110.03132 h 4.169783"
+       style="display:inline;fill:none;stroke:#000000;stroke-width:0.282001;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#Arrow2Mend)" />
+    <path
+       inkscape:export-ydpi="300"
+       inkscape:export-xdpi="300"
+       inkscape:export-filename="/mnt/windows/Documents/public/jmmauricio6/EVOLUTION/webpage/source/tutorials/pyelec/phasor/png/circ_im_1.png"
+       style="fill:none;stroke:#000000;stroke-width:0.282223px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="m 44.995457,113.80917 h 1.975556"
+       id="path10635-2-6-2-9"
+       inkscape:connector-curvature="0" />
+    <g
+       inkscape:export-ydpi="300"
+       inkscape:export-xdpi="300"
+       inkscape:export-filename="/mnt/windows/Documents/public/jmmauricio6/EVOLUTION/webpage/source/tutorials/pyelec/phasor/png/circ_im_1.png"
+       id="g12551-6-7-0-3-6"
+       transform="matrix(0,0.26458333,-0.26458333,0,76.70656,105.3425)">
+      <g
+         id="g16145-1-51-3-82-3-8"
+         transform="translate(-16,-282.66667)">
+        <g
+           id="g15315-0-94-1-0-6-1"
+           transform="translate(-37.333333)">
+          <path
+             d="m 74.666667,418.51721 c 0,5.88865 4.775698,10.66912 10.666052,10.66912 5.890356,0 10.667281,-4.78047 10.667281,-10.66912 0,-5.88867 -4.776925,-10.66422 -10.667281,-10.66422 -5.890354,0 -10.666052,4.77555 -10.666052,10.66422"
+             style="display:inline;fill:none;stroke:#000000;stroke-width:1.06667;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:6;stroke-dasharray:none;stroke-opacity:1"
+             id="path70904-5-3-4-9-4-8"
+             inkscape:connector-curvature="0" />
+          <path
+             inkscape:connector-curvature="0"
+             id="path15311-4-19-9-7-3-8"
+             d="m 85.333333,407.85299 v -5.33333"
+             style="fill:none;stroke:#000000;stroke-width:1.06667px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
+          <path
+             inkscape:connector-curvature="0"
+             id="path15313-5-8-6-48-8-5"
+             d="m 85.333333,429.18633 v 5.33333"
+             style="fill:none;stroke:#000000;stroke-width:1.06667px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
+          <g
+             id="g70398-5-6-8-9-9-3"
+             transform="matrix(1.1522065,0,0,1.25,72.303261,80.290325)">
+            <path
+               d="m 15.937067,270.58347 c -4.628267,13.88693 -4.628267,-13.89227 -9.2576003,0"
+               style="fill:none;stroke:#000000;stroke-width:0.888809;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:6;stroke-dasharray:none;stroke-opacity:1"
+               id="path70400-1-40-2-69-0-97"
+               inkscape:connector-curvature="0" />
+          </g>
+        </g>
+      </g>
+    </g>
+    <g
+       inkscape:export-ydpi="300"
+       inkscape:export-xdpi="300"
+       inkscape:export-filename="/mnt/windows/Documents/public/jmmauricio6/EVOLUTION/webpage/source/tutorials/pyelec/phasor/png/circ_im_1.png"
+       id="g12551-6-7-0-3-6-1"
+       transform="matrix(0,0.26458333,0.26458333,0,34.733245,105.3425)">
+      <g
+         id="g16145-1-51-3-82-3-8-0"
+         transform="translate(-16,-282.66667)">
+        <g
+           id="g15315-0-94-1-0-6-1-3"
+           transform="translate(-37.333333)">
+          <path
+             d="m 74.666667,418.51721 c 0,5.88865 4.775698,10.66912 10.666052,10.66912 5.890356,0 10.667281,-4.78047 10.667281,-10.66912 0,-5.88867 -4.776925,-10.66422 -10.667281,-10.66422 -5.890354,0 -10.666052,4.77555 -10.666052,10.66422"
+             style="display:inline;fill:none;stroke:#000000;stroke-width:1.06667;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:6;stroke-dasharray:none;stroke-opacity:1"
+             id="path70904-5-3-4-9-4-8-4"
+             inkscape:connector-curvature="0" />
+          <path
+             inkscape:connector-curvature="0"
+             id="path15311-4-19-9-7-3-8-8"
+             d="m 85.333333,407.85299 v -5.33333"
+             style="fill:none;stroke:#000000;stroke-width:1.06667px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
+          <path
+             inkscape:connector-curvature="0"
+             id="path15313-5-8-6-48-8-5-8"
+             d="m 85.333333,429.18633 v 5.33333"
+             style="fill:none;stroke:#000000;stroke-width:1.06667px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
+          <g
+             id="g70398-5-6-8-9-9-3-5"
+             transform="matrix(1.1522065,0,0,1.25,72.303261,80.290325)">
+            <path
+               d="m 15.937067,270.58347 c -4.628267,13.88693 -4.628267,-13.89227 -9.2576003,0"
+               style="fill:none;stroke:#000000;stroke-width:0.888809;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:6;stroke-dasharray:none;stroke-opacity:1"
+               id="path70400-1-40-2-69-0-97-8"
+               inkscape:connector-curvature="0" />
+          </g>
+        </g>
+      </g>
+    </g>
+    <text
+       xml:space="preserve"
+       style="font-size:3.52778px;line-height:1.25;font-family:Consolas;-inkscape-font-specification:Consolas;letter-spacing:0px;word-spacing:0px;stroke-width:0.264583"
+       x="37.691311"
+       y="108.7322"
+       id="text10136"><tspan
+         sodipodi:role="line"
+         id="tspan10134"
+         style="font-size:3.52778px;stroke-width:0.264583"
+         x="37.691311"
+         y="108.7322">v_t</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:3.52778px;line-height:1.25;font-family:Consolas;-inkscape-font-specification:Consolas;letter-spacing:0px;word-spacing:0px;stroke-width:0.264583"
+       x="68.161537"
+       y="108.92425"
+       id="text10136-2"><tspan
+         sodipodi:role="line"
+         id="tspan10134-9"
+         style="font-size:3.52778px;stroke-width:0.264583"
+         x="68.161537"
+         y="108.92425">v_s</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:3.52778px;line-height:1.25;font-family:Consolas;-inkscape-font-specification:Consolas;letter-spacing:0px;word-spacing:0px;stroke-width:0.264583"
+       x="54.744202"
+       y="108.95395"
+       id="text10136-6"><tspan
+         sodipodi:role="line"
+         id="tspan10134-6"
+         style="font-size:3.52778px;stroke-width:0.264583"
+         x="54.744202"
+         y="108.95395">i</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:3.52778px;line-height:1.25;font-family:Consolas;-inkscape-font-specification:Consolas;letter-spacing:0px;word-spacing:0px;stroke-width:0.264583"
+       x="50.024925"
+       y="118.39252"
+       id="text10136-8"><tspan
+         sodipodi:role="line"
+         id="tspan10134-7"
+         style="font-size:3.52778px;stroke-width:0.264583"
+         x="50.024925"
+         y="118.39252">L</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:3.52778px;line-height:1.25;font-family:Consolas;-inkscape-font-specification:Consolas;letter-spacing:0px;word-spacing:0px;stroke-width:0.264583"
+       x="61.434235"
+       y="118.41551"
+       id="text10136-8-1"><tspan
+         sodipodi:role="line"
+         id="tspan10134-7-7"
+         style="font-size:3.52778px;stroke-width:0.264583"
+         x="61.434235"
+         y="118.41551">R</tspan></text>
+  </g>
+</svg>
