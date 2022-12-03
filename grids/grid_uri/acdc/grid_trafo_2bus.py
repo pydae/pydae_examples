@@ -65,7 +65,7 @@ sign = np.sign
 exp = np.exp
 
 
-class grid_trafo_2bus_class: 
+class model: 
 
     def __init__(self): 
 
@@ -80,13 +80,13 @@ class grid_trafo_2bus_class:
         self.N_x = 1
         self.N_y = 92 
         self.N_z = 45 
-        self.N_store = 10000 
-        self.params_list = ['a_AC2', 'b_AC2', 'c_AC2', 'C_a_AC2', 'C_b_AC2', 'C_c_AC2', 'R_dc_DC2', 'K_dc_DC2', 'a_AC4', 'b_AC4', 'c_AC4', 'coef_a_AC4', 'coef_b_AC4', 'coef_c_AC4'] 
-        self.params_values_list  = [2.92, 0.45, 0.027, 0.3333333333333333, 0.3333333333333333, 0.3333333333333333, 1e-06, 1e-06, 2.92, 0.45, 0.027, 0.3333333333333333, 0.3333333333333333, 0.3333333333333333] 
-        self.inputs_ini_list = ['v_AC1_a_r', 'v_AC1_a_i', 'v_AC1_b_r', 'v_AC1_b_i', 'v_AC1_c_r', 'v_AC1_c_i', 'v_DC2_a_r', 'v_DC2_a_i', 'v_DC2_b_r', 'v_DC2_b_i', 'v_DC2_c_r', 'v_DC2_c_i', 'p_load_AC3_a', 'q_load_AC3_a', 'p_load_AC3_b', 'q_load_AC3_b', 'p_load_AC3_c', 'q_load_AC3_c', 'p_load_AC4_a', 'q_load_AC4_a', 'p_load_AC4_b', 'q_load_AC4_b', 'p_load_AC4_c', 'q_load_AC4_c', 'p_load_DC4_a', 'q_load_DC4_a', 'p_load_DC4_b', 'q_load_DC4_b', 'p_load_DC4_c', 'q_load_DC4_c', 'v_dc_DC2_ref', 'q_vsc_AC2', 'p_vsc_AC4', 'q_vsc_AC4', 'u_dummy'] 
-        self.inputs_ini_values_list  = [11547.0, 0.0, -5773.499999999997, -9999.995337498915, -5773.5000000000055, 9999.99533749891, 800.0, 0.0, 1e-05, 0.0, 1e-05, 0.0, -0.0, 0.0, 0.0, -0.0, -0.0, -0.0, -0.0, 0.0, 0.0, -0.0, -0.0, -0.0, -0.0, -0.0, -0.0, -0.0, -0.0, -0.0, 800.0, 0.0, 0.0, 0.0, 0] 
-        self.inputs_run_list = ['v_AC1_a_r', 'v_AC1_a_i', 'v_AC1_b_r', 'v_AC1_b_i', 'v_AC1_c_r', 'v_AC1_c_i', 'v_DC2_a_r', 'v_DC2_a_i', 'v_DC2_b_r', 'v_DC2_b_i', 'v_DC2_c_r', 'v_DC2_c_i', 'p_load_AC3_a', 'q_load_AC3_a', 'p_load_AC3_b', 'q_load_AC3_b', 'p_load_AC3_c', 'q_load_AC3_c', 'p_load_AC4_a', 'q_load_AC4_a', 'p_load_AC4_b', 'q_load_AC4_b', 'p_load_AC4_c', 'q_load_AC4_c', 'p_load_DC4_a', 'q_load_DC4_a', 'p_load_DC4_b', 'q_load_DC4_b', 'p_load_DC4_c', 'q_load_DC4_c', 'v_dc_DC2_ref', 'q_vsc_AC2', 'p_vsc_AC4', 'q_vsc_AC4', 'u_dummy'] 
-        self.inputs_run_values_list = [11547.0, 0.0, -5773.499999999997, -9999.995337498915, -5773.5000000000055, 9999.99533749891, 800.0, 0.0, 1e-05, 0.0, 1e-05, 0.0, -0.0, 0.0, 0.0, -0.0, -0.0, -0.0, -0.0, 0.0, 0.0, -0.0, -0.0, -0.0, -0.0, -0.0, -0.0, -0.0, -0.0, -0.0, 800.0, 0.0, 0.0, 0.0, 0] 
+        self.N_store = 100000 
+        self.params_list = ['a_AC2', 'b_AC2', 'c_AC2', 'C_a_AC2', 'C_b_AC2', 'C_c_AC2', 'R_dc_DC2', 'K_dc_DC2', 'a_AC4', 'b_AC4', 'c_AC4'] 
+        self.params_values_list  = [2.92, 0.45, 0.027, 0.3333333333333333, 0.3333333333333333, 0.3333333333333333, 1e-06, 1e-06, 2.92, 0.45, 0.027] 
+        self.inputs_ini_list = ['v_AC1_a_r', 'v_AC1_a_i', 'v_AC1_b_r', 'v_AC1_b_i', 'v_AC1_c_r', 'v_AC1_c_i', 'v_DC2_a_r', 'v_DC2_a_i', 'v_DC2_b_r', 'v_DC2_b_i', 'v_DC2_c_r', 'v_DC2_c_i', 'p_load_AC3_a', 'q_load_AC3_a', 'p_load_AC3_b', 'q_load_AC3_b', 'p_load_AC3_c', 'q_load_AC3_c', 'p_load_AC4_a', 'q_load_AC4_a', 'p_load_AC4_b', 'q_load_AC4_b', 'p_load_AC4_c', 'q_load_AC4_c', 'p_load_DC4_a', 'q_load_DC4_a', 'p_load_DC4_b', 'q_load_DC4_b', 'p_load_DC4_c', 'q_load_DC4_c', 'v_dc_DC2_ref', 'q_vsc_a_AC2', 'q_vsc_b_AC2', 'q_vsc_c_AC2', 'p_vsc_a_AC4', 'p_vsc_b_AC4', 'p_vsc_c_AC4', 'q_vsc_a_AC4', 'q_vsc_b_AC4', 'q_vsc_c_AC4', 'u_dummy'] 
+        self.inputs_ini_values_list  = [11547.0, 0.0, -5773.499999999997, -9999.995337498915, -5773.5000000000055, 9999.99533749891, 800.0, 0.0, 1e-05, 0.0, 1e-05, 0.0, -0.0, 0.0, 0.0, -0.0, -0.0, -0.0, -0.0, 0.0, 0.0, -0.0, -0.0, -0.0, -0.0, -0.0, -0.0, -0.0, -0.0, -0.0, 800.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0] 
+        self.inputs_run_list = ['v_AC1_a_r', 'v_AC1_a_i', 'v_AC1_b_r', 'v_AC1_b_i', 'v_AC1_c_r', 'v_AC1_c_i', 'v_DC2_a_r', 'v_DC2_a_i', 'v_DC2_b_r', 'v_DC2_b_i', 'v_DC2_c_r', 'v_DC2_c_i', 'p_load_AC3_a', 'q_load_AC3_a', 'p_load_AC3_b', 'q_load_AC3_b', 'p_load_AC3_c', 'q_load_AC3_c', 'p_load_AC4_a', 'q_load_AC4_a', 'p_load_AC4_b', 'q_load_AC4_b', 'p_load_AC4_c', 'q_load_AC4_c', 'p_load_DC4_a', 'q_load_DC4_a', 'p_load_DC4_b', 'q_load_DC4_b', 'p_load_DC4_c', 'q_load_DC4_c', 'v_dc_DC2_ref', 'q_vsc_a_AC2', 'q_vsc_b_AC2', 'q_vsc_c_AC2', 'p_vsc_a_AC4', 'p_vsc_b_AC4', 'p_vsc_c_AC4', 'q_vsc_a_AC4', 'q_vsc_b_AC4', 'q_vsc_c_AC4', 'u_dummy'] 
+        self.inputs_run_values_list = [11547.0, 0.0, -5773.499999999997, -9999.995337498915, -5773.5000000000055, 9999.99533749891, 800.0, 0.0, 1e-05, 0.0, 1e-05, 0.0, -0.0, 0.0, 0.0, -0.0, -0.0, -0.0, -0.0, 0.0, 0.0, -0.0, -0.0, -0.0, -0.0, -0.0, -0.0, -0.0, -0.0, -0.0, 800.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0] 
         self.outputs_list = ['i_t_AC1_AC2_1_a_r', 'i_t_AC1_AC2_1_a_i', 'i_t_AC1_AC2_1_b_r', 'i_t_AC1_AC2_1_b_i', 'i_t_AC1_AC2_1_c_r', 'i_t_AC1_AC2_1_c_i', 'p_t_AC1_AC2_1', 'q_t_AC1_AC2_1', 'i_t_AC1_AC2_2_a_r', 'i_t_AC1_AC2_2_a_i', 'i_t_AC1_AC2_2_b_r', 'i_t_AC1_AC2_2_b_i', 'i_t_AC1_AC2_2_c_r', 'i_t_AC1_AC2_2_c_i', 'i_t_AC1_AC2_2_n_r', 'i_t_AC1_AC2_2_n_i', 'i_l_AC2_AC3_a_r', 'i_l_AC2_AC3_a_i', 'i_l_AC2_AC3_b_r', 'i_l_AC2_AC3_b_i', 'i_l_AC2_AC3_c_r', 'i_l_AC2_AC3_c_i', 'i_l_AC2_AC3_n_r', 'i_l_AC2_AC3_n_i', 'i_l_AC3_AC4_a_r', 'i_l_AC3_AC4_a_i', 'i_l_AC3_AC4_b_r', 'i_l_AC3_AC4_b_i', 'i_l_AC3_AC4_c_r', 'i_l_AC3_AC4_c_i', 'i_l_AC3_AC4_n_r', 'i_l_AC3_AC4_n_i', 'i_l_DC2_DC4_a_r', 'i_l_DC2_DC4_a_i', 'i_l_DC2_DC4_b_r', 'i_l_DC2_DC4_b_i', 'i_l_DC2_DC4_c_r', 'i_l_DC2_DC4_c_i', 'i_l_DC2_DC4_n_r', 'i_l_DC2_DC4_n_i', 'p_vsc_AC2', 'p_vsc_loss_AC2', 'p_vsc_AC4', 'p_vsc_loss_AC4', 'z_dummy'] 
         self.x_list = ['x_dummy'] 
         self.y_run_list = ['v_AC3_a_r', 'v_AC3_a_i', 'v_AC3_b_r', 'v_AC3_b_i', 'v_AC3_c_r', 'v_AC3_c_i', 'v_AC3_n_r', 'v_AC3_n_i', 'v_AC4_a_r', 'v_AC4_a_i', 'v_AC4_b_r', 'v_AC4_b_i', 'v_AC4_c_r', 'v_AC4_c_i', 'v_AC4_n_r', 'v_AC4_n_i', 'v_DC4_a_r', 'v_DC4_a_i', 'v_DC4_b_r', 'v_DC4_b_i', 'v_DC4_c_r', 'v_DC4_c_i', 'v_DC4_n_r', 'v_DC4_n_i', 'v_AC2_a_r', 'v_AC2_a_i', 'v_AC2_b_r', 'v_AC2_b_i', 'v_AC2_c_r', 'v_AC2_c_i', 'v_AC2_n_r', 'v_AC2_n_i', 'v_DC2_n_r', 'v_DC2_n_i', 'i_l_DC2_DC4_a_r', 'i_l_DC2_DC4_a_i', 'i_l_DC2_DC4_b_r', 'i_l_DC2_DC4_b_i', 'i_l_DC2_DC4_c_r', 'i_l_DC2_DC4_c_i', 'i_l_DC2_DC4_n_r', 'i_l_DC2_DC4_n_i', 'i_load_AC3_a_r', 'i_load_AC3_a_i', 'i_load_AC3_b_r', 'i_load_AC3_b_i', 'i_load_AC3_c_r', 'i_load_AC3_c_i', 'i_load_AC3_n_r', 'i_load_AC3_n_i', 'i_load_AC4_a_r', 'i_load_AC4_a_i', 'i_load_AC4_b_r', 'i_load_AC4_b_i', 'i_load_AC4_c_r', 'i_load_AC4_c_i', 'i_load_AC4_n_r', 'i_load_AC4_n_i', 'i_load_DC4_a_r', 'i_load_DC4_a_i', 'i_load_DC4_b_r', 'i_load_DC4_b_i', 'i_load_DC4_c_r', 'i_load_DC4_c_i', 'i_load_DC4_n_r', 'i_load_DC4_n_i', 'p_a_d_AC2', 'p_b_d_AC2', 'p_c_d_AC2', 'p_n_d_AC2', 'i_vsc_AC2_a_r', 'i_vsc_AC2_a_i', 'i_vsc_AC2_b_r', 'i_vsc_AC2_b_i', 'i_vsc_AC2_c_r', 'i_vsc_AC2_c_i', 'i_vsc_AC2_n_r', 'i_vsc_AC2_n_i', 'i_dc_DC2', 'p_vsc_DC2', 'i_vsc_AC4_a_r', 'i_vsc_AC4_a_i', 'i_vsc_AC4_b_r', 'i_vsc_AC4_b_i', 'i_vsc_AC4_c_r', 'i_vsc_AC4_c_i', 'i_vsc_AC4_n_r', 'i_vsc_AC4_n_i', 'i_vsc_DC4_a_r', 'i_vsc_DC4_n_r', 'p_vsc_DC4', 'p_vsc_loss_AC4'] 
@@ -130,7 +130,7 @@ class grid_trafo_2bus_class:
         self.sp_jac_ini_ia, self.sp_jac_ini_ja, self.sp_jac_ini_nia, self.sp_jac_ini_nja = sp_jac_ini_vectors()
         data = np.array(self.sp_jac_ini_ia,dtype=np.float64)
         #self.sp_jac_ini = sspa.csr_matrix((data, self.sp_jac_ini_ia, self.sp_jac_ini_ja), shape=(self.sp_jac_ini_nia,self.sp_jac_ini_nja))
-        self.sp_jac_ini = sspa.load_npz('grid_trafo_2bus_sp_jac_ini_num.npz')
+        self.sp_jac_ini = sspa.load_npz('./__pycache__/grid_trafo_2bus_sp_jac_ini_num.npz')
         self.jac_ini = self.sp_jac_ini.toarray()
 
         #self.J_ini_d = np.array(self.sp_jac_ini_ia)*0.0
@@ -146,7 +146,7 @@ class grid_trafo_2bus_class:
         self.sp_jac_run_ia, self.sp_jac_run_ja, self.sp_jac_run_nia, self.sp_jac_run_nja = sp_jac_run_vectors()
         data = np.array(self.sp_jac_run_ia,dtype=np.float64)
         #self.sp_jac_run = sspa.csr_matrix((data, self.sp_jac_run_ia, self.sp_jac_run_ja), shape=(self.sp_jac_run_nia,self.sp_jac_run_nja))
-        self.sp_jac_run = sspa.load_npz('grid_trafo_2bus_sp_jac_run_num.npz')
+        self.sp_jac_run = sspa.load_npz('./__pycache__/grid_trafo_2bus_sp_jac_run_num.npz')
         self.jac_run = self.sp_jac_run.toarray()
 
         self.J_run_d = np.array(self.sp_jac_run_ia)*0.0
@@ -160,7 +160,7 @@ class grid_trafo_2bus_class:
         self.sp_jac_trap_ia, self.sp_jac_trap_ja, self.sp_jac_trap_nia, self.sp_jac_trap_nja = sp_jac_trap_vectors()
         data = np.array(self.sp_jac_trap_ia,dtype=np.float64)
         #self.sp_jac_trap = sspa.csr_matrix((data, self.sp_jac_trap_ia, self.sp_jac_trap_ja), shape=(self.sp_jac_trap_nia,self.sp_jac_trap_nja))
-        self.sp_jac_trap = sspa.load_npz('grid_trafo_2bus_sp_jac_trap_num.npz')
+        self.sp_jac_trap = sspa.load_npz('./__pycache__/grid_trafo_2bus_sp_jac_trap_num.npz')
         self.jac_trap = self.sp_jac_trap.toarray()
         
         #self.J_trap_d = np.array(self.sp_jac_trap_ia)*0.0
@@ -175,16 +175,16 @@ class grid_trafo_2bus_class:
 
         
         self.max_it,self.itol,self.store = 50,1e-8,1 
-        self.lmax_it,self.ltol,self.ldamp=50,1e-8,1.0
+        self.lmax_it,self.ltol,self.ldamp= 50,1e-8,1.0
         self.mode = 0 
 
         self.lmax_it_ini,self.ltol_ini,self.ldamp_ini=50,1e-8,1.0
 
-        self.sp_Fu_run = sspa.load_npz('grid_trafo_2bus_Fu_run_num.npz')
-        self.sp_Gu_run = sspa.load_npz('grid_trafo_2bus_Gu_run_num.npz')
-        self.sp_Hx_run = sspa.load_npz('grid_trafo_2bus_Hx_run_num.npz')
-        self.sp_Hy_run = sspa.load_npz('grid_trafo_2bus_Hy_run_num.npz')
-        self.sp_Hu_run = sspa.load_npz('grid_trafo_2bus_Hu_run_num.npz')        
+        self.sp_Fu_run = sspa.load_npz('./__pycache__/grid_trafo_2bus_Fu_run_num.npz')
+        self.sp_Gu_run = sspa.load_npz('./__pycache__/grid_trafo_2bus_Gu_run_num.npz')
+        self.sp_Hx_run = sspa.load_npz('./__pycache__/grid_trafo_2bus_Hx_run_num.npz')
+        self.sp_Hy_run = sspa.load_npz('./__pycache__/grid_trafo_2bus_Hy_run_num.npz')
+        self.sp_Hu_run = sspa.load_npz('./__pycache__/grid_trafo_2bus_Hu_run_num.npz')        
  
         
 
@@ -250,6 +250,7 @@ class grid_trafo_2bus_class:
         self.it = it
         self.it_store = it_store
         self.xy = xy
+        self.z = self.Z[self.it_store,:]
  
     def runsp(self,t_end,up_dict):
         for item in up_dict:
@@ -618,6 +619,8 @@ class grid_trafo_2bus_class:
         self.it = it
         self.it_store = it_store
         self.xy = xy
+        self.z = self.Z[self.it_store,:]
+
             
     def spini(self,up_dict,xy_0={}):
     

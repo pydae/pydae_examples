@@ -6,11 +6,20 @@ from scipy.sparse.linalg import spsolve,spilu,splu
 from numba import cuda
 import cffi
 import numba.core.typing.cffi_utils as cffi_support
+from io import BytesIO
+import pkgutil
+
+dae_file_mode = 'local'
 
 ffi = cffi.FFI()
 
-import cigre_eu_lv_acdc_cffi as jacs
-
+if dae_file_mode == 'local':
+    import cigre_eu_lv_acdc_cffi as jacs
+if dae_file_mode == 'enviroment':
+    import envus.no_enviroment.cigre_eu_lv_acdc_cffi as jacs
+if dae_file_mode == 'colab':
+    import cigre_eu_lv_acdc_cffi as jacs
+    
 cffi_support.register_module(jacs)
 f_ini_eval = jacs.lib.f_ini_eval
 g_ini_eval = jacs.lib.g_ini_eval
@@ -65,10 +74,11 @@ sign = np.sign
 exp = np.exp
 
 
-class cigre_eu_lv_acdc_class: 
+class model: 
 
     def __init__(self): 
-
+        
+        self.dae_file_mode = 'local'
         self.t_end = 10.000000 
         self.Dt = 0.0010000 
         self.decimation = 10.000000 
@@ -80,13 +90,13 @@ class cigre_eu_lv_acdc_class:
         self.N_x = 1
         self.N_y = 856 
         self.N_z = 834 
-        self.N_store = 10000 
-        self.params_list = ['a_R01', 'b_R01', 'c_R01', 'coef_a_R01', 'coef_b_R01', 'coef_c_R01', 'a_R10', 'b_R10', 'c_R10', 'coef_a_R10', 'coef_b_R10', 'coef_c_R10', 'a_R14', 'b_R14', 'c_R14', 'coef_a_R14', 'coef_b_R14', 'coef_c_R14', 'a_I01', 'b_I01', 'c_I01', 'C_a_I01', 'C_b_I01', 'C_c_I01', 'R_dc_H01', 'K_dc_H01', 'a_I02', 'b_I02', 'c_I02', 'coef_a_I02', 'coef_b_I02', 'coef_c_I02', 'a_C01', 'b_C01', 'c_C01', 'coef_a_C01', 'coef_b_C01', 'coef_c_C01', 'a_C09', 'b_C09', 'c_C09', 'coef_a_C09', 'coef_b_C09', 'coef_c_C09', 'a_C11', 'b_C11', 'c_C11', 'coef_a_C11', 'coef_b_C11', 'coef_c_C11', 'a_C16', 'b_C16', 'c_C16', 'coef_a_C16', 'coef_b_C16', 'coef_c_C16'] 
-        self.params_values_list  = [2.92, 0.45, 0.027, 0.3333333333333333, 0.3333333333333333, 0.3333333333333333, 2.92, 0.45, 0.027, 0.3333333333333333, 0.3333333333333333, 0.3333333333333333, 2.92, 0.45, 0.027, 0.3333333333333333, 0.3333333333333333, 0.3333333333333333, 2.92, 0.45, 0.027, 0.3333333333333333, 0.3333333333333333, 0.3333333333333333, 1e-06, 1e-06, 2.92, 0.45, 0.027, 0.3333333333333333, 0.3333333333333333, 0.3333333333333333, 2.92, 0.45, 0.027, 0.3333333333333333, 0.3333333333333333, 0.3333333333333333, 2.92, 0.45, 0.027, 0.3333333333333333, 0.3333333333333333, 0.3333333333333333, 2.92, 0.45, 0.027, 0.3333333333333333, 0.3333333333333333, 0.3333333333333333, 2.92, 0.45, 0.027, 0.3333333333333333, 0.3333333333333333, 0.3333333333333333] 
-        self.inputs_ini_list = ['v_MV0_a_r', 'v_MV0_a_i', 'v_MV0_b_r', 'v_MV0_b_i', 'v_MV0_c_r', 'v_MV0_c_i', 'v_H01_a_r', 'v_H01_a_i', 'v_H01_b_r', 'v_H01_b_i', 'v_H01_c_r', 'v_H01_c_i', 'p_load_R01_a', 'q_load_R01_a', 'p_load_R01_b', 'q_load_R01_b', 'p_load_R01_c', 'q_load_R01_c', 'p_load_R11_a', 'q_load_R11_a', 'p_load_R11_b', 'q_load_R11_b', 'p_load_R11_c', 'q_load_R11_c', 'p_load_R15_a', 'q_load_R15_a', 'p_load_R15_b', 'q_load_R15_b', 'p_load_R15_c', 'q_load_R15_c', 'p_load_R16_a', 'q_load_R16_a', 'p_load_R16_b', 'q_load_R16_b', 'p_load_R16_c', 'q_load_R16_c', 'p_load_R17_a', 'q_load_R17_a', 'p_load_R17_b', 'q_load_R17_b', 'p_load_R17_c', 'q_load_R17_c', 'p_load_R18_a', 'q_load_R18_a', 'p_load_R18_b', 'q_load_R18_b', 'p_load_R18_c', 'q_load_R18_c', 'p_load_I02_a', 'q_load_I02_a', 'p_load_I02_b', 'q_load_I02_b', 'p_load_I02_c', 'q_load_I02_c', 'p_load_C01_a', 'q_load_C01_a', 'p_load_C01_b', 'q_load_C01_b', 'p_load_C01_c', 'q_load_C01_c', 'p_load_C12_a', 'q_load_C12_a', 'p_load_C12_b', 'q_load_C12_b', 'p_load_C12_c', 'q_load_C12_c', 'p_load_C13_a', 'q_load_C13_a', 'p_load_C13_b', 'q_load_C13_b', 'p_load_C13_c', 'q_load_C13_c', 'p_load_C14_a', 'q_load_C14_a', 'p_load_C14_b', 'q_load_C14_b', 'p_load_C14_c', 'q_load_C14_c', 'p_load_C17_a', 'q_load_C17_a', 'p_load_C17_b', 'q_load_C17_b', 'p_load_C17_c', 'q_load_C17_c', 'p_load_C18_a', 'q_load_C18_a', 'p_load_C18_b', 'q_load_C18_b', 'p_load_C18_c', 'q_load_C18_c', 'p_load_C19_a', 'q_load_C19_a', 'p_load_C19_b', 'q_load_C19_b', 'p_load_C19_c', 'q_load_C19_c', 'p_load_C20_a', 'q_load_C20_a', 'p_load_C20_b', 'q_load_C20_b', 'p_load_C20_c', 'q_load_C20_c', 'p_load_S15_a', 'q_load_S15_a', 'p_load_S15_b', 'q_load_S15_b', 'p_load_S15_c', 'q_load_S15_c', 'p_load_S11_a', 'q_load_S11_a', 'p_load_S11_b', 'q_load_S11_b', 'p_load_S11_c', 'q_load_S11_c', 'p_load_S16_a', 'q_load_S16_a', 'p_load_S16_b', 'q_load_S16_b', 'p_load_S16_c', 'q_load_S16_c', 'p_load_S17_a', 'q_load_S17_a', 'p_load_S17_b', 'q_load_S17_b', 'p_load_S17_c', 'q_load_S17_c', 'p_load_S18_a', 'q_load_S18_a', 'p_load_S18_b', 'q_load_S18_b', 'p_load_S18_c', 'q_load_S18_c', 'p_load_H02_a', 'q_load_H02_a', 'p_load_H02_b', 'q_load_H02_b', 'p_load_H02_c', 'q_load_H02_c', 'p_load_D11_a', 'q_load_D11_a', 'p_load_D11_b', 'q_load_D11_b', 'p_load_D11_c', 'q_load_D11_c', 'p_load_D12_a', 'q_load_D12_a', 'p_load_D12_b', 'q_load_D12_b', 'p_load_D12_c', 'q_load_D12_c', 'p_load_D17_a', 'q_load_D17_a', 'p_load_D17_b', 'q_load_D17_b', 'p_load_D17_c', 'q_load_D17_c', 'p_load_D20_a', 'q_load_D20_a', 'p_load_D20_b', 'q_load_D20_b', 'p_load_D20_c', 'q_load_D20_c', 'p_vsc_R01', 'q_vsc_R01', 'p_vsc_R10', 'q_vsc_R10', 'p_vsc_R14', 'q_vsc_R14', 'v_dc_H01_ref', 'q_vsc_I01', 'p_vsc_I02', 'q_vsc_I02', 'p_vsc_C01', 'q_vsc_C01', 'p_vsc_C09', 'q_vsc_C09', 'p_vsc_C11', 'q_vsc_C11', 'p_vsc_C16', 'q_vsc_C16', 'u_dummy'] 
-        self.inputs_ini_values_list  = [11547.0, 0.0, -5773.499999999997, -9999.995337498915, -5773.5000000000055, 9999.99533749891, 800.0, 0.0, -0.0004999999999999998, -0.0008660254037844387, -0.0005000000000000004, 0.0008660254037844385, 63333.333333332645, 20816.659994660517, 63333.33333333524, 20816.6599946599, 63333.33333333269, 20816.659994659964, 4750.0, 1561.2494995996008, 4750.000000000066, 1561.249499599505, 4750.000000000209, 1561.2494995995023, 16466.666666666893, 5412.331598611749, 16466.666666667305, 5412.331598612134, 16466.66666666621, 5412.33159861147, 17416.666666666515, 5724.581498533624, 17416.66666666503, 5724.581498529638, 17416.66666666831, 5724.581498531819, 11083.33333333359, 3642.9154990660395, 11083.333333332714, 3642.915499065636, 11083.33333333372, 3642.9154990652505, 14883.333333334202, 4891.915098746447, 14883.333333332934, 4891.915098744666, 14883.333333333358, 4891.91509874458, 28333.333333333823, 17559.42292142097, 28333.33333333306, 17559.422921421217, 28333.33333333302, 17559.422921420693, 36000.000000001164, 17435.59577416271, 36000.000000000626, 17435.59577416234, 35999.99999999973, 17435.595774161826, 5999.999999999965, 2905.9326290272757, 5999.99999999982, 2905.932629026953, 6000.000000000102, 2905.932629027167, 5999.999999999951, 2905.9326290271465, 5999.9999999999345, 2905.9326290269464, 6000.000000000257, 2905.9326290269883, 7500.000000000018, 3632.415786284053, 7499.999999999655, 3632.415786284123, 7500.00000000032, 3632.415786283578, 7500.000000000018, 3632.4157862840566, 7499.999999999873, 3632.4157862842603, 7500.000000000387, 3632.4157862837665, 2399.9999999999377, 1162.3730516107487, 2400.000000000001, 1162.3730516108687, 2399.9999999999077, 1162.3730516109265, 4800.000000000106, 2324.7461032215156, 4800.000000000002, 2324.7461032217375, 4799.999999999984, 2324.746103221428, 2399.999999999949, 1162.3730516108508, 2399.999999999888, 1162.373051610873, 2400.0000000001132, 1162.3730516107257, 192.8323752209726, -9.718819616094102, -20.03722397722062, -0.02905762548866475, -20.037205741971263, -0.029089974871641555, 192.83979553159122, -9.71900796603593, -20.20875722831493, -0.029121096655241097, -20.208738905073265, -0.029152603255041543, 192.85737029008936, -9.719460481505386, -20.641471907102538, -0.02922890152431823, -20.641453366958906, -0.029258077300520324, 192.88281150657224, -9.720111527016815, -21.369191922114958, -0.029277249298687025, -21.369173030512368, -0.029302218689306048, 192.87953299901855, -9.720020740580047, -21.276990644165746, -0.029294919508045192, -21.27697179517636, -0.029320576376925755, 192.9086118391288, -9.720816467721106, -22.18944047816995, -0.029005220727349568, -22.189421218705096, -0.029023895325474225, -0.0, 0.0, 0.0, -0.0, 0.0, -0.0, 192.84599103120206, -9.71914760286049, -20.37991279670915, -0.02919973118917074, -20.379894384836696, -0.029230627004343868, 192.8611194095459, -9.719538600086846, -20.763055006637444, -0.029276902189468768, -20.7630364044605, -0.029305685082155475, 192.88278168535493, -9.720110069357233, -21.369451373913144, -0.029277159180983725, -21.369432482106635, -0.029302131747405924, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 800.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0] 
-        self.inputs_run_list = ['v_MV0_a_r', 'v_MV0_a_i', 'v_MV0_b_r', 'v_MV0_b_i', 'v_MV0_c_r', 'v_MV0_c_i', 'v_H01_a_r', 'v_H01_a_i', 'v_H01_b_r', 'v_H01_b_i', 'v_H01_c_r', 'v_H01_c_i', 'p_load_R01_a', 'q_load_R01_a', 'p_load_R01_b', 'q_load_R01_b', 'p_load_R01_c', 'q_load_R01_c', 'p_load_R11_a', 'q_load_R11_a', 'p_load_R11_b', 'q_load_R11_b', 'p_load_R11_c', 'q_load_R11_c', 'p_load_R15_a', 'q_load_R15_a', 'p_load_R15_b', 'q_load_R15_b', 'p_load_R15_c', 'q_load_R15_c', 'p_load_R16_a', 'q_load_R16_a', 'p_load_R16_b', 'q_load_R16_b', 'p_load_R16_c', 'q_load_R16_c', 'p_load_R17_a', 'q_load_R17_a', 'p_load_R17_b', 'q_load_R17_b', 'p_load_R17_c', 'q_load_R17_c', 'p_load_R18_a', 'q_load_R18_a', 'p_load_R18_b', 'q_load_R18_b', 'p_load_R18_c', 'q_load_R18_c', 'p_load_I02_a', 'q_load_I02_a', 'p_load_I02_b', 'q_load_I02_b', 'p_load_I02_c', 'q_load_I02_c', 'p_load_C01_a', 'q_load_C01_a', 'p_load_C01_b', 'q_load_C01_b', 'p_load_C01_c', 'q_load_C01_c', 'p_load_C12_a', 'q_load_C12_a', 'p_load_C12_b', 'q_load_C12_b', 'p_load_C12_c', 'q_load_C12_c', 'p_load_C13_a', 'q_load_C13_a', 'p_load_C13_b', 'q_load_C13_b', 'p_load_C13_c', 'q_load_C13_c', 'p_load_C14_a', 'q_load_C14_a', 'p_load_C14_b', 'q_load_C14_b', 'p_load_C14_c', 'q_load_C14_c', 'p_load_C17_a', 'q_load_C17_a', 'p_load_C17_b', 'q_load_C17_b', 'p_load_C17_c', 'q_load_C17_c', 'p_load_C18_a', 'q_load_C18_a', 'p_load_C18_b', 'q_load_C18_b', 'p_load_C18_c', 'q_load_C18_c', 'p_load_C19_a', 'q_load_C19_a', 'p_load_C19_b', 'q_load_C19_b', 'p_load_C19_c', 'q_load_C19_c', 'p_load_C20_a', 'q_load_C20_a', 'p_load_C20_b', 'q_load_C20_b', 'p_load_C20_c', 'q_load_C20_c', 'p_load_S15_a', 'q_load_S15_a', 'p_load_S15_b', 'q_load_S15_b', 'p_load_S15_c', 'q_load_S15_c', 'p_load_S11_a', 'q_load_S11_a', 'p_load_S11_b', 'q_load_S11_b', 'p_load_S11_c', 'q_load_S11_c', 'p_load_S16_a', 'q_load_S16_a', 'p_load_S16_b', 'q_load_S16_b', 'p_load_S16_c', 'q_load_S16_c', 'p_load_S17_a', 'q_load_S17_a', 'p_load_S17_b', 'q_load_S17_b', 'p_load_S17_c', 'q_load_S17_c', 'p_load_S18_a', 'q_load_S18_a', 'p_load_S18_b', 'q_load_S18_b', 'p_load_S18_c', 'q_load_S18_c', 'p_load_H02_a', 'q_load_H02_a', 'p_load_H02_b', 'q_load_H02_b', 'p_load_H02_c', 'q_load_H02_c', 'p_load_D11_a', 'q_load_D11_a', 'p_load_D11_b', 'q_load_D11_b', 'p_load_D11_c', 'q_load_D11_c', 'p_load_D12_a', 'q_load_D12_a', 'p_load_D12_b', 'q_load_D12_b', 'p_load_D12_c', 'q_load_D12_c', 'p_load_D17_a', 'q_load_D17_a', 'p_load_D17_b', 'q_load_D17_b', 'p_load_D17_c', 'q_load_D17_c', 'p_load_D20_a', 'q_load_D20_a', 'p_load_D20_b', 'q_load_D20_b', 'p_load_D20_c', 'q_load_D20_c', 'p_vsc_R01', 'q_vsc_R01', 'p_vsc_R10', 'q_vsc_R10', 'p_vsc_R14', 'q_vsc_R14', 'v_dc_H01_ref', 'q_vsc_I01', 'p_vsc_I02', 'q_vsc_I02', 'p_vsc_C01', 'q_vsc_C01', 'p_vsc_C09', 'q_vsc_C09', 'p_vsc_C11', 'q_vsc_C11', 'p_vsc_C16', 'q_vsc_C16', 'u_dummy'] 
-        self.inputs_run_values_list = [11547.0, 0.0, -5773.499999999997, -9999.995337498915, -5773.5000000000055, 9999.99533749891, 800.0, 0.0, -0.0004999999999999998, -0.0008660254037844387, -0.0005000000000000004, 0.0008660254037844385, 63333.333333332645, 20816.659994660517, 63333.33333333524, 20816.6599946599, 63333.33333333269, 20816.659994659964, 4750.0, 1561.2494995996008, 4750.000000000066, 1561.249499599505, 4750.000000000209, 1561.2494995995023, 16466.666666666893, 5412.331598611749, 16466.666666667305, 5412.331598612134, 16466.66666666621, 5412.33159861147, 17416.666666666515, 5724.581498533624, 17416.66666666503, 5724.581498529638, 17416.66666666831, 5724.581498531819, 11083.33333333359, 3642.9154990660395, 11083.333333332714, 3642.915499065636, 11083.33333333372, 3642.9154990652505, 14883.333333334202, 4891.915098746447, 14883.333333332934, 4891.915098744666, 14883.333333333358, 4891.91509874458, 28333.333333333823, 17559.42292142097, 28333.33333333306, 17559.422921421217, 28333.33333333302, 17559.422921420693, 36000.000000001164, 17435.59577416271, 36000.000000000626, 17435.59577416234, 35999.99999999973, 17435.595774161826, 5999.999999999965, 2905.9326290272757, 5999.99999999982, 2905.932629026953, 6000.000000000102, 2905.932629027167, 5999.999999999951, 2905.9326290271465, 5999.9999999999345, 2905.9326290269464, 6000.000000000257, 2905.9326290269883, 7500.000000000018, 3632.415786284053, 7499.999999999655, 3632.415786284123, 7500.00000000032, 3632.415786283578, 7500.000000000018, 3632.4157862840566, 7499.999999999873, 3632.4157862842603, 7500.000000000387, 3632.4157862837665, 2399.9999999999377, 1162.3730516107487, 2400.000000000001, 1162.3730516108687, 2399.9999999999077, 1162.3730516109265, 4800.000000000106, 2324.7461032215156, 4800.000000000002, 2324.7461032217375, 4799.999999999984, 2324.746103221428, 2399.999999999949, 1162.3730516108508, 2399.999999999888, 1162.373051610873, 2400.0000000001132, 1162.3730516107257, 192.8323752209726, -9.718819616094102, -20.03722397722062, -0.02905762548866475, -20.037205741971263, -0.029089974871641555, 192.83979553159122, -9.71900796603593, -20.20875722831493, -0.029121096655241097, -20.208738905073265, -0.029152603255041543, 192.85737029008936, -9.719460481505386, -20.641471907102538, -0.02922890152431823, -20.641453366958906, -0.029258077300520324, 192.88281150657224, -9.720111527016815, -21.369191922114958, -0.029277249298687025, -21.369173030512368, -0.029302218689306048, 192.87953299901855, -9.720020740580047, -21.276990644165746, -0.029294919508045192, -21.27697179517636, -0.029320576376925755, 192.9086118391288, -9.720816467721106, -22.18944047816995, -0.029005220727349568, -22.189421218705096, -0.029023895325474225, -0.0, 0.0, 0.0, -0.0, 0.0, -0.0, 192.84599103120206, -9.71914760286049, -20.37991279670915, -0.02919973118917074, -20.379894384836696, -0.029230627004343868, 192.8611194095459, -9.719538600086846, -20.763055006637444, -0.029276902189468768, -20.7630364044605, -0.029305685082155475, 192.88278168535493, -9.720110069357233, -21.369451373913144, -0.029277159180983725, -21.369432482106635, -0.029302131747405924, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 800.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0] 
+        self.N_store = 100000 
+        self.params_list = ['a_R01', 'b_R01', 'c_R01', 'a_R10', 'b_R10', 'c_R10', 'a_R14', 'b_R14', 'c_R14', 'a_I01', 'b_I01', 'c_I01', 'C_a_I01', 'C_b_I01', 'C_c_I01', 'R_dc_H01', 'K_dc_H01', 'a_I02', 'b_I02', 'c_I02', 'a_C01', 'b_C01', 'c_C01', 'a_C09', 'b_C09', 'c_C09', 'a_C11', 'b_C11', 'c_C11', 'a_C16', 'b_C16', 'c_C16'] 
+        self.params_values_list  = [2.92, 0.45, 0.027, 2.92, 0.45, 0.027, 2.92, 0.45, 0.027, 2.92, 0.45, 0.027, 0.3333333333333333, 0.3333333333333333, 0.3333333333333333, 1e-06, 1e-06, 2.92, 0.45, 0.027, 2.92, 0.45, 0.027, 2.92, 0.45, 0.027, 2.92, 0.45, 0.027, 2.92, 0.45, 0.027] 
+        self.inputs_ini_list = ['v_MV0_a_r', 'v_MV0_a_i', 'v_MV0_b_r', 'v_MV0_b_i', 'v_MV0_c_r', 'v_MV0_c_i', 'v_H01_a_r', 'v_H01_a_i', 'v_H01_b_r', 'v_H01_b_i', 'v_H01_c_r', 'v_H01_c_i', 'p_load_R01_a', 'q_load_R01_a', 'p_load_R01_b', 'q_load_R01_b', 'p_load_R01_c', 'q_load_R01_c', 'p_load_R11_a', 'q_load_R11_a', 'p_load_R11_b', 'q_load_R11_b', 'p_load_R11_c', 'q_load_R11_c', 'p_load_R15_a', 'q_load_R15_a', 'p_load_R15_b', 'q_load_R15_b', 'p_load_R15_c', 'q_load_R15_c', 'p_load_R16_a', 'q_load_R16_a', 'p_load_R16_b', 'q_load_R16_b', 'p_load_R16_c', 'q_load_R16_c', 'p_load_R17_a', 'q_load_R17_a', 'p_load_R17_b', 'q_load_R17_b', 'p_load_R17_c', 'q_load_R17_c', 'p_load_R18_a', 'q_load_R18_a', 'p_load_R18_b', 'q_load_R18_b', 'p_load_R18_c', 'q_load_R18_c', 'p_load_I02_a', 'q_load_I02_a', 'p_load_I02_b', 'q_load_I02_b', 'p_load_I02_c', 'q_load_I02_c', 'p_load_C01_a', 'q_load_C01_a', 'p_load_C01_b', 'q_load_C01_b', 'p_load_C01_c', 'q_load_C01_c', 'p_load_C12_a', 'q_load_C12_a', 'p_load_C12_b', 'q_load_C12_b', 'p_load_C12_c', 'q_load_C12_c', 'p_load_C13_a', 'q_load_C13_a', 'p_load_C13_b', 'q_load_C13_b', 'p_load_C13_c', 'q_load_C13_c', 'p_load_C14_a', 'q_load_C14_a', 'p_load_C14_b', 'q_load_C14_b', 'p_load_C14_c', 'q_load_C14_c', 'p_load_C17_a', 'q_load_C17_a', 'p_load_C17_b', 'q_load_C17_b', 'p_load_C17_c', 'q_load_C17_c', 'p_load_C18_a', 'q_load_C18_a', 'p_load_C18_b', 'q_load_C18_b', 'p_load_C18_c', 'q_load_C18_c', 'p_load_C19_a', 'q_load_C19_a', 'p_load_C19_b', 'q_load_C19_b', 'p_load_C19_c', 'q_load_C19_c', 'p_load_C20_a', 'q_load_C20_a', 'p_load_C20_b', 'q_load_C20_b', 'p_load_C20_c', 'q_load_C20_c', 'p_load_S15_a', 'q_load_S15_a', 'p_load_S15_b', 'q_load_S15_b', 'p_load_S15_c', 'q_load_S15_c', 'p_load_S11_a', 'q_load_S11_a', 'p_load_S11_b', 'q_load_S11_b', 'p_load_S11_c', 'q_load_S11_c', 'p_load_S16_a', 'q_load_S16_a', 'p_load_S16_b', 'q_load_S16_b', 'p_load_S16_c', 'q_load_S16_c', 'p_load_S17_a', 'q_load_S17_a', 'p_load_S17_b', 'q_load_S17_b', 'p_load_S17_c', 'q_load_S17_c', 'p_load_S18_a', 'q_load_S18_a', 'p_load_S18_b', 'q_load_S18_b', 'p_load_S18_c', 'q_load_S18_c', 'p_load_H02_a', 'q_load_H02_a', 'p_load_H02_b', 'q_load_H02_b', 'p_load_H02_c', 'q_load_H02_c', 'p_load_D11_a', 'q_load_D11_a', 'p_load_D11_b', 'q_load_D11_b', 'p_load_D11_c', 'q_load_D11_c', 'p_load_D12_a', 'q_load_D12_a', 'p_load_D12_b', 'q_load_D12_b', 'p_load_D12_c', 'q_load_D12_c', 'p_load_D17_a', 'q_load_D17_a', 'p_load_D17_b', 'q_load_D17_b', 'p_load_D17_c', 'q_load_D17_c', 'p_load_D20_a', 'q_load_D20_a', 'p_load_D20_b', 'q_load_D20_b', 'p_load_D20_c', 'q_load_D20_c', 'p_vsc_a_R01', 'p_vsc_b_R01', 'p_vsc_c_R01', 'q_vsc_a_R01', 'q_vsc_b_R01', 'q_vsc_c_R01', 'p_vsc_a_R10', 'p_vsc_b_R10', 'p_vsc_c_R10', 'q_vsc_a_R10', 'q_vsc_b_R10', 'q_vsc_c_R10', 'p_vsc_a_R14', 'p_vsc_b_R14', 'p_vsc_c_R14', 'q_vsc_a_R14', 'q_vsc_b_R14', 'q_vsc_c_R14', 'v_dc_H01_ref', 'q_vsc_a_I01', 'q_vsc_b_I01', 'q_vsc_c_I01', 'p_vsc_a_I02', 'p_vsc_b_I02', 'p_vsc_c_I02', 'q_vsc_a_I02', 'q_vsc_b_I02', 'q_vsc_c_I02', 'p_vsc_a_C01', 'p_vsc_b_C01', 'p_vsc_c_C01', 'q_vsc_a_C01', 'q_vsc_b_C01', 'q_vsc_c_C01', 'p_vsc_a_C09', 'p_vsc_b_C09', 'p_vsc_c_C09', 'q_vsc_a_C09', 'q_vsc_b_C09', 'q_vsc_c_C09', 'p_vsc_a_C11', 'p_vsc_b_C11', 'p_vsc_c_C11', 'q_vsc_a_C11', 'q_vsc_b_C11', 'q_vsc_c_C11', 'p_vsc_a_C16', 'p_vsc_b_C16', 'p_vsc_c_C16', 'q_vsc_a_C16', 'q_vsc_b_C16', 'q_vsc_c_C16', 'u_dummy'] 
+        self.inputs_ini_values_list  = [11547.0, 0.0, -5773.499999999997, -9999.995337498915, -5773.5000000000055, 9999.99533749891, 800.0, 0.0, -0.0004999999999999998, -0.0008660254037844387, -0.0005000000000000004, 0.0008660254037844385, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 800.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0] 
+        self.inputs_run_list = ['v_MV0_a_r', 'v_MV0_a_i', 'v_MV0_b_r', 'v_MV0_b_i', 'v_MV0_c_r', 'v_MV0_c_i', 'v_H01_a_r', 'v_H01_a_i', 'v_H01_b_r', 'v_H01_b_i', 'v_H01_c_r', 'v_H01_c_i', 'p_load_R01_a', 'q_load_R01_a', 'p_load_R01_b', 'q_load_R01_b', 'p_load_R01_c', 'q_load_R01_c', 'p_load_R11_a', 'q_load_R11_a', 'p_load_R11_b', 'q_load_R11_b', 'p_load_R11_c', 'q_load_R11_c', 'p_load_R15_a', 'q_load_R15_a', 'p_load_R15_b', 'q_load_R15_b', 'p_load_R15_c', 'q_load_R15_c', 'p_load_R16_a', 'q_load_R16_a', 'p_load_R16_b', 'q_load_R16_b', 'p_load_R16_c', 'q_load_R16_c', 'p_load_R17_a', 'q_load_R17_a', 'p_load_R17_b', 'q_load_R17_b', 'p_load_R17_c', 'q_load_R17_c', 'p_load_R18_a', 'q_load_R18_a', 'p_load_R18_b', 'q_load_R18_b', 'p_load_R18_c', 'q_load_R18_c', 'p_load_I02_a', 'q_load_I02_a', 'p_load_I02_b', 'q_load_I02_b', 'p_load_I02_c', 'q_load_I02_c', 'p_load_C01_a', 'q_load_C01_a', 'p_load_C01_b', 'q_load_C01_b', 'p_load_C01_c', 'q_load_C01_c', 'p_load_C12_a', 'q_load_C12_a', 'p_load_C12_b', 'q_load_C12_b', 'p_load_C12_c', 'q_load_C12_c', 'p_load_C13_a', 'q_load_C13_a', 'p_load_C13_b', 'q_load_C13_b', 'p_load_C13_c', 'q_load_C13_c', 'p_load_C14_a', 'q_load_C14_a', 'p_load_C14_b', 'q_load_C14_b', 'p_load_C14_c', 'q_load_C14_c', 'p_load_C17_a', 'q_load_C17_a', 'p_load_C17_b', 'q_load_C17_b', 'p_load_C17_c', 'q_load_C17_c', 'p_load_C18_a', 'q_load_C18_a', 'p_load_C18_b', 'q_load_C18_b', 'p_load_C18_c', 'q_load_C18_c', 'p_load_C19_a', 'q_load_C19_a', 'p_load_C19_b', 'q_load_C19_b', 'p_load_C19_c', 'q_load_C19_c', 'p_load_C20_a', 'q_load_C20_a', 'p_load_C20_b', 'q_load_C20_b', 'p_load_C20_c', 'q_load_C20_c', 'p_load_S15_a', 'q_load_S15_a', 'p_load_S15_b', 'q_load_S15_b', 'p_load_S15_c', 'q_load_S15_c', 'p_load_S11_a', 'q_load_S11_a', 'p_load_S11_b', 'q_load_S11_b', 'p_load_S11_c', 'q_load_S11_c', 'p_load_S16_a', 'q_load_S16_a', 'p_load_S16_b', 'q_load_S16_b', 'p_load_S16_c', 'q_load_S16_c', 'p_load_S17_a', 'q_load_S17_a', 'p_load_S17_b', 'q_load_S17_b', 'p_load_S17_c', 'q_load_S17_c', 'p_load_S18_a', 'q_load_S18_a', 'p_load_S18_b', 'q_load_S18_b', 'p_load_S18_c', 'q_load_S18_c', 'p_load_H02_a', 'q_load_H02_a', 'p_load_H02_b', 'q_load_H02_b', 'p_load_H02_c', 'q_load_H02_c', 'p_load_D11_a', 'q_load_D11_a', 'p_load_D11_b', 'q_load_D11_b', 'p_load_D11_c', 'q_load_D11_c', 'p_load_D12_a', 'q_load_D12_a', 'p_load_D12_b', 'q_load_D12_b', 'p_load_D12_c', 'q_load_D12_c', 'p_load_D17_a', 'q_load_D17_a', 'p_load_D17_b', 'q_load_D17_b', 'p_load_D17_c', 'q_load_D17_c', 'p_load_D20_a', 'q_load_D20_a', 'p_load_D20_b', 'q_load_D20_b', 'p_load_D20_c', 'q_load_D20_c', 'p_vsc_a_R01', 'p_vsc_b_R01', 'p_vsc_c_R01', 'q_vsc_a_R01', 'q_vsc_b_R01', 'q_vsc_c_R01', 'p_vsc_a_R10', 'p_vsc_b_R10', 'p_vsc_c_R10', 'q_vsc_a_R10', 'q_vsc_b_R10', 'q_vsc_c_R10', 'p_vsc_a_R14', 'p_vsc_b_R14', 'p_vsc_c_R14', 'q_vsc_a_R14', 'q_vsc_b_R14', 'q_vsc_c_R14', 'v_dc_H01_ref', 'q_vsc_a_I01', 'q_vsc_b_I01', 'q_vsc_c_I01', 'p_vsc_a_I02', 'p_vsc_b_I02', 'p_vsc_c_I02', 'q_vsc_a_I02', 'q_vsc_b_I02', 'q_vsc_c_I02', 'p_vsc_a_C01', 'p_vsc_b_C01', 'p_vsc_c_C01', 'q_vsc_a_C01', 'q_vsc_b_C01', 'q_vsc_c_C01', 'p_vsc_a_C09', 'p_vsc_b_C09', 'p_vsc_c_C09', 'q_vsc_a_C09', 'q_vsc_b_C09', 'q_vsc_c_C09', 'p_vsc_a_C11', 'p_vsc_b_C11', 'p_vsc_c_C11', 'q_vsc_a_C11', 'q_vsc_b_C11', 'q_vsc_c_C11', 'p_vsc_a_C16', 'p_vsc_b_C16', 'p_vsc_c_C16', 'q_vsc_a_C16', 'q_vsc_b_C16', 'q_vsc_c_C16', 'u_dummy'] 
+        self.inputs_run_values_list = [11547.0, 0.0, -5773.499999999997, -9999.995337498915, -5773.5000000000055, 9999.99533749891, 800.0, 0.0, -0.0004999999999999998, -0.0008660254037844387, -0.0005000000000000004, 0.0008660254037844385, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 800.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0] 
         self.outputs_list = ['i_t_MV0_R01_1_a_r', 'i_t_MV0_R01_1_a_i', 'i_t_MV0_R01_1_b_r', 'i_t_MV0_R01_1_b_i', 'i_t_MV0_R01_1_c_r', 'i_t_MV0_R01_1_c_i', 'p_t_MV0_R01_1', 'q_t_MV0_R01_1', 'i_t_MV0_R01_2_a_r', 'i_t_MV0_R01_2_a_i', 'i_t_MV0_R01_2_b_r', 'i_t_MV0_R01_2_b_i', 'i_t_MV0_R01_2_c_r', 'i_t_MV0_R01_2_c_i', 'i_t_MV0_R01_2_n_r', 'i_t_MV0_R01_2_n_i', 'i_t_MV0_I01_1_a_r', 'i_t_MV0_I01_1_a_i', 'i_t_MV0_I01_1_b_r', 'i_t_MV0_I01_1_b_i', 'i_t_MV0_I01_1_c_r', 'i_t_MV0_I01_1_c_i', 'p_t_MV0_I01_1', 'q_t_MV0_I01_1', 'i_t_MV0_I01_2_a_r', 'i_t_MV0_I01_2_a_i', 'i_t_MV0_I01_2_b_r', 'i_t_MV0_I01_2_b_i', 'i_t_MV0_I01_2_c_r', 'i_t_MV0_I01_2_c_i', 'i_t_MV0_I01_2_n_r', 'i_t_MV0_I01_2_n_i', 'i_t_MV0_C01_1_a_r', 'i_t_MV0_C01_1_a_i', 'i_t_MV0_C01_1_b_r', 'i_t_MV0_C01_1_b_i', 'i_t_MV0_C01_1_c_r', 'i_t_MV0_C01_1_c_i', 'p_t_MV0_C01_1', 'q_t_MV0_C01_1', 'i_t_MV0_C01_2_a_r', 'i_t_MV0_C01_2_a_i', 'i_t_MV0_C01_2_b_r', 'i_t_MV0_C01_2_b_i', 'i_t_MV0_C01_2_c_r', 'i_t_MV0_C01_2_c_i', 'i_t_MV0_C01_2_n_r', 'i_t_MV0_C01_2_n_i', 'i_l_R01_R02_a_r', 'i_l_R01_R02_a_i', 'i_l_R01_R02_b_r', 'i_l_R01_R02_b_i', 'i_l_R01_R02_c_r', 'i_l_R01_R02_c_i', 'i_l_R01_R02_n_r', 'i_l_R01_R02_n_i', 'i_l_R02_R03_a_r', 'i_l_R02_R03_a_i', 'i_l_R02_R03_b_r', 'i_l_R02_R03_b_i', 'i_l_R02_R03_c_r', 'i_l_R02_R03_c_i', 'i_l_R02_R03_n_r', 'i_l_R02_R03_n_i', 'i_l_R03_R04_a_r', 'i_l_R03_R04_a_i', 'i_l_R03_R04_b_r', 'i_l_R03_R04_b_i', 'i_l_R03_R04_c_r', 'i_l_R03_R04_c_i', 'i_l_R03_R04_n_r', 'i_l_R03_R04_n_i', 'i_l_R04_R05_a_r', 'i_l_R04_R05_a_i', 'i_l_R04_R05_b_r', 'i_l_R04_R05_b_i', 'i_l_R04_R05_c_r', 'i_l_R04_R05_c_i', 'i_l_R04_R05_n_r', 'i_l_R04_R05_n_i', 'i_l_R05_R06_a_r', 'i_l_R05_R06_a_i', 'i_l_R05_R06_b_r', 'i_l_R05_R06_b_i', 'i_l_R05_R06_c_r', 'i_l_R05_R06_c_i', 'i_l_R05_R06_n_r', 'i_l_R05_R06_n_i', 'i_l_R06_R07_a_r', 'i_l_R06_R07_a_i', 'i_l_R06_R07_b_r', 'i_l_R06_R07_b_i', 'i_l_R06_R07_c_r', 'i_l_R06_R07_c_i', 'i_l_R06_R07_n_r', 'i_l_R06_R07_n_i', 'i_l_R07_R08_a_r', 'i_l_R07_R08_a_i', 'i_l_R07_R08_b_r', 'i_l_R07_R08_b_i', 'i_l_R07_R08_c_r', 'i_l_R07_R08_c_i', 'i_l_R07_R08_n_r', 'i_l_R07_R08_n_i', 'i_l_R08_R09_a_r', 'i_l_R08_R09_a_i', 'i_l_R08_R09_b_r', 'i_l_R08_R09_b_i', 'i_l_R08_R09_c_r', 'i_l_R08_R09_c_i', 'i_l_R08_R09_n_r', 'i_l_R08_R09_n_i', 'i_l_R09_R10_a_r', 'i_l_R09_R10_a_i', 'i_l_R09_R10_b_r', 'i_l_R09_R10_b_i', 'i_l_R09_R10_c_r', 'i_l_R09_R10_c_i', 'i_l_R09_R10_n_r', 'i_l_R09_R10_n_i', 'i_l_R03_R11_a_r', 'i_l_R03_R11_a_i', 'i_l_R03_R11_b_r', 'i_l_R03_R11_b_i', 'i_l_R03_R11_c_r', 'i_l_R03_R11_c_i', 'i_l_R03_R11_n_r', 'i_l_R03_R11_n_i', 'i_l_R04_R12_a_r', 'i_l_R04_R12_a_i', 'i_l_R04_R12_b_r', 'i_l_R04_R12_b_i', 'i_l_R04_R12_c_r', 'i_l_R04_R12_c_i', 'i_l_R04_R12_n_r', 'i_l_R04_R12_n_i', 'i_l_R12_R13_a_r', 'i_l_R12_R13_a_i', 'i_l_R12_R13_b_r', 'i_l_R12_R13_b_i', 'i_l_R12_R13_c_r', 'i_l_R12_R13_c_i', 'i_l_R12_R13_n_r', 'i_l_R12_R13_n_i', 'i_l_R13_R14_a_r', 'i_l_R13_R14_a_i', 'i_l_R13_R14_b_r', 'i_l_R13_R14_b_i', 'i_l_R13_R14_c_r', 'i_l_R13_R14_c_i', 'i_l_R13_R14_n_r', 'i_l_R13_R14_n_i', 'i_l_R14_R15_a_r', 'i_l_R14_R15_a_i', 'i_l_R14_R15_b_r', 'i_l_R14_R15_b_i', 'i_l_R14_R15_c_r', 'i_l_R14_R15_c_i', 'i_l_R14_R15_n_r', 'i_l_R14_R15_n_i', 'i_l_R06_R16_a_r', 'i_l_R06_R16_a_i', 'i_l_R06_R16_b_r', 'i_l_R06_R16_b_i', 'i_l_R06_R16_c_r', 'i_l_R06_R16_c_i', 'i_l_R06_R16_n_r', 'i_l_R06_R16_n_i', 'i_l_R09_R17_a_r', 'i_l_R09_R17_a_i', 'i_l_R09_R17_b_r', 'i_l_R09_R17_b_i', 'i_l_R09_R17_c_r', 'i_l_R09_R17_c_i', 'i_l_R09_R17_n_r', 'i_l_R09_R17_n_i', 'i_l_R10_R18_a_r', 'i_l_R10_R18_a_i', 'i_l_R10_R18_b_r', 'i_l_R10_R18_b_i', 'i_l_R10_R18_c_r', 'i_l_R10_R18_c_i', 'i_l_R10_R18_n_r', 'i_l_R10_R18_n_i', 'i_l_I01_I02_a_r', 'i_l_I01_I02_a_i', 'i_l_I01_I02_b_r', 'i_l_I01_I02_b_i', 'i_l_I01_I02_c_r', 'i_l_I01_I02_c_i', 'i_l_I01_I02_n_r', 'i_l_I01_I02_n_i', 'i_l_C01_C02_a_r', 'i_l_C01_C02_a_i', 'i_l_C01_C02_b_r', 'i_l_C01_C02_b_i', 'i_l_C01_C02_c_r', 'i_l_C01_C02_c_i', 'i_l_C01_C02_n_r', 'i_l_C01_C02_n_i', 'i_l_C02_C03_a_r', 'i_l_C02_C03_a_i', 'i_l_C02_C03_b_r', 'i_l_C02_C03_b_i', 'i_l_C02_C03_c_r', 'i_l_C02_C03_c_i', 'i_l_C02_C03_n_r', 'i_l_C02_C03_n_i', 'i_l_C03_C04_a_r', 'i_l_C03_C04_a_i', 'i_l_C03_C04_b_r', 'i_l_C03_C04_b_i', 'i_l_C03_C04_c_r', 'i_l_C03_C04_c_i', 'i_l_C03_C04_n_r', 'i_l_C03_C04_n_i', 'i_l_C04_C05_a_r', 'i_l_C04_C05_a_i', 'i_l_C04_C05_b_r', 'i_l_C04_C05_b_i', 'i_l_C04_C05_c_r', 'i_l_C04_C05_c_i', 'i_l_C04_C05_n_r', 'i_l_C04_C05_n_i', 'i_l_C05_C06_a_r', 'i_l_C05_C06_a_i', 'i_l_C05_C06_b_r', 'i_l_C05_C06_b_i', 'i_l_C05_C06_c_r', 'i_l_C05_C06_c_i', 'i_l_C05_C06_n_r', 'i_l_C05_C06_n_i', 'i_l_C06_C07_a_r', 'i_l_C06_C07_a_i', 'i_l_C06_C07_b_r', 'i_l_C06_C07_b_i', 'i_l_C06_C07_c_r', 'i_l_C06_C07_c_i', 'i_l_C06_C07_n_r', 'i_l_C06_C07_n_i', 'i_l_C07_C08_a_r', 'i_l_C07_C08_a_i', 'i_l_C07_C08_b_r', 'i_l_C07_C08_b_i', 'i_l_C07_C08_c_r', 'i_l_C07_C08_c_i', 'i_l_C07_C08_n_r', 'i_l_C07_C08_n_i', 'i_l_C08_C09_a_r', 'i_l_C08_C09_a_i', 'i_l_C08_C09_b_r', 'i_l_C08_C09_b_i', 'i_l_C08_C09_c_r', 'i_l_C08_C09_c_i', 'i_l_C08_C09_n_r', 'i_l_C08_C09_n_i', 'i_l_C03_C10_a_r', 'i_l_C03_C10_a_i', 'i_l_C03_C10_b_r', 'i_l_C03_C10_b_i', 'i_l_C03_C10_c_r', 'i_l_C03_C10_c_i', 'i_l_C03_C10_n_r', 'i_l_C03_C10_n_i', 'i_l_C10_C11_a_r', 'i_l_C10_C11_a_i', 'i_l_C10_C11_b_r', 'i_l_C10_C11_b_i', 'i_l_C10_C11_c_r', 'i_l_C10_C11_c_i', 'i_l_C10_C11_n_r', 'i_l_C10_C11_n_i', 'i_l_C11_C12_a_r', 'i_l_C11_C12_a_i', 'i_l_C11_C12_b_r', 'i_l_C11_C12_b_i', 'i_l_C11_C12_c_r', 'i_l_C11_C12_c_i', 'i_l_C11_C12_n_r', 'i_l_C11_C12_n_i', 'i_l_C11_C13_a_r', 'i_l_C11_C13_a_i', 'i_l_C11_C13_b_r', 'i_l_C11_C13_b_i', 'i_l_C11_C13_c_r', 'i_l_C11_C13_c_i', 'i_l_C11_C13_n_r', 'i_l_C11_C13_n_i', 'i_l_C10_C14_a_r', 'i_l_C10_C14_a_i', 'i_l_C10_C14_b_r', 'i_l_C10_C14_b_i', 'i_l_C10_C14_c_r', 'i_l_C10_C14_c_i', 'i_l_C10_C14_n_r', 'i_l_C10_C14_n_i', 'i_l_C05_C15_a_r', 'i_l_C05_C15_a_i', 'i_l_C05_C15_b_r', 'i_l_C05_C15_b_i', 'i_l_C05_C15_c_r', 'i_l_C05_C15_c_i', 'i_l_C05_C15_n_r', 'i_l_C05_C15_n_i', 'i_l_C15_C16_a_r', 'i_l_C15_C16_a_i', 'i_l_C15_C16_b_r', 'i_l_C15_C16_b_i', 'i_l_C15_C16_c_r', 'i_l_C15_C16_c_i', 'i_l_C15_C16_n_r', 'i_l_C15_C16_n_i', 'i_l_C15_C18_a_r', 'i_l_C15_C18_a_i', 'i_l_C15_C18_b_r', 'i_l_C15_C18_b_i', 'i_l_C15_C18_c_r', 'i_l_C15_C18_c_i', 'i_l_C15_C18_n_r', 'i_l_C15_C18_n_i', 'i_l_C16_C17_a_r', 'i_l_C16_C17_a_i', 'i_l_C16_C17_b_r', 'i_l_C16_C17_b_i', 'i_l_C16_C17_c_r', 'i_l_C16_C17_c_i', 'i_l_C16_C17_n_r', 'i_l_C16_C17_n_i', 'i_l_C08_C19_a_r', 'i_l_C08_C19_a_i', 'i_l_C08_C19_b_r', 'i_l_C08_C19_b_i', 'i_l_C08_C19_c_r', 'i_l_C08_C19_c_i', 'i_l_C08_C19_n_r', 'i_l_C08_C19_n_i', 'i_l_C09_C20_a_r', 'i_l_C09_C20_a_i', 'i_l_C09_C20_b_r', 'i_l_C09_C20_b_i', 'i_l_C09_C20_c_r', 'i_l_C09_C20_c_i', 'i_l_C09_C20_n_r', 'i_l_C09_C20_n_i', 'i_l_S01_S03_a_r', 'i_l_S01_S03_a_i', 'i_l_S01_S03_b_r', 'i_l_S01_S03_b_i', 'i_l_S01_S03_c_r', 'i_l_S01_S03_c_i', 'i_l_S01_S03_n_r', 'i_l_S01_S03_n_i', 'i_l_S03_S04_a_r', 'i_l_S03_S04_a_i', 'i_l_S03_S04_b_r', 'i_l_S03_S04_b_i', 'i_l_S03_S04_c_r', 'i_l_S03_S04_c_i', 'i_l_S03_S04_n_r', 'i_l_S03_S04_n_i', 'i_l_S04_S06_a_r', 'i_l_S04_S06_a_i', 'i_l_S04_S06_b_r', 'i_l_S04_S06_b_i', 'i_l_S04_S06_c_r', 'i_l_S04_S06_c_i', 'i_l_S04_S06_n_r', 'i_l_S04_S06_n_i', 'i_l_S06_S07_a_r', 'i_l_S06_S07_a_i', 'i_l_S06_S07_b_r', 'i_l_S06_S07_b_i', 'i_l_S06_S07_c_r', 'i_l_S06_S07_c_i', 'i_l_S06_S07_n_r', 'i_l_S06_S07_n_i', 'i_l_S07_S09_a_r', 'i_l_S07_S09_a_i', 'i_l_S07_S09_b_r', 'i_l_S07_S09_b_i', 'i_l_S07_S09_c_r', 'i_l_S07_S09_c_i', 'i_l_S07_S09_n_r', 'i_l_S07_S09_n_i', 'i_l_S09_S10_a_r', 'i_l_S09_S10_a_i', 'i_l_S09_S10_b_r', 'i_l_S09_S10_b_i', 'i_l_S09_S10_c_r', 'i_l_S09_S10_c_i', 'i_l_S09_S10_n_r', 'i_l_S09_S10_n_i', 'i_l_S03_S11_a_r', 'i_l_S03_S11_a_i', 'i_l_S03_S11_b_r', 'i_l_S03_S11_b_i', 'i_l_S03_S11_c_r', 'i_l_S03_S11_c_i', 'i_l_S03_S11_n_r', 'i_l_S03_S11_n_i', 'i_l_S04_S14_a_r', 'i_l_S04_S14_a_i', 'i_l_S04_S14_b_r', 'i_l_S04_S14_b_i', 'i_l_S04_S14_c_r', 'i_l_S04_S14_c_i', 'i_l_S04_S14_n_r', 'i_l_S04_S14_n_i', 'i_l_S14_S15_a_r', 'i_l_S14_S15_a_i', 'i_l_S14_S15_b_r', 'i_l_S14_S15_b_i', 'i_l_S14_S15_c_r', 'i_l_S14_S15_c_i', 'i_l_S14_S15_n_r', 'i_l_S14_S15_n_i', 'i_l_S06_S16_a_r', 'i_l_S06_S16_a_i', 'i_l_S06_S16_b_r', 'i_l_S06_S16_b_i', 'i_l_S06_S16_c_r', 'i_l_S06_S16_c_i', 'i_l_S06_S16_n_r', 'i_l_S06_S16_n_i', 'i_l_S09_S17_a_r', 'i_l_S09_S17_a_i', 'i_l_S09_S17_b_r', 'i_l_S09_S17_b_i', 'i_l_S09_S17_c_r', 'i_l_S09_S17_c_i', 'i_l_S09_S17_n_r', 'i_l_S09_S17_n_i', 'i_l_S10_S18_a_r', 'i_l_S10_S18_a_i', 'i_l_S10_S18_b_r', 'i_l_S10_S18_b_i', 'i_l_S10_S18_c_r', 'i_l_S10_S18_c_i', 'i_l_S10_S18_n_r', 'i_l_S10_S18_n_i', 'i_l_H01_H02_a_r', 'i_l_H01_H02_a_i', 'i_l_H01_H02_b_r', 'i_l_H01_H02_b_i', 'i_l_H01_H02_c_r', 'i_l_H01_H02_c_i', 'i_l_H01_H02_n_r', 'i_l_H01_H02_n_i', 'i_l_D01_D03_a_r', 'i_l_D01_D03_a_i', 'i_l_D01_D03_b_r', 'i_l_D01_D03_b_i', 'i_l_D01_D03_c_r', 'i_l_D01_D03_c_i', 'i_l_D01_D03_n_r', 'i_l_D01_D03_n_i', 'i_l_D03_D05_a_r', 'i_l_D03_D05_a_i', 'i_l_D03_D05_b_r', 'i_l_D03_D05_b_i', 'i_l_D03_D05_c_r', 'i_l_D03_D05_c_i', 'i_l_D03_D05_n_r', 'i_l_D03_D05_n_i', 'i_l_D05_D08_a_r', 'i_l_D05_D08_a_i', 'i_l_D05_D08_b_r', 'i_l_D05_D08_b_i', 'i_l_D05_D08_c_r', 'i_l_D05_D08_c_i', 'i_l_D05_D08_n_r', 'i_l_D05_D08_n_i', 'i_l_D08_D09_a_r', 'i_l_D08_D09_a_i', 'i_l_D08_D09_b_r', 'i_l_D08_D09_b_i', 'i_l_D08_D09_c_r', 'i_l_D08_D09_c_i', 'i_l_D08_D09_n_r', 'i_l_D08_D09_n_i', 'i_l_D03_D11_a_r', 'i_l_D03_D11_a_i', 'i_l_D03_D11_b_r', 'i_l_D03_D11_b_i', 'i_l_D03_D11_c_r', 'i_l_D03_D11_c_i', 'i_l_D03_D11_n_r', 'i_l_D03_D11_n_i', 'i_l_D11_D12_a_r', 'i_l_D11_D12_a_i', 'i_l_D11_D12_b_r', 'i_l_D11_D12_b_i', 'i_l_D11_D12_c_r', 'i_l_D11_D12_c_i', 'i_l_D11_D12_n_r', 'i_l_D11_D12_n_i', 'i_l_D05_D16_a_r', 'i_l_D05_D16_a_i', 'i_l_D05_D16_b_r', 'i_l_D05_D16_b_i', 'i_l_D05_D16_c_r', 'i_l_D05_D16_c_i', 'i_l_D05_D16_n_r', 'i_l_D05_D16_n_i', 'i_l_D16_D17_a_r', 'i_l_D16_D17_a_i', 'i_l_D16_D17_b_r', 'i_l_D16_D17_b_i', 'i_l_D16_D17_c_r', 'i_l_D16_D17_c_i', 'i_l_D16_D17_n_r', 'i_l_D16_D17_n_i', 'i_l_D08_D19_a_r', 'i_l_D08_D19_a_i', 'i_l_D08_D19_b_r', 'i_l_D08_D19_b_i', 'i_l_D08_D19_c_r', 'i_l_D08_D19_c_i', 'i_l_D08_D19_n_r', 'i_l_D08_D19_n_i', 'i_l_D09_D20_a_r', 'i_l_D09_D20_a_i', 'i_l_D09_D20_b_r', 'i_l_D09_D20_b_i', 'i_l_D09_D20_c_r', 'i_l_D09_D20_c_i', 'i_l_D09_D20_n_r', 'i_l_D09_D20_n_i', 'i_l_S07_H02_a_r', 'i_l_S07_H02_a_i', 'i_l_S07_H02_b_r', 'i_l_S07_H02_b_i', 'i_l_S07_H02_c_r', 'i_l_S07_H02_c_i', 'i_l_S07_H02_n_r', 'i_l_S07_H02_n_i', 'i_l_H02_D19_a_r', 'i_l_H02_D19_a_i', 'i_l_H02_D19_b_r', 'i_l_H02_D19_b_i', 'i_l_H02_D19_c_r', 'i_l_H02_D19_c_i', 'i_l_H02_D19_n_r', 'i_l_H02_D19_n_i', 'p_vsc_R01', 'p_vsc_loss_R01', 'p_vsc_R10', 'p_vsc_loss_R10', 'p_vsc_R14', 'p_vsc_loss_R14', 'p_vsc_I01', 'p_vsc_loss_I01', 'p_vsc_I02', 'p_vsc_loss_I02', 'p_vsc_C01', 'p_vsc_loss_C01', 'p_vsc_C09', 'p_vsc_loss_C09', 'p_vsc_C11', 'p_vsc_loss_C11', 'p_vsc_C16', 'p_vsc_loss_C16', 'v_MV0_a_m', 'v_MV0_b_m', 'v_MV0_c_m', 'v_H01_a_m', 'v_H01_b_m', 'v_H01_c_m', 'v_R01_a_m', 'v_R01_b_m', 'v_R01_c_m', 'v_R01_n_m', 'v_R11_a_m', 'v_R11_b_m', 'v_R11_c_m', 'v_R11_n_m', 'v_R15_a_m', 'v_R15_b_m', 'v_R15_c_m', 'v_R15_n_m', 'v_R16_a_m', 'v_R16_b_m', 'v_R16_c_m', 'v_R16_n_m', 'v_R17_a_m', 'v_R17_b_m', 'v_R17_c_m', 'v_R17_n_m', 'v_R18_a_m', 'v_R18_b_m', 'v_R18_c_m', 'v_R18_n_m', 'v_I02_a_m', 'v_I02_b_m', 'v_I02_c_m', 'v_I02_n_m', 'v_C01_a_m', 'v_C01_b_m', 'v_C01_c_m', 'v_C01_n_m', 'v_C12_a_m', 'v_C12_b_m', 'v_C12_c_m', 'v_C12_n_m', 'v_C13_a_m', 'v_C13_b_m', 'v_C13_c_m', 'v_C13_n_m', 'v_C14_a_m', 'v_C14_b_m', 'v_C14_c_m', 'v_C14_n_m', 'v_C17_a_m', 'v_C17_b_m', 'v_C17_c_m', 'v_C17_n_m', 'v_C18_a_m', 'v_C18_b_m', 'v_C18_c_m', 'v_C18_n_m', 'v_C19_a_m', 'v_C19_b_m', 'v_C19_c_m', 'v_C19_n_m', 'v_C20_a_m', 'v_C20_b_m', 'v_C20_c_m', 'v_C20_n_m', 'v_S15_a_m', 'v_S15_b_m', 'v_S15_c_m', 'v_S15_n_m', 'v_S11_a_m', 'v_S11_b_m', 'v_S11_c_m', 'v_S11_n_m', 'v_S16_a_m', 'v_S16_b_m', 'v_S16_c_m', 'v_S16_n_m', 'v_S17_a_m', 'v_S17_b_m', 'v_S17_c_m', 'v_S17_n_m', 'v_S18_a_m', 'v_S18_b_m', 'v_S18_c_m', 'v_S18_n_m', 'v_H02_a_m', 'v_H02_b_m', 'v_H02_c_m', 'v_H02_n_m', 'v_D11_a_m', 'v_D11_b_m', 'v_D11_c_m', 'v_D11_n_m', 'v_D12_a_m', 'v_D12_b_m', 'v_D12_c_m', 'v_D12_n_m', 'v_D17_a_m', 'v_D17_b_m', 'v_D17_c_m', 'v_D17_n_m', 'v_D20_a_m', 'v_D20_b_m', 'v_D20_c_m', 'v_D20_n_m', 'v_I01_a_m', 'v_I01_b_m', 'v_I01_c_m', 'v_I01_n_m', 'v_R02_a_m', 'v_R02_b_m', 'v_R02_c_m', 'v_R02_n_m', 'v_R03_a_m', 'v_R03_b_m', 'v_R03_c_m', 'v_R03_n_m', 'v_R04_a_m', 'v_R04_b_m', 'v_R04_c_m', 'v_R04_n_m', 'v_R05_a_m', 'v_R05_b_m', 'v_R05_c_m', 'v_R05_n_m', 'v_R06_a_m', 'v_R06_b_m', 'v_R06_c_m', 'v_R06_n_m', 'v_R07_a_m', 'v_R07_b_m', 'v_R07_c_m', 'v_R07_n_m', 'v_R08_a_m', 'v_R08_b_m', 'v_R08_c_m', 'v_R08_n_m', 'v_R09_a_m', 'v_R09_b_m', 'v_R09_c_m', 'v_R09_n_m', 'v_R10_a_m', 'v_R10_b_m', 'v_R10_c_m', 'v_R10_n_m', 'v_R12_a_m', 'v_R12_b_m', 'v_R12_c_m', 'v_R12_n_m', 'v_R13_a_m', 'v_R13_b_m', 'v_R13_c_m', 'v_R13_n_m', 'v_R14_a_m', 'v_R14_b_m', 'v_R14_c_m', 'v_R14_n_m', 'v_C02_a_m', 'v_C02_b_m', 'v_C02_c_m', 'v_C02_n_m', 'v_C03_a_m', 'v_C03_b_m', 'v_C03_c_m', 'v_C03_n_m', 'v_C04_a_m', 'v_C04_b_m', 'v_C04_c_m', 'v_C04_n_m', 'v_C05_a_m', 'v_C05_b_m', 'v_C05_c_m', 'v_C05_n_m', 'v_C06_a_m', 'v_C06_b_m', 'v_C06_c_m', 'v_C06_n_m', 'v_C07_a_m', 'v_C07_b_m', 'v_C07_c_m', 'v_C07_n_m', 'v_C08_a_m', 'v_C08_b_m', 'v_C08_c_m', 'v_C08_n_m', 'v_C09_a_m', 'v_C09_b_m', 'v_C09_c_m', 'v_C09_n_m', 'v_C10_a_m', 'v_C10_b_m', 'v_C10_c_m', 'v_C10_n_m', 'v_C11_a_m', 'v_C11_b_m', 'v_C11_c_m', 'v_C11_n_m', 'v_C15_a_m', 'v_C15_b_m', 'v_C15_c_m', 'v_C15_n_m', 'v_C16_a_m', 'v_C16_b_m', 'v_C16_c_m', 'v_C16_n_m', 'v_S01_a_m', 'v_S01_b_m', 'v_S01_c_m', 'v_S01_n_m', 'v_S03_a_m', 'v_S03_b_m', 'v_S03_c_m', 'v_S03_n_m', 'v_S04_a_m', 'v_S04_b_m', 'v_S04_c_m', 'v_S04_n_m', 'v_S06_a_m', 'v_S06_b_m', 'v_S06_c_m', 'v_S06_n_m', 'v_S07_a_m', 'v_S07_b_m', 'v_S07_c_m', 'v_S07_n_m', 'v_S09_a_m', 'v_S09_b_m', 'v_S09_c_m', 'v_S09_n_m', 'v_S10_a_m', 'v_S10_b_m', 'v_S10_c_m', 'v_S10_n_m', 'v_S14_a_m', 'v_S14_b_m', 'v_S14_c_m', 'v_S14_n_m', 'v_H01_n_m', 'v_D01_a_m', 'v_D01_b_m', 'v_D01_c_m', 'v_D01_n_m', 'v_D03_a_m', 'v_D03_b_m', 'v_D03_c_m', 'v_D03_n_m', 'v_D05_a_m', 'v_D05_b_m', 'v_D05_c_m', 'v_D05_n_m', 'v_D08_a_m', 'v_D08_b_m', 'v_D08_c_m', 'v_D08_n_m', 'v_D09_a_m', 'v_D09_b_m', 'v_D09_c_m', 'v_D09_n_m', 'v_D16_a_m', 'v_D16_b_m', 'v_D16_c_m', 'v_D16_n_m', 'v_D19_a_m', 'v_D19_b_m', 'v_D19_c_m', 'v_D19_n_m', 'p_total', 'i_res', 'i_ind', 'i_com', 'z_dummy'] 
         self.x_list = ['x_dummy'] 
         self.y_run_list = ['v_R01_a_r', 'v_R01_a_i', 'v_R01_b_r', 'v_R01_b_i', 'v_R01_c_r', 'v_R01_c_i', 'v_R01_n_r', 'v_R01_n_i', 'v_R11_a_r', 'v_R11_a_i', 'v_R11_b_r', 'v_R11_b_i', 'v_R11_c_r', 'v_R11_c_i', 'v_R11_n_r', 'v_R11_n_i', 'v_R15_a_r', 'v_R15_a_i', 'v_R15_b_r', 'v_R15_b_i', 'v_R15_c_r', 'v_R15_c_i', 'v_R15_n_r', 'v_R15_n_i', 'v_R16_a_r', 'v_R16_a_i', 'v_R16_b_r', 'v_R16_b_i', 'v_R16_c_r', 'v_R16_c_i', 'v_R16_n_r', 'v_R16_n_i', 'v_R17_a_r', 'v_R17_a_i', 'v_R17_b_r', 'v_R17_b_i', 'v_R17_c_r', 'v_R17_c_i', 'v_R17_n_r', 'v_R17_n_i', 'v_R18_a_r', 'v_R18_a_i', 'v_R18_b_r', 'v_R18_b_i', 'v_R18_c_r', 'v_R18_c_i', 'v_R18_n_r', 'v_R18_n_i', 'v_I02_a_r', 'v_I02_a_i', 'v_I02_b_r', 'v_I02_b_i', 'v_I02_c_r', 'v_I02_c_i', 'v_I02_n_r', 'v_I02_n_i', 'v_C01_a_r', 'v_C01_a_i', 'v_C01_b_r', 'v_C01_b_i', 'v_C01_c_r', 'v_C01_c_i', 'v_C01_n_r', 'v_C01_n_i', 'v_C12_a_r', 'v_C12_a_i', 'v_C12_b_r', 'v_C12_b_i', 'v_C12_c_r', 'v_C12_c_i', 'v_C12_n_r', 'v_C12_n_i', 'v_C13_a_r', 'v_C13_a_i', 'v_C13_b_r', 'v_C13_b_i', 'v_C13_c_r', 'v_C13_c_i', 'v_C13_n_r', 'v_C13_n_i', 'v_C14_a_r', 'v_C14_a_i', 'v_C14_b_r', 'v_C14_b_i', 'v_C14_c_r', 'v_C14_c_i', 'v_C14_n_r', 'v_C14_n_i', 'v_C17_a_r', 'v_C17_a_i', 'v_C17_b_r', 'v_C17_b_i', 'v_C17_c_r', 'v_C17_c_i', 'v_C17_n_r', 'v_C17_n_i', 'v_C18_a_r', 'v_C18_a_i', 'v_C18_b_r', 'v_C18_b_i', 'v_C18_c_r', 'v_C18_c_i', 'v_C18_n_r', 'v_C18_n_i', 'v_C19_a_r', 'v_C19_a_i', 'v_C19_b_r', 'v_C19_b_i', 'v_C19_c_r', 'v_C19_c_i', 'v_C19_n_r', 'v_C19_n_i', 'v_C20_a_r', 'v_C20_a_i', 'v_C20_b_r', 'v_C20_b_i', 'v_C20_c_r', 'v_C20_c_i', 'v_C20_n_r', 'v_C20_n_i', 'v_S15_a_r', 'v_S15_a_i', 'v_S15_b_r', 'v_S15_b_i', 'v_S15_c_r', 'v_S15_c_i', 'v_S15_n_r', 'v_S15_n_i', 'v_S11_a_r', 'v_S11_a_i', 'v_S11_b_r', 'v_S11_b_i', 'v_S11_c_r', 'v_S11_c_i', 'v_S11_n_r', 'v_S11_n_i', 'v_S16_a_r', 'v_S16_a_i', 'v_S16_b_r', 'v_S16_b_i', 'v_S16_c_r', 'v_S16_c_i', 'v_S16_n_r', 'v_S16_n_i', 'v_S17_a_r', 'v_S17_a_i', 'v_S17_b_r', 'v_S17_b_i', 'v_S17_c_r', 'v_S17_c_i', 'v_S17_n_r', 'v_S17_n_i', 'v_S18_a_r', 'v_S18_a_i', 'v_S18_b_r', 'v_S18_b_i', 'v_S18_c_r', 'v_S18_c_i', 'v_S18_n_r', 'v_S18_n_i', 'v_H02_a_r', 'v_H02_a_i', 'v_H02_b_r', 'v_H02_b_i', 'v_H02_c_r', 'v_H02_c_i', 'v_H02_n_r', 'v_H02_n_i', 'v_D11_a_r', 'v_D11_a_i', 'v_D11_b_r', 'v_D11_b_i', 'v_D11_c_r', 'v_D11_c_i', 'v_D11_n_r', 'v_D11_n_i', 'v_D12_a_r', 'v_D12_a_i', 'v_D12_b_r', 'v_D12_b_i', 'v_D12_c_r', 'v_D12_c_i', 'v_D12_n_r', 'v_D12_n_i', 'v_D17_a_r', 'v_D17_a_i', 'v_D17_b_r', 'v_D17_b_i', 'v_D17_c_r', 'v_D17_c_i', 'v_D17_n_r', 'v_D17_n_i', 'v_D20_a_r', 'v_D20_a_i', 'v_D20_b_r', 'v_D20_b_i', 'v_D20_c_r', 'v_D20_c_i', 'v_D20_n_r', 'v_D20_n_i', 'v_I01_a_r', 'v_I01_a_i', 'v_I01_b_r', 'v_I01_b_i', 'v_I01_c_r', 'v_I01_c_i', 'v_I01_n_r', 'v_I01_n_i', 'v_R02_a_r', 'v_R02_a_i', 'v_R02_b_r', 'v_R02_b_i', 'v_R02_c_r', 'v_R02_c_i', 'v_R02_n_r', 'v_R02_n_i', 'v_R03_a_r', 'v_R03_a_i', 'v_R03_b_r', 'v_R03_b_i', 'v_R03_c_r', 'v_R03_c_i', 'v_R03_n_r', 'v_R03_n_i', 'v_R04_a_r', 'v_R04_a_i', 'v_R04_b_r', 'v_R04_b_i', 'v_R04_c_r', 'v_R04_c_i', 'v_R04_n_r', 'v_R04_n_i', 'v_R05_a_r', 'v_R05_a_i', 'v_R05_b_r', 'v_R05_b_i', 'v_R05_c_r', 'v_R05_c_i', 'v_R05_n_r', 'v_R05_n_i', 'v_R06_a_r', 'v_R06_a_i', 'v_R06_b_r', 'v_R06_b_i', 'v_R06_c_r', 'v_R06_c_i', 'v_R06_n_r', 'v_R06_n_i', 'v_R07_a_r', 'v_R07_a_i', 'v_R07_b_r', 'v_R07_b_i', 'v_R07_c_r', 'v_R07_c_i', 'v_R07_n_r', 'v_R07_n_i', 'v_R08_a_r', 'v_R08_a_i', 'v_R08_b_r', 'v_R08_b_i', 'v_R08_c_r', 'v_R08_c_i', 'v_R08_n_r', 'v_R08_n_i', 'v_R09_a_r', 'v_R09_a_i', 'v_R09_b_r', 'v_R09_b_i', 'v_R09_c_r', 'v_R09_c_i', 'v_R09_n_r', 'v_R09_n_i', 'v_R10_a_r', 'v_R10_a_i', 'v_R10_b_r', 'v_R10_b_i', 'v_R10_c_r', 'v_R10_c_i', 'v_R10_n_r', 'v_R10_n_i', 'v_R12_a_r', 'v_R12_a_i', 'v_R12_b_r', 'v_R12_b_i', 'v_R12_c_r', 'v_R12_c_i', 'v_R12_n_r', 'v_R12_n_i', 'v_R13_a_r', 'v_R13_a_i', 'v_R13_b_r', 'v_R13_b_i', 'v_R13_c_r', 'v_R13_c_i', 'v_R13_n_r', 'v_R13_n_i', 'v_R14_a_r', 'v_R14_a_i', 'v_R14_b_r', 'v_R14_b_i', 'v_R14_c_r', 'v_R14_c_i', 'v_R14_n_r', 'v_R14_n_i', 'v_C02_a_r', 'v_C02_a_i', 'v_C02_b_r', 'v_C02_b_i', 'v_C02_c_r', 'v_C02_c_i', 'v_C02_n_r', 'v_C02_n_i', 'v_C03_a_r', 'v_C03_a_i', 'v_C03_b_r', 'v_C03_b_i', 'v_C03_c_r', 'v_C03_c_i', 'v_C03_n_r', 'v_C03_n_i', 'v_C04_a_r', 'v_C04_a_i', 'v_C04_b_r', 'v_C04_b_i', 'v_C04_c_r', 'v_C04_c_i', 'v_C04_n_r', 'v_C04_n_i', 'v_C05_a_r', 'v_C05_a_i', 'v_C05_b_r', 'v_C05_b_i', 'v_C05_c_r', 'v_C05_c_i', 'v_C05_n_r', 'v_C05_n_i', 'v_C06_a_r', 'v_C06_a_i', 'v_C06_b_r', 'v_C06_b_i', 'v_C06_c_r', 'v_C06_c_i', 'v_C06_n_r', 'v_C06_n_i', 'v_C07_a_r', 'v_C07_a_i', 'v_C07_b_r', 'v_C07_b_i', 'v_C07_c_r', 'v_C07_c_i', 'v_C07_n_r', 'v_C07_n_i', 'v_C08_a_r', 'v_C08_a_i', 'v_C08_b_r', 'v_C08_b_i', 'v_C08_c_r', 'v_C08_c_i', 'v_C08_n_r', 'v_C08_n_i', 'v_C09_a_r', 'v_C09_a_i', 'v_C09_b_r', 'v_C09_b_i', 'v_C09_c_r', 'v_C09_c_i', 'v_C09_n_r', 'v_C09_n_i', 'v_C10_a_r', 'v_C10_a_i', 'v_C10_b_r', 'v_C10_b_i', 'v_C10_c_r', 'v_C10_c_i', 'v_C10_n_r', 'v_C10_n_i', 'v_C11_a_r', 'v_C11_a_i', 'v_C11_b_r', 'v_C11_b_i', 'v_C11_c_r', 'v_C11_c_i', 'v_C11_n_r', 'v_C11_n_i', 'v_C15_a_r', 'v_C15_a_i', 'v_C15_b_r', 'v_C15_b_i', 'v_C15_c_r', 'v_C15_c_i', 'v_C15_n_r', 'v_C15_n_i', 'v_C16_a_r', 'v_C16_a_i', 'v_C16_b_r', 'v_C16_b_i', 'v_C16_c_r', 'v_C16_c_i', 'v_C16_n_r', 'v_C16_n_i', 'v_S01_a_r', 'v_S01_a_i', 'v_S01_b_r', 'v_S01_b_i', 'v_S01_c_r', 'v_S01_c_i', 'v_S01_n_r', 'v_S01_n_i', 'v_S03_a_r', 'v_S03_a_i', 'v_S03_b_r', 'v_S03_b_i', 'v_S03_c_r', 'v_S03_c_i', 'v_S03_n_r', 'v_S03_n_i', 'v_S04_a_r', 'v_S04_a_i', 'v_S04_b_r', 'v_S04_b_i', 'v_S04_c_r', 'v_S04_c_i', 'v_S04_n_r', 'v_S04_n_i', 'v_S06_a_r', 'v_S06_a_i', 'v_S06_b_r', 'v_S06_b_i', 'v_S06_c_r', 'v_S06_c_i', 'v_S06_n_r', 'v_S06_n_i', 'v_S07_a_r', 'v_S07_a_i', 'v_S07_b_r', 'v_S07_b_i', 'v_S07_c_r', 'v_S07_c_i', 'v_S07_n_r', 'v_S07_n_i', 'v_S09_a_r', 'v_S09_a_i', 'v_S09_b_r', 'v_S09_b_i', 'v_S09_c_r', 'v_S09_c_i', 'v_S09_n_r', 'v_S09_n_i', 'v_S10_a_r', 'v_S10_a_i', 'v_S10_b_r', 'v_S10_b_i', 'v_S10_c_r', 'v_S10_c_i', 'v_S10_n_r', 'v_S10_n_i', 'v_S14_a_r', 'v_S14_a_i', 'v_S14_b_r', 'v_S14_b_i', 'v_S14_c_r', 'v_S14_c_i', 'v_S14_n_r', 'v_S14_n_i', 'v_H01_n_r', 'v_H01_n_i', 'v_D01_a_r', 'v_D01_a_i', 'v_D01_b_r', 'v_D01_b_i', 'v_D01_c_r', 'v_D01_c_i', 'v_D01_n_r', 'v_D01_n_i', 'v_D03_a_r', 'v_D03_a_i', 'v_D03_b_r', 'v_D03_b_i', 'v_D03_c_r', 'v_D03_c_i', 'v_D03_n_r', 'v_D03_n_i', 'v_D05_a_r', 'v_D05_a_i', 'v_D05_b_r', 'v_D05_b_i', 'v_D05_c_r', 'v_D05_c_i', 'v_D05_n_r', 'v_D05_n_i', 'v_D08_a_r', 'v_D08_a_i', 'v_D08_b_r', 'v_D08_b_i', 'v_D08_c_r', 'v_D08_c_i', 'v_D08_n_r', 'v_D08_n_i', 'v_D09_a_r', 'v_D09_a_i', 'v_D09_b_r', 'v_D09_b_i', 'v_D09_c_r', 'v_D09_c_i', 'v_D09_n_r', 'v_D09_n_i', 'v_D16_a_r', 'v_D16_a_i', 'v_D16_b_r', 'v_D16_b_i', 'v_D16_c_r', 'v_D16_c_i', 'v_D16_n_r', 'v_D16_n_i', 'v_D19_a_r', 'v_D19_a_i', 'v_D19_b_r', 'v_D19_b_i', 'v_D19_c_r', 'v_D19_c_i', 'v_D19_n_r', 'v_D19_n_i', 'i_l_S01_S03_a_r', 'i_l_S01_S03_a_i', 'i_l_S01_S03_b_r', 'i_l_S01_S03_b_i', 'i_l_S01_S03_c_r', 'i_l_S01_S03_c_i', 'i_l_S01_S03_n_r', 'i_l_S01_S03_n_i', 'i_l_H01_H02_a_r', 'i_l_H01_H02_a_i', 'i_l_H01_H02_b_r', 'i_l_H01_H02_b_i', 'i_l_H01_H02_c_r', 'i_l_H01_H02_c_i', 'i_l_H01_H02_n_r', 'i_l_H01_H02_n_i', 'i_l_D01_D03_a_r', 'i_l_D01_D03_a_i', 'i_l_D01_D03_b_r', 'i_l_D01_D03_b_i', 'i_l_D01_D03_c_r', 'i_l_D01_D03_c_i', 'i_l_D01_D03_n_r', 'i_l_D01_D03_n_i', 'i_load_R01_a_r', 'i_load_R01_a_i', 'i_load_R01_b_r', 'i_load_R01_b_i', 'i_load_R01_c_r', 'i_load_R01_c_i', 'i_load_R01_n_r', 'i_load_R01_n_i', 'i_load_R11_a_r', 'i_load_R11_a_i', 'i_load_R11_b_r', 'i_load_R11_b_i', 'i_load_R11_c_r', 'i_load_R11_c_i', 'i_load_R11_n_r', 'i_load_R11_n_i', 'i_load_R15_a_r', 'i_load_R15_a_i', 'i_load_R15_b_r', 'i_load_R15_b_i', 'i_load_R15_c_r', 'i_load_R15_c_i', 'i_load_R15_n_r', 'i_load_R15_n_i', 'i_load_R16_a_r', 'i_load_R16_a_i', 'i_load_R16_b_r', 'i_load_R16_b_i', 'i_load_R16_c_r', 'i_load_R16_c_i', 'i_load_R16_n_r', 'i_load_R16_n_i', 'i_load_R17_a_r', 'i_load_R17_a_i', 'i_load_R17_b_r', 'i_load_R17_b_i', 'i_load_R17_c_r', 'i_load_R17_c_i', 'i_load_R17_n_r', 'i_load_R17_n_i', 'i_load_R18_a_r', 'i_load_R18_a_i', 'i_load_R18_b_r', 'i_load_R18_b_i', 'i_load_R18_c_r', 'i_load_R18_c_i', 'i_load_R18_n_r', 'i_load_R18_n_i', 'i_load_I02_a_r', 'i_load_I02_a_i', 'i_load_I02_b_r', 'i_load_I02_b_i', 'i_load_I02_c_r', 'i_load_I02_c_i', 'i_load_I02_n_r', 'i_load_I02_n_i', 'i_load_C01_a_r', 'i_load_C01_a_i', 'i_load_C01_b_r', 'i_load_C01_b_i', 'i_load_C01_c_r', 'i_load_C01_c_i', 'i_load_C01_n_r', 'i_load_C01_n_i', 'i_load_C12_a_r', 'i_load_C12_a_i', 'i_load_C12_b_r', 'i_load_C12_b_i', 'i_load_C12_c_r', 'i_load_C12_c_i', 'i_load_C12_n_r', 'i_load_C12_n_i', 'i_load_C13_a_r', 'i_load_C13_a_i', 'i_load_C13_b_r', 'i_load_C13_b_i', 'i_load_C13_c_r', 'i_load_C13_c_i', 'i_load_C13_n_r', 'i_load_C13_n_i', 'i_load_C14_a_r', 'i_load_C14_a_i', 'i_load_C14_b_r', 'i_load_C14_b_i', 'i_load_C14_c_r', 'i_load_C14_c_i', 'i_load_C14_n_r', 'i_load_C14_n_i', 'i_load_C17_a_r', 'i_load_C17_a_i', 'i_load_C17_b_r', 'i_load_C17_b_i', 'i_load_C17_c_r', 'i_load_C17_c_i', 'i_load_C17_n_r', 'i_load_C17_n_i', 'i_load_C18_a_r', 'i_load_C18_a_i', 'i_load_C18_b_r', 'i_load_C18_b_i', 'i_load_C18_c_r', 'i_load_C18_c_i', 'i_load_C18_n_r', 'i_load_C18_n_i', 'i_load_C19_a_r', 'i_load_C19_a_i', 'i_load_C19_b_r', 'i_load_C19_b_i', 'i_load_C19_c_r', 'i_load_C19_c_i', 'i_load_C19_n_r', 'i_load_C19_n_i', 'i_load_C20_a_r', 'i_load_C20_a_i', 'i_load_C20_b_r', 'i_load_C20_b_i', 'i_load_C20_c_r', 'i_load_C20_c_i', 'i_load_C20_n_r', 'i_load_C20_n_i', 'i_load_S15_a_r', 'i_load_S15_a_i', 'i_load_S15_b_r', 'i_load_S15_b_i', 'i_load_S15_c_r', 'i_load_S15_c_i', 'i_load_S15_n_r', 'i_load_S15_n_i', 'i_load_S11_a_r', 'i_load_S11_a_i', 'i_load_S11_b_r', 'i_load_S11_b_i', 'i_load_S11_c_r', 'i_load_S11_c_i', 'i_load_S11_n_r', 'i_load_S11_n_i', 'i_load_S16_a_r', 'i_load_S16_a_i', 'i_load_S16_b_r', 'i_load_S16_b_i', 'i_load_S16_c_r', 'i_load_S16_c_i', 'i_load_S16_n_r', 'i_load_S16_n_i', 'i_load_S17_a_r', 'i_load_S17_a_i', 'i_load_S17_b_r', 'i_load_S17_b_i', 'i_load_S17_c_r', 'i_load_S17_c_i', 'i_load_S17_n_r', 'i_load_S17_n_i', 'i_load_S18_a_r', 'i_load_S18_a_i', 'i_load_S18_b_r', 'i_load_S18_b_i', 'i_load_S18_c_r', 'i_load_S18_c_i', 'i_load_S18_n_r', 'i_load_S18_n_i', 'i_load_H02_a_r', 'i_load_H02_a_i', 'i_load_H02_b_r', 'i_load_H02_b_i', 'i_load_H02_c_r', 'i_load_H02_c_i', 'i_load_H02_n_r', 'i_load_H02_n_i', 'i_load_D11_a_r', 'i_load_D11_a_i', 'i_load_D11_b_r', 'i_load_D11_b_i', 'i_load_D11_c_r', 'i_load_D11_c_i', 'i_load_D11_n_r', 'i_load_D11_n_i', 'i_load_D12_a_r', 'i_load_D12_a_i', 'i_load_D12_b_r', 'i_load_D12_b_i', 'i_load_D12_c_r', 'i_load_D12_c_i', 'i_load_D12_n_r', 'i_load_D12_n_i', 'i_load_D17_a_r', 'i_load_D17_a_i', 'i_load_D17_b_r', 'i_load_D17_b_i', 'i_load_D17_c_r', 'i_load_D17_c_i', 'i_load_D17_n_r', 'i_load_D17_n_i', 'i_load_D20_a_r', 'i_load_D20_a_i', 'i_load_D20_b_r', 'i_load_D20_b_i', 'i_load_D20_c_r', 'i_load_D20_c_i', 'i_load_D20_n_r', 'i_load_D20_n_i', 'i_vsc_R01_a_r', 'i_vsc_R01_a_i', 'i_vsc_R01_b_r', 'i_vsc_R01_b_i', 'i_vsc_R01_c_r', 'i_vsc_R01_c_i', 'i_vsc_R01_n_r', 'i_vsc_R01_n_i', 'i_vsc_S01_a_r', 'i_vsc_S01_n_r', 'p_vsc_S01', 'p_vsc_loss_R01', 'i_vsc_R10_a_r', 'i_vsc_R10_a_i', 'i_vsc_R10_b_r', 'i_vsc_R10_b_i', 'i_vsc_R10_c_r', 'i_vsc_R10_c_i', 'i_vsc_R10_n_r', 'i_vsc_R10_n_i', 'i_vsc_S10_a_r', 'i_vsc_S10_n_r', 'p_vsc_S10', 'p_vsc_loss_R10', 'i_vsc_R14_a_r', 'i_vsc_R14_a_i', 'i_vsc_R14_b_r', 'i_vsc_R14_b_i', 'i_vsc_R14_c_r', 'i_vsc_R14_c_i', 'i_vsc_R14_n_r', 'i_vsc_R14_n_i', 'i_vsc_S14_a_r', 'i_vsc_S14_n_r', 'p_vsc_S14', 'p_vsc_loss_R14', 'p_a_d_I01', 'p_b_d_I01', 'p_c_d_I01', 'p_n_d_I01', 'i_vsc_I01_a_r', 'i_vsc_I01_a_i', 'i_vsc_I01_b_r', 'i_vsc_I01_b_i', 'i_vsc_I01_c_r', 'i_vsc_I01_c_i', 'i_vsc_I01_n_r', 'i_vsc_I01_n_i', 'i_dc_H01', 'p_vsc_H01', 'i_vsc_I02_a_r', 'i_vsc_I02_a_i', 'i_vsc_I02_b_r', 'i_vsc_I02_b_i', 'i_vsc_I02_c_r', 'i_vsc_I02_c_i', 'i_vsc_I02_n_r', 'i_vsc_I02_n_i', 'i_vsc_H02_a_r', 'i_vsc_H02_n_r', 'p_vsc_H02', 'p_vsc_loss_I02', 'i_vsc_C01_a_r', 'i_vsc_C01_a_i', 'i_vsc_C01_b_r', 'i_vsc_C01_b_i', 'i_vsc_C01_c_r', 'i_vsc_C01_c_i', 'i_vsc_C01_n_r', 'i_vsc_C01_n_i', 'i_vsc_D01_a_r', 'i_vsc_D01_n_r', 'p_vsc_D01', 'p_vsc_loss_C01', 'i_vsc_C09_a_r', 'i_vsc_C09_a_i', 'i_vsc_C09_b_r', 'i_vsc_C09_b_i', 'i_vsc_C09_c_r', 'i_vsc_C09_c_i', 'i_vsc_C09_n_r', 'i_vsc_C09_n_i', 'i_vsc_D09_a_r', 'i_vsc_D09_n_r', 'p_vsc_D09', 'p_vsc_loss_C09', 'i_vsc_C11_a_r', 'i_vsc_C11_a_i', 'i_vsc_C11_b_r', 'i_vsc_C11_b_i', 'i_vsc_C11_c_r', 'i_vsc_C11_c_i', 'i_vsc_C11_n_r', 'i_vsc_C11_n_i', 'i_vsc_D11_a_r', 'i_vsc_D11_n_r', 'p_vsc_D11', 'p_vsc_loss_C11', 'i_vsc_C16_a_r', 'i_vsc_C16_a_i', 'i_vsc_C16_b_r', 'i_vsc_C16_b_i', 'i_vsc_C16_c_r', 'i_vsc_C16_c_i', 'i_vsc_C16_n_r', 'i_vsc_C16_n_i', 'i_vsc_D16_a_r', 'i_vsc_D16_n_r', 'p_vsc_D16', 'p_vsc_loss_C16'] 
@@ -130,7 +140,14 @@ class cigre_eu_lv_acdc_class:
         self.sp_jac_ini_ia, self.sp_jac_ini_ja, self.sp_jac_ini_nia, self.sp_jac_ini_nja = sp_jac_ini_vectors()
         data = np.array(self.sp_jac_ini_ia,dtype=np.float64)
         #self.sp_jac_ini = sspa.csr_matrix((data, self.sp_jac_ini_ia, self.sp_jac_ini_ja), shape=(self.sp_jac_ini_nia,self.sp_jac_ini_nja))
-        self.sp_jac_ini = sspa.load_npz('cigre_eu_lv_acdc_sp_jac_ini_num.npz')
+           
+        if self.dae_file_mode == 'enviroment':
+            fobj = BytesIO(pkgutil.get_data(__name__, './cigre_eu_lv_acdc_sp_jac_ini_num.npz'))
+            self.sp_jac_ini = sspa.load_npz(fobj)
+        else:
+            self.sp_jac_ini = sspa.load_npz('./cigre_eu_lv_acdc_sp_jac_ini_num.npz')
+            
+            
         self.jac_ini = self.sp_jac_ini.toarray()
 
         #self.J_ini_d = np.array(self.sp_jac_ini_ia)*0.0
@@ -145,10 +162,14 @@ class cigre_eu_lv_acdc_class:
         self.jac_run = np.zeros((self.N_x+self.N_y,self.N_x+self.N_y))
         self.sp_jac_run_ia, self.sp_jac_run_ja, self.sp_jac_run_nia, self.sp_jac_run_nja = sp_jac_run_vectors()
         data = np.array(self.sp_jac_run_ia,dtype=np.float64)
-        #self.sp_jac_run = sspa.csr_matrix((data, self.sp_jac_run_ia, self.sp_jac_run_ja), shape=(self.sp_jac_run_nia,self.sp_jac_run_nja))
-        self.sp_jac_run = sspa.load_npz('cigre_eu_lv_acdc_sp_jac_run_num.npz')
-        self.jac_run = self.sp_jac_run.toarray()
 
+        if self.dae_file_mode == 'enviroment':
+            fobj = BytesIO(pkgutil.get_data(__name__, './cigre_eu_lv_acdc_sp_jac_run_num.npz'))
+            self.sp_jac_run = sspa.load_npz(fobj)
+        else:
+            self.sp_jac_run = sspa.load_npz('./cigre_eu_lv_acdc_sp_jac_run_num.npz')
+        self.jac_run = self.sp_jac_run.toarray()            
+           
         self.J_run_d = np.array(self.sp_jac_run_ia)*0.0
         self.J_run_i = np.array(self.sp_jac_run_ia)
         self.J_run_p = np.array(self.sp_jac_run_ja)
@@ -160,7 +181,16 @@ class cigre_eu_lv_acdc_class:
         self.sp_jac_trap_ia, self.sp_jac_trap_ja, self.sp_jac_trap_nia, self.sp_jac_trap_nja = sp_jac_trap_vectors()
         data = np.array(self.sp_jac_trap_ia,dtype=np.float64)
         #self.sp_jac_trap = sspa.csr_matrix((data, self.sp_jac_trap_ia, self.sp_jac_trap_ja), shape=(self.sp_jac_trap_nia,self.sp_jac_trap_nja))
-        self.sp_jac_trap = sspa.load_npz('cigre_eu_lv_acdc_sp_jac_trap_num.npz')
+       
+    
+
+        if self.dae_file_mode == 'enviroment':
+            fobj = BytesIO(pkgutil.get_data(__name__, './cigre_eu_lv_acdc_sp_jac_trap_num.npz'))
+            self.sp_jac_trap = sspa.load_npz(fobj)
+        else:
+            self.sp_jac_trap = sspa.load_npz('./cigre_eu_lv_acdc_sp_jac_trap_num.npz')
+            
+
         self.jac_trap = self.sp_jac_trap.toarray()
         
         #self.J_trap_d = np.array(self.sp_jac_trap_ia)*0.0
@@ -175,16 +205,16 @@ class cigre_eu_lv_acdc_class:
 
         
         self.max_it,self.itol,self.store = 50,1e-8,1 
-        self.lmax_it,self.ltol,self.ldamp=50,1e-8,1.0
+        self.lmax_it,self.ltol,self.ldamp= 50,1e-8,1.0
         self.mode = 0 
 
         self.lmax_it_ini,self.ltol_ini,self.ldamp_ini=50,1e-8,1.0
 
-        self.sp_Fu_run = sspa.load_npz('cigre_eu_lv_acdc_Fu_run_num.npz')
-        self.sp_Gu_run = sspa.load_npz('cigre_eu_lv_acdc_Gu_run_num.npz')
-        self.sp_Hx_run = sspa.load_npz('cigre_eu_lv_acdc_Hx_run_num.npz')
-        self.sp_Hy_run = sspa.load_npz('cigre_eu_lv_acdc_Hy_run_num.npz')
-        self.sp_Hu_run = sspa.load_npz('cigre_eu_lv_acdc_Hu_run_num.npz')        
+        self.sp_Fu_run = sspa.load_npz('./cigre_eu_lv_acdc_Fu_run_num.npz')
+        self.sp_Gu_run = sspa.load_npz('./cigre_eu_lv_acdc_Gu_run_num.npz')
+        self.sp_Hx_run = sspa.load_npz('./cigre_eu_lv_acdc_Hx_run_num.npz')
+        self.sp_Hy_run = sspa.load_npz('./cigre_eu_lv_acdc_Hy_run_num.npz')
+        self.sp_Hu_run = sspa.load_npz('./cigre_eu_lv_acdc_Hu_run_num.npz')        
  
         
 
@@ -231,8 +261,9 @@ class cigre_eu_lv_acdc_class:
         it_store = self.it_store
         xy = self.xy
         u = self.u_run
+        z = self.z
         
-        t,it,it_store,xy = daesolver(t,t_end,it,it_store,xy,u,p,
+        t,it,it_store,xy = daesolver(t,t_end,it,it_store,xy,u,p,z,
                                   self.jac_trap,
                                   self.Time,
                                   self.X,
@@ -250,6 +281,7 @@ class cigre_eu_lv_acdc_class:
         self.it = it
         self.it_store = it_store
         self.xy = xy
+        self.z = z
  
     def runsp(self,t_end,up_dict):
         for item in up_dict:
@@ -595,9 +627,10 @@ class cigre_eu_lv_acdc_class:
         it_store = self.it_store
         xy = self.xy
         u = self.u_run
+        z = self.z
         self.iparams_run = np.zeros(10,dtype=np.float64)
     
-        t,it,it_store,xy = spdaesolver(t,t_end,it,it_store,xy,u,p,
+        t,it,it_store,xy = spdaesolver(t,t_end,it,it_store,xy,u,p,z,
                                   self.sp_jac_trap.data,self.sp_jac_trap.indices,self.sp_jac_trap.indptr,
                                   self.P_trap_d,self.P_trap_i,self.P_trap_p,self.perm_trap_r,self.perm_trap_c,
                                   self.Time,
@@ -618,6 +651,8 @@ class cigre_eu_lv_acdc_class:
         self.it = it
         self.it_store = it_store
         self.xy = xy
+        self.z = z
+
             
     def spini(self,up_dict,xy_0={}):
     
@@ -714,11 +749,120 @@ class cigre_eu_lv_acdc_class:
 
         #((sspa.linalg.spsolve(s.sp_jac_ini,-Hxy_run)) @ FGu_run + sp_Hu_run )@s.u_ini
 
-        self.jac_u2z = Hxy_run @ sspa.linalg.spsolve(self.sp_jac_run,-FGu_run) + self.sp_Hu_run        
+        self.jac_u2z = Hxy_run @ sspa.linalg.spsolve(self.sp_jac_run,-FGu_run) + self.sp_Hu_run  
+        
+        
+    def step(self,t_end,up_dict):
+        for item in up_dict:
+            self.set_value(item,up_dict[item])
 
+        t = self.t
+        p = self.p
+        it = self.it
+        it_store = self.it_store
+        xy = self.xy
+        u = self.u_run
+        z = self.z
+
+        t,it,xy = daestep(t,t_end,it,
+                          xy,u,p,z,
+                          self.jac_trap,
+                          self.iters,
+                          self.Dt,
+                          self.N_x,
+                          self.N_y,
+                          self.N_z,
+                          max_it=self.max_it,itol=self.itol,store=self.store)
+
+        self.t = t
+        self.it = it
+        self.it_store = it_store
+        self.xy = xy
+        self.z = z
            
             
 
+
+@numba.njit() 
+def daestep(t,t_end,it,xy,u,p,z,jac_trap,iters,Dt,N_x,N_y,N_z,max_it=50,itol=1e-8,store=1): 
+
+
+    fg = np.zeros((N_x+N_y,1),dtype=np.float64)
+    fg_i = np.zeros((N_x+N_y),dtype=np.float64)
+    x = xy[:N_x]
+    y = xy[N_x:]
+    fg = np.zeros((N_x+N_y,),dtype=np.float64)
+    f = fg[:N_x]
+    g = fg[N_x:]
+    #h = np.zeros((N_z),dtype=np.float64)
+    
+    f_ptr=ffi.from_buffer(np.ascontiguousarray(f))
+    g_ptr=ffi.from_buffer(np.ascontiguousarray(g))
+    z_ptr=ffi.from_buffer(np.ascontiguousarray(z))
+    x_ptr=ffi.from_buffer(np.ascontiguousarray(x))
+    y_ptr=ffi.from_buffer(np.ascontiguousarray(y))
+    u_ptr=ffi.from_buffer(np.ascontiguousarray(u))
+    p_ptr=ffi.from_buffer(np.ascontiguousarray(p))
+
+    jac_trap_ptr=ffi.from_buffer(np.ascontiguousarray(jac_trap))
+    
+    #de_jac_trap_num_eval(jac_trap_ptr,x_ptr,y_ptr,u_ptr,p_ptr,Dt)    
+    de_jac_trap_up_eval(jac_trap_ptr,x_ptr,y_ptr,u_ptr,p_ptr,Dt) 
+    de_jac_trap_xy_eval(jac_trap_ptr,x_ptr,y_ptr,u_ptr,p_ptr,Dt) 
+    
+    if it == 0:
+        f_run_eval(f_ptr,x_ptr,y_ptr,u_ptr,p_ptr,Dt)
+        g_run_eval(g_ptr,x_ptr,y_ptr,u_ptr,p_ptr,Dt)
+        h_eval(z_ptr,x_ptr,y_ptr,u_ptr,p_ptr,Dt)
+        it_store = 0  
+
+    while t<t_end: 
+        it += 1
+        t += Dt
+
+        f_run_eval(f_ptr,x_ptr,y_ptr,u_ptr,p_ptr,Dt)
+        g_run_eval(g_ptr,x_ptr,y_ptr,u_ptr,p_ptr,Dt)
+
+        x_0 = np.copy(x) 
+        y_0 = np.copy(y) 
+        f_0 = np.copy(f) 
+        g_0 = np.copy(g) 
+            
+        for iti in range(max_it):
+            f_run_eval(f_ptr,x_ptr,y_ptr,u_ptr,p_ptr,Dt)
+            g_run_eval(g_ptr,x_ptr,y_ptr,u_ptr,p_ptr,Dt)
+            de_jac_trap_xy_eval(jac_trap_ptr,x_ptr,y_ptr,u_ptr,p_ptr,Dt) 
+
+            f_n_i = x - x_0 - 0.5*Dt*(f+f_0) 
+
+            fg_i[:N_x] = f_n_i
+            fg_i[N_x:] = g
+            
+            Dxy_i = np.linalg.solve(-jac_trap,fg_i) 
+
+            x += Dxy_i[:N_x]
+            y += Dxy_i[N_x:] 
+            
+            #print(Dxy_i)
+
+            # iteration stop
+            max_relative = 0.0
+            for it_var in range(N_x+N_y):
+                abs_value = np.abs(xy[it_var])
+                if abs_value < 0.001:
+                    abs_value = 0.001
+                relative_error = np.abs(Dxy_i[it_var])/abs_value
+
+                if relative_error > max_relative: max_relative = relative_error
+
+            if max_relative<itol:
+                break
+                
+        h_eval(z_ptr,x_ptr,y_ptr,u_ptr,p_ptr,Dt)
+        xy[:N_x] = x
+        xy[N_x:] = y
+        
+    return t,it,xy
 
 
 def daesolver_sp(t,t_end,it,it_store,xy,u,p,sp_jac_trap,T,X,Y,Z,iters,Dt,N_x,N_y,N_z,decimation,max_it=50,itol=1e-8,store=1): 
@@ -873,7 +1017,7 @@ def spsstate(xy,u,p,
 
     
 @numba.njit() 
-def daesolver(t,t_end,it,it_store,xy,u,p,jac_trap,T,X,Y,Z,iters,Dt,N_x,N_y,N_z,decimation,max_it=50,itol=1e-8,store=1): 
+def daesolver(t,t_end,it,it_store,xy,u,p,z,jac_trap,T,X,Y,Z,iters,Dt,N_x,N_y,N_z,decimation,max_it=50,itol=1e-8,store=1): 
 
 
     fg = np.zeros((N_x+N_y,1),dtype=np.float64)
@@ -883,11 +1027,11 @@ def daesolver(t,t_end,it,it_store,xy,u,p,jac_trap,T,X,Y,Z,iters,Dt,N_x,N_y,N_z,d
     fg = np.zeros((N_x+N_y,),dtype=np.float64)
     f = fg[:N_x]
     g = fg[N_x:]
-    h = np.zeros((N_z),dtype=np.float64)
+    #h = np.zeros((N_z),dtype=np.float64)
     
     f_ptr=ffi.from_buffer(np.ascontiguousarray(f))
     g_ptr=ffi.from_buffer(np.ascontiguousarray(g))
-    h_ptr=ffi.from_buffer(np.ascontiguousarray(h))
+    z_ptr=ffi.from_buffer(np.ascontiguousarray(z))
     x_ptr=ffi.from_buffer(np.ascontiguousarray(x))
     y_ptr=ffi.from_buffer(np.ascontiguousarray(y))
     u_ptr=ffi.from_buffer(np.ascontiguousarray(u))
@@ -902,12 +1046,12 @@ def daesolver(t,t_end,it,it_store,xy,u,p,jac_trap,T,X,Y,Z,iters,Dt,N_x,N_y,N_z,d
     if it == 0:
         f_run_eval(f_ptr,x_ptr,y_ptr,u_ptr,p_ptr,Dt)
         g_run_eval(g_ptr,x_ptr,y_ptr,u_ptr,p_ptr,Dt)
-        h_eval(h_ptr,x_ptr,y_ptr,u_ptr,p_ptr,Dt)
+        h_eval(z_ptr,x_ptr,y_ptr,u_ptr,p_ptr,Dt)
         it_store = 0  
         T[0] = t 
         X[0,:] = x  
         Y[0,:] = y  
-        Z[0,:] = h  
+        Z[0,:] = z  
 
     while t<t_end: 
         it += 1
@@ -951,7 +1095,7 @@ def daesolver(t,t_end,it,it_store,xy,u,p,jac_trap,T,X,Y,Z,iters,Dt,N_x,N_y,N_z,d
             if max_relative<itol:
                 break
                 
-        h_eval(h_ptr,x_ptr,y_ptr,u_ptr,p_ptr,Dt)
+        h_eval(z_ptr,x_ptr,y_ptr,u_ptr,p_ptr,Dt)
         xy[:N_x] = x
         xy[N_x:] = y
         
@@ -961,14 +1105,14 @@ def daesolver(t,t_end,it,it_store,xy,u,p,jac_trap,T,X,Y,Z,iters,Dt,N_x,N_y,N_z,d
                 T[it_store+1] = t 
                 X[it_store+1,:] = x 
                 Y[it_store+1,:] = y
-                Z[it_store+1,:] = h
+                Z[it_store+1,:] = z
                 iters[it_store+1] = iti
                 it_store += 1 
 
     return t,it,it_store,xy
     
 @numba.njit() 
-def spdaesolver(t,t_end,it,it_store,xy,u,p,
+def spdaesolver(t,t_end,it,it_store,xy,u,p,z,
                 J_d,J_i,J_p,
                 P_d,P_i,P_p,perm_r,perm_c,
                 T,X,Y,Z,iters,Dt,N_x,N_y,N_z,decimation,
@@ -982,11 +1126,11 @@ def spdaesolver(t,t_end,it,it_store,xy,u,p,
     fg = np.zeros((N_x+N_y,),dtype=np.float64)
     f = fg[:N_x]
     g = fg[N_x:]
-    h = np.zeros((N_z),dtype=np.float64)
+    z = np.zeros((N_z),dtype=np.float64)
     Dxy_i_0 = np.zeros(N_x+N_y,dtype=np.float64) 
     f_ptr=ffi.from_buffer(np.ascontiguousarray(f))
     g_ptr=ffi.from_buffer(np.ascontiguousarray(g))
-    h_ptr=ffi.from_buffer(np.ascontiguousarray(h))
+    z_ptr=ffi.from_buffer(np.ascontiguousarray(z))
     x_ptr=ffi.from_buffer(np.ascontiguousarray(x))
     y_ptr=ffi.from_buffer(np.ascontiguousarray(y))
     u_ptr=ffi.from_buffer(np.ascontiguousarray(u))
@@ -1006,7 +1150,7 @@ def spdaesolver(t,t_end,it,it_store,xy,u,p,
         T[0] = t 
         X[0,:] = x  
         Y[0,:] = y  
-        Z[0,:] = h  
+        Z[0,:] = z 
 
     while t<t_end: 
         it += 1
@@ -1052,7 +1196,7 @@ def spdaesolver(t,t_end,it,it_store,xy,u,p,
             if max_relative<itol:
                 break
                 
-        h_eval(h_ptr,x_ptr,y_ptr,u_ptr,p_ptr,Dt)
+        h_eval(z_ptr,x_ptr,y_ptr,u_ptr,p_ptr,Dt)
         xy[:N_x] = x
         xy[N_x:] = y
         
@@ -1062,7 +1206,7 @@ def spdaesolver(t,t_end,it,it_store,xy,u,p,
                 T[it_store+1] = t 
                 X[it_store+1,:] = x 
                 Y[it_store+1,:] = y
-                Z[it_store+1,:] = h
+                Z[it_store+1,:] = z
                 iters[it_store+1] = iti
                 it_store += 1 
 
