@@ -1,0 +1,15 @@
+# Matplotlib style for IEEE plots
+# This style should work for most two-column journals
+
+# Set color cycle
+# Set line style as well for black and white graphs
+axes.prop_cycle :cycler('color',['d9524f', '5cb85c', '337ab7', 'f0ad4e', '5bc0de','5e4485']) # jmcolo 
+
+# Set default figure size
+figure.figsize : 3.3, 2.5
+figure.dpi : 600
+
+# Font sizes
+font.size : 8
+font.family : serif
+font.serif : Times New Roman

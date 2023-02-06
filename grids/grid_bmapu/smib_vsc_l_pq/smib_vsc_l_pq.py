@@ -89,18 +89,18 @@ class model:
         self.Dt_min = 0.001000 
         self.solvern = 5 
         self.imax = 100 
-        self.N_x = 4
+        self.N_x = 5
         self.N_y = 22 
-        self.N_z = 17 
+        self.N_z = 18 
         self.N_store = 100000 
-        self.params_list = ['S_base', 'g_1_2', 'b_1_2', 'bs_1_2', 'U_1_n', 'U_2_n', 'S_n_1', 'F_n_1', 'X_s_1', 'R_s_1', 'A_l_1', 'B_l_1', 'C_l_1', 'S_n_2', 'F_n_2', 'X_v_2', 'R_v_2', 'K_delta_2', 'K_alpha_2', 'K_p_agc', 'K_i_agc', 'K_xif'] 
-        self.params_values_list  = [100000000.0, 3.846153846153846, -19.23076923076923, -5e-07, 20000.0, 20000.0, 1000000.0, 50.0, 0.1, 0.01, 0.005, 0.005, 0.005, 100000000.0, 50.0, 0.001, 0.0, 0.001, 1e-06, 0.0, 0.0, 0.01] 
-        self.inputs_ini_list = ['P_1', 'Q_1', 'P_2', 'Q_2', 'v_dc_1', 'p_s_ref_1', 'q_s_ref_1', 'i_sd_ref_1', 'i_sq_ref_1', 'alpha_2', 'v_ref_2', 'omega_ref_2', 'delta_ref_2', 'phi_2'] 
-        self.inputs_ini_values_list  = [0.0, 0.0, 0.0, 0.0, 1.2, 0.2, 0.1, 0.2, 0.1, 0, 1.0, 1.0, 0.0, 0.0] 
-        self.inputs_run_list = ['P_1', 'Q_1', 'P_2', 'Q_2', 'v_dc_1', 'p_s_ref_1', 'q_s_ref_1', 'i_sd_ref_1', 'i_sq_ref_1', 'alpha_2', 'v_ref_2', 'omega_ref_2', 'delta_ref_2', 'phi_2'] 
-        self.inputs_run_values_list = [0.0, 0.0, 0.0, 0.0, 1.2, 0.2, 0.1, 0.2, 0.1, 0, 1.0, 1.0, 0.0, 0.0] 
-        self.outputs_list = ['V_1', 'V_2', 'p_line_1_2', 'q_line_1_2', 'p_line_2_1', 'q_line_2_1', 'p_s_1', 'q_s_1', 'i_si_1', 'i_sr_1', 'm_f_1', 'p_ac_1', 'p_dc_1', 'i_d_1', 'm_ref_1', 'theta_t_1', 'alpha_2'] 
-        self.x_list = ['m_f_1', 'delta_2', 'Domega_2', 'xi_freq'] 
+        self.params_list = ['S_base', 'g_1_2', 'b_1_2', 'bs_1_2', 'U_1_n', 'U_2_n', 'S_n_1', 'F_n_1', 'X_s_1', 'R_s_1', 'A_l_1', 'B_l_1', 'C_l_1', 'S_n_2', 'F_n_2', 'X_v_2', 'R_v_2', 'K_delta_2', 'K_alpha_2', 'K_rocov_2', 'K_p_agc', 'K_i_agc', 'K_xif'] 
+        self.params_values_list  = [100000000.0, 3.846153846153846, -19.23076923076923, -5e-07, 20000.0, 20000.0, 10000000.0, 50.0, 0.1, 0.01, 0.005, 0.005, 0.005, 100000000.0, 50.0, 0.001, 0.0, 0.001, 1e-06, 1e-06, 0.0, 0.0, 0.01] 
+        self.inputs_ini_list = ['P_1', 'Q_1', 'P_2', 'Q_2', 'v_dc_1', 'p_s_ref_1', 'q_s_ref_1', 'i_sd_ref_1', 'i_sq_ref_1', 'alpha_2', 'v_ref_2', 'omega_ref_2', 'delta_ref_2', 'phi_2', 'rocov_2'] 
+        self.inputs_ini_values_list  = [0.0, 0.0, 0.0, 0.0, 1.2, 0.2, 0.1, 0.2, 0.1, 0, 1.0, 1.0, 0.0, 0.0, 0.0] 
+        self.inputs_run_list = ['P_1', 'Q_1', 'P_2', 'Q_2', 'v_dc_1', 'p_s_ref_1', 'q_s_ref_1', 'i_sd_ref_1', 'i_sq_ref_1', 'alpha_2', 'v_ref_2', 'omega_ref_2', 'delta_ref_2', 'phi_2', 'rocov_2'] 
+        self.inputs_run_values_list = [0.0, 0.0, 0.0, 0.0, 1.2, 0.2, 0.1, 0.2, 0.1, 0, 1.0, 1.0, 0.0, 0.0, 0.0] 
+        self.outputs_list = ['V_1', 'V_2', 'p_line_1_2', 'q_line_1_2', 'p_line_2_1', 'q_line_2_1', 'p_s_1', 'q_s_1', 'i_si_1', 'i_sr_1', 'm_f_1', 'p_ac_1', 'p_dc_1', 'i_d_1', 'm_ref_1', 'theta_t_1', 'alpha_2', 'Dv_2'] 
+        self.x_list = ['m_f_1', 'delta_2', 'Domega_2', 'Dv_2', 'xi_freq'] 
         self.y_run_list = ['V_1', 'theta_1', 'V_2', 'theta_2', 'i_si_1', 'i_sr_1', 'p_s_1', 'q_s_1', 'p_dc_1', 'i_sd_ref_1', 'i_sq_ref_1', 'v_td_ref_1', 'v_tq_ref_1', 'm_1', 'theta_t_1', 'omega_2', 'i_d_2', 'i_q_2', 'p_s_2', 'q_s_2', 'omega_coi', 'p_agc'] 
         self.xy_list = self.x_list + self.y_run_list 
         self.y_ini_list = ['V_1', 'theta_1', 'V_2', 'theta_2', 'i_si_1', 'i_sr_1', 'p_s_1', 'q_s_1', 'p_dc_1', 'i_sd_ref_1', 'i_sq_ref_1', 'v_td_ref_1', 'v_tq_ref_1', 'm_1', 'theta_t_1', 'omega_2', 'i_d_2', 'i_q_2', 'p_s_2', 'q_s_2', 'omega_coi', 'p_agc'] 
@@ -1611,6 +1611,7 @@ def sp_jac_run_eval(sp_jac_run,x,y,u,p,Dt):
     u_c_ptr=ffi.from_buffer(np.ascontiguousarray(u))
     p_c_ptr=ffi.from_buffer(np.ascontiguousarray(p))
 
+    sp_jac_run_num_eval( sp_jac_run_ptr,x_c_ptr,y_c_ptr,u_c_ptr,p_c_ptr,Dt)
     sp_jac_run_up_eval( sp_jac_run_ptr,x_c_ptr,y_c_ptr,u_c_ptr,p_c_ptr,Dt)
     sp_jac_run_xy_eval( sp_jac_run_ptr,x_c_ptr,y_c_ptr,u_c_ptr,p_c_ptr,Dt)
     
@@ -1920,24 +1921,24 @@ def sp_H_jacs_run_eval(H_x,H_y,H_u,x,y,u,p,Dt):
 
 def sp_jac_ini_vectors():
 
-    sp_jac_ini_ia = [0, 17, 1, 19, 24, 2, 3, 24, 4, 5, 6, 7, 10, 4, 5, 6, 7, 11, 4, 5, 6, 7, 22, 4, 5, 6, 7, 23, 4, 5, 8, 9, 17, 18, 4, 5, 8, 9, 17, 18, 4, 5, 8, 9, 10, 4, 5, 8, 9, 11, 8, 9, 10, 12, 4, 14, 4, 13, 13, 14, 15, 4, 13, 14, 16, 5, 15, 16, 17, 5, 15, 16, 18, 2, 19, 1, 6, 7, 20, 21, 1, 6, 7, 20, 21, 1, 6, 7, 20, 21, 22, 1, 6, 7, 20, 21, 23, 19, 24, 3, 24, 25]
-    sp_jac_ini_ja = [0, 2, 5, 6, 8, 13, 18, 23, 28, 34, 40, 45, 50, 54, 56, 58, 61, 65, 69, 73, 75, 80, 85, 91, 97, 99, 102]
-    sp_jac_ini_nia = 26
-    sp_jac_ini_nja = 26
+    sp_jac_ini_ia = [0, 18, 1, 20, 25, 2, 3, 4, 25, 5, 6, 7, 8, 11, 5, 6, 7, 8, 12, 5, 6, 7, 8, 23, 5, 6, 7, 8, 24, 5, 6, 9, 10, 18, 19, 5, 6, 9, 10, 18, 19, 5, 6, 9, 10, 11, 5, 6, 9, 10, 12, 9, 10, 11, 13, 5, 15, 5, 14, 14, 15, 16, 5, 14, 15, 17, 6, 16, 17, 18, 6, 16, 17, 19, 2, 20, 1, 7, 8, 21, 22, 1, 3, 7, 8, 21, 22, 1, 7, 8, 21, 22, 23, 1, 7, 8, 21, 22, 24, 20, 25, 4, 25, 26]
+    sp_jac_ini_ja = [0, 2, 5, 6, 7, 9, 14, 19, 24, 29, 35, 41, 46, 51, 55, 57, 59, 62, 66, 70, 74, 76, 81, 87, 93, 99, 101, 104]
+    sp_jac_ini_nia = 27
+    sp_jac_ini_nja = 27
     return sp_jac_ini_ia, sp_jac_ini_ja, sp_jac_ini_nia, sp_jac_ini_nja 
 
 def sp_jac_run_vectors():
 
-    sp_jac_run_ia = [0, 17, 1, 19, 24, 2, 3, 24, 4, 5, 6, 7, 10, 4, 5, 6, 7, 11, 4, 5, 6, 7, 22, 4, 5, 6, 7, 23, 4, 5, 8, 9, 17, 18, 4, 5, 8, 9, 17, 18, 4, 5, 8, 9, 10, 4, 5, 8, 9, 11, 8, 9, 10, 12, 4, 14, 4, 13, 13, 14, 15, 4, 13, 14, 16, 5, 15, 16, 17, 5, 15, 16, 18, 2, 19, 1, 6, 7, 20, 21, 1, 6, 7, 20, 21, 1, 6, 7, 20, 21, 22, 1, 6, 7, 20, 21, 23, 19, 24, 3, 24, 25]
-    sp_jac_run_ja = [0, 2, 5, 6, 8, 13, 18, 23, 28, 34, 40, 45, 50, 54, 56, 58, 61, 65, 69, 73, 75, 80, 85, 91, 97, 99, 102]
-    sp_jac_run_nia = 26
-    sp_jac_run_nja = 26
+    sp_jac_run_ia = [0, 18, 1, 20, 25, 2, 3, 4, 25, 5, 6, 7, 8, 11, 5, 6, 7, 8, 12, 5, 6, 7, 8, 23, 5, 6, 7, 8, 24, 5, 6, 9, 10, 18, 19, 5, 6, 9, 10, 18, 19, 5, 6, 9, 10, 11, 5, 6, 9, 10, 12, 9, 10, 11, 13, 5, 15, 5, 14, 14, 15, 16, 5, 14, 15, 17, 6, 16, 17, 18, 6, 16, 17, 19, 2, 20, 1, 7, 8, 21, 22, 1, 3, 7, 8, 21, 22, 1, 7, 8, 21, 22, 23, 1, 7, 8, 21, 22, 24, 20, 25, 4, 25, 26]
+    sp_jac_run_ja = [0, 2, 5, 6, 7, 9, 14, 19, 24, 29, 35, 41, 46, 51, 55, 57, 59, 62, 66, 70, 74, 76, 81, 87, 93, 99, 101, 104]
+    sp_jac_run_nia = 27
+    sp_jac_run_nja = 27
     return sp_jac_run_ia, sp_jac_run_ja, sp_jac_run_nia, sp_jac_run_nja 
 
 def sp_jac_trap_vectors():
 
-    sp_jac_trap_ia = [0, 17, 1, 19, 24, 2, 3, 24, 4, 5, 6, 7, 10, 4, 5, 6, 7, 11, 4, 5, 6, 7, 22, 4, 5, 6, 7, 23, 4, 5, 8, 9, 17, 18, 4, 5, 8, 9, 17, 18, 4, 5, 8, 9, 10, 4, 5, 8, 9, 11, 8, 9, 10, 12, 4, 14, 4, 13, 13, 14, 15, 4, 13, 14, 16, 5, 15, 16, 17, 5, 15, 16, 18, 2, 19, 1, 6, 7, 20, 21, 1, 6, 7, 20, 21, 1, 6, 7, 20, 21, 22, 1, 6, 7, 20, 21, 23, 19, 24, 3, 24, 25]
-    sp_jac_trap_ja = [0, 2, 5, 6, 8, 13, 18, 23, 28, 34, 40, 45, 50, 54, 56, 58, 61, 65, 69, 73, 75, 80, 85, 91, 97, 99, 102]
-    sp_jac_trap_nia = 26
-    sp_jac_trap_nja = 26
+    sp_jac_trap_ia = [0, 18, 1, 20, 25, 2, 3, 4, 25, 5, 6, 7, 8, 11, 5, 6, 7, 8, 12, 5, 6, 7, 8, 23, 5, 6, 7, 8, 24, 5, 6, 9, 10, 18, 19, 5, 6, 9, 10, 18, 19, 5, 6, 9, 10, 11, 5, 6, 9, 10, 12, 9, 10, 11, 13, 5, 15, 5, 14, 14, 15, 16, 5, 14, 15, 17, 6, 16, 17, 18, 6, 16, 17, 19, 2, 20, 1, 7, 8, 21, 22, 1, 3, 7, 8, 21, 22, 1, 7, 8, 21, 22, 23, 1, 7, 8, 21, 22, 24, 20, 25, 4, 25, 26]
+    sp_jac_trap_ja = [0, 2, 5, 6, 7, 9, 14, 19, 24, 29, 35, 41, 46, 51, 55, 57, 59, 62, 66, 70, 74, 76, 81, 87, 93, 99, 101, 104]
+    sp_jac_trap_nia = 27
+    sp_jac_trap_nja = 27
     return sp_jac_trap_ia, sp_jac_trap_ja, sp_jac_trap_nia, sp_jac_trap_nja 
