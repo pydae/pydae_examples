@@ -6,11 +6,20 @@ from scipy.sparse.linalg import spsolve,spilu,splu
 from numba import cuda
 import cffi
 import numba.core.typing.cffi_utils as cffi_support
+from io import BytesIO
+import pkgutil
+
+dae_file_mode = 'local'
 
 ffi = cffi.FFI()
 
-import grid_3bus4wire_cffi as jacs
-
+if dae_file_mode == 'local':
+    import grid_3bus4wire_cffi as jacs
+if dae_file_mode == 'enviroment':
+    import envus.no_enviroment.grid_3bus4wire_cffi as jacs
+if dae_file_mode == 'colab':
+    import grid_3bus4wire_cffi as jacs
+    
 cffi_support.register_module(jacs)
 f_ini_eval = jacs.lib.f_ini_eval
 g_ini_eval = jacs.lib.g_ini_eval
@@ -42,6 +51,19 @@ sp_jac_trap_xy_eval= jacs.lib.sp_jac_trap_xy_eval
 sp_jac_trap_up_eval= jacs.lib.sp_jac_trap_up_eval        
 sp_jac_trap_num_eval= jacs.lib.sp_jac_trap_num_eval
 
+sp_Fu_run_up_eval = jacs.lib.sp_Fu_run_up_eval
+sp_Gu_run_up_eval = jacs.lib.sp_Gu_run_up_eval
+sp_Hx_run_up_eval = jacs.lib.sp_Hx_run_up_eval
+sp_Hy_run_up_eval = jacs.lib.sp_Hy_run_up_eval
+sp_Hu_run_up_eval = jacs.lib.sp_Hu_run_up_eval
+sp_Fu_run_xy_eval = jacs.lib.sp_Fu_run_xy_eval
+sp_Gu_run_xy_eval = jacs.lib.sp_Gu_run_xy_eval
+sp_Hx_run_xy_eval = jacs.lib.sp_Hx_run_xy_eval
+sp_Hy_run_xy_eval = jacs.lib.sp_Hy_run_xy_eval
+sp_Hu_run_xy_eval = jacs.lib.sp_Hu_run_xy_eval
+
+
+
 import json
 
 sin = np.sin
@@ -52,10 +74,13 @@ sign = np.sign
 exp = np.exp
 
 
-class grid_3bus4wire_class: 
+class model: 
 
     def __init__(self): 
-
+        
+        self.matrices_folder = 'build'
+        
+        self.dae_file_mode = 'local'
         self.t_end = 10.000000 
         self.Dt = 0.0010000 
         self.decimation = 10.000000 
@@ -65,20 +90,20 @@ class grid_3bus4wire_class:
         self.solvern = 5 
         self.imax = 100 
         self.N_x = 1
-        self.N_y = 24 
-        self.N_z = 22 
-        self.N_store = 10000 
-        self.params_list = [] 
-        self.params_values_list  = [] 
-        self.inputs_ini_list = ['v_B1_a_r', 'v_B1_a_i', 'v_B1_b_r', 'v_B1_b_i', 'v_B1_c_r', 'v_B1_c_i', 'i_B3_a_r', 'i_B3_a_i', 'i_B3_b_r', 'i_B3_b_i', 'i_B3_c_r', 'i_B3_c_i', 'i_B3_n_r', 'i_B3_n_i', 'i_B2_a_r', 'i_B2_a_i', 'i_B2_b_r', 'i_B2_b_i', 'i_B2_c_r', 'i_B2_c_i', 'i_B2_n_r', 'i_B2_n_i', 'p_load_B3_a', 'q_load_B3_a', 'p_load_B3_b', 'q_load_B3_b', 'p_load_B3_c', 'q_load_B3_c', 'u_dummy'] 
-        self.inputs_ini_values_list  = [11547.0, 0.0, -5773.499999999997, -9999.995337498915, -5773.5000000000055, 9999.99533749891, -0.0, 0.0, 0.0, -0.0, -0.0, -0.0, 0.0, -0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 84999.99994497238, 52678.26878473126, 85000.00002305994, 52678.26873701247, 85000.00002714703, 52678.26876925182, 1.0] 
-        self.inputs_run_list = ['v_B1_a_r', 'v_B1_a_i', 'v_B1_b_r', 'v_B1_b_i', 'v_B1_c_r', 'v_B1_c_i', 'i_B3_a_r', 'i_B3_a_i', 'i_B3_b_r', 'i_B3_b_i', 'i_B3_c_r', 'i_B3_c_i', 'i_B3_n_r', 'i_B3_n_i', 'i_B2_a_r', 'i_B2_a_i', 'i_B2_b_r', 'i_B2_b_i', 'i_B2_c_r', 'i_B2_c_i', 'i_B2_n_r', 'i_B2_n_i', 'p_load_B3_a', 'q_load_B3_a', 'p_load_B3_b', 'q_load_B3_b', 'p_load_B3_c', 'q_load_B3_c', 'u_dummy'] 
-        self.inputs_run_values_list = [11547.0, 0.0, -5773.499999999997, -9999.995337498915, -5773.5000000000055, 9999.99533749891, -0.0, 0.0, 0.0, -0.0, -0.0, -0.0, 0.0, -0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 84999.99994497238, 52678.26878473126, 85000.00002305994, 52678.26873701247, 85000.00002714703, 52678.26876925182, 1.0] 
-        self.outputs_list = ['i_t_B1_B2_1_a_r', 'i_t_B1_B2_1_a_i', 'i_t_B1_B2_1_b_r', 'i_t_B1_B2_1_b_i', 'i_t_B1_B2_1_c_r', 'i_t_B1_B2_1_c_i', 'i_t_B1_B2_2_a_r', 'i_t_B1_B2_2_a_i', 'i_t_B1_B2_2_b_r', 'i_t_B1_B2_2_b_i', 'i_t_B1_B2_2_c_r', 'i_t_B1_B2_2_c_i', 'i_t_B1_B2_2_n_r', 'i_t_B1_B2_2_n_i', 'i_l_B2_B3_a_r', 'i_l_B2_B3_a_i', 'i_l_B2_B3_b_r', 'i_l_B2_B3_b_i', 'i_l_B2_B3_c_r', 'i_l_B2_B3_c_i', 'i_l_B2_B3_n_r', 'i_l_B2_B3_n_i'] 
-        self.x_list = ['x_dummy'] 
-        self.y_run_list = ['v_B3_a_r', 'v_B3_a_i', 'v_B3_b_r', 'v_B3_b_i', 'v_B3_c_r', 'v_B3_c_i', 'v_B3_n_r', 'v_B3_n_i', 'v_B2_a_r', 'v_B2_a_i', 'v_B2_b_r', 'v_B2_b_i', 'v_B2_c_r', 'v_B2_c_i', 'v_B2_n_r', 'v_B2_n_i', 'i_load_B3_a_r', 'i_load_B3_a_i', 'i_load_B3_b_r', 'i_load_B3_b_i', 'i_load_B3_c_r', 'i_load_B3_c_i', 'i_load_B3_n_r', 'i_load_B3_n_i'] 
+        self.N_y = 38 
+        self.N_z = 29 
+        self.N_store = 100000 
+        self.params_list = ['g_B2_0_B3_0_0', 'b_B2_0_B3_0_0', 'g_B2_0_B3_0_1', 'b_B2_0_B3_0_1', 'g_B2_0_B3_0_2', 'b_B2_0_B3_0_2', 'g_B2_0_B3_0_3', 'b_B2_0_B3_0_3', 'g_B2_1_B3_1_0', 'b_B2_1_B3_1_0', 'g_B2_1_B3_1_1', 'b_B2_1_B3_1_1', 'g_B2_1_B3_1_2', 'b_B2_1_B3_1_2', 'g_B2_1_B3_1_3', 'b_B2_1_B3_1_3', 'g_B2_2_B3_2_0', 'b_B2_2_B3_2_0', 'g_B2_2_B3_2_1', 'b_B2_2_B3_2_1', 'g_B2_2_B3_2_2', 'b_B2_2_B3_2_2', 'g_B2_2_B3_2_3', 'b_B2_2_B3_2_3', 'g_B2_3_B3_3_0', 'b_B2_3_B3_3_0', 'g_B2_3_B3_3_1', 'b_B2_3_B3_3_1', 'g_B2_3_B3_3_2', 'b_B2_3_B3_3_2', 'g_B2_3_B3_3_3', 'b_B2_3_B3_3_3', 'g_shunt_B2_3', 'b_shunt_B2_3', 'X_B1_s', 'R_B1_s', 'X_B1_sn', 'R_B1_sn', 'X_B1_ng', 'R_B1_ng', 'K_p_agc', 'K_i_agc', 'K_xif'] 
+        self.params_values_list  = [11.170890870562609, -7.9710117643527685, -4.08880622494911, 0.8790218978249574, -2.9675017098594996, 1.4359693800721494, -2.5817824856198417, 1.4820341018577499, -4.088713828475583, 0.8782581514854142, 11.831917268685816, -7.454316658848343, -3.7802631579928367, 1.064222439234722, -2.9448504138589846, 1.4511020088437085, -2.944850413858984, 1.451102008843707, -3.7568378997445606, 1.083440113008898, 11.807130936420842, -7.479963986046686, -4.089386278858772, 0.8829473652791767, -2.6057877977777784, 1.466741895537792, -2.9701357405036046, 1.4290537665578815, -4.004144939332728, 0.911067241319985, 11.145605543917988, -7.993060006638594, 0.3333333333333333, 0.0, 0.1, 0.01, 0.1, 0.01, 0, 3, 0.01, 0.01, 0.01] 
+        self.inputs_ini_list = ['p_load_B3_a', 'q_load_B3_a', 'g_load_B3_a', 'b_load_B3_a', 'p_load_B3_b', 'q_load_B3_b', 'g_load_B3_b', 'b_load_B3_b', 'p_load_B3_c', 'q_load_B3_c', 'g_load_B3_c', 'b_load_B3_c', 'e_ao_m_B1', 'e_bo_m_B1', 'e_co_m_B1', 'phi_B1', 'u_freq'] 
+        self.inputs_ini_values_list  = [1000.0, 0, 0, 0, 1000.0, 0, 0, 0, 1000.0, 0, 0, 0, 11547.005383792515, 11547.005383792515, 11547.005383792515, 0.0, 0.0] 
+        self.inputs_run_list = ['p_load_B3_a', 'q_load_B3_a', 'g_load_B3_a', 'b_load_B3_a', 'p_load_B3_b', 'q_load_B3_b', 'g_load_B3_b', 'b_load_B3_b', 'p_load_B3_c', 'q_load_B3_c', 'g_load_B3_c', 'b_load_B3_c', 'e_ao_m_B1', 'e_bo_m_B1', 'e_co_m_B1', 'phi_B1', 'u_freq'] 
+        self.inputs_run_values_list = [1000.0, 0, 0, 0, 1000.0, 0, 0, 0, 1000.0, 0, 0, 0, 11547.005383792515, 11547.005383792515, 11547.005383792515, 0.0, 0.0] 
+        self.outputs_list = ['i_l_B2_0_B3_0_r', 'i_l_B2_0_B3_0_i', 'i_l_B2_1_B3_1_r', 'i_l_B2_1_B3_1_i', 'i_l_B2_2_B3_2_r', 'i_l_B2_2_B3_2_i', 'i_l_B2_3_B3_3_r', 'i_l_B2_3_B3_3_i', 'i_t_B1_B2_1_0_r', 'i_t_B1_B2_1_0_i', 'i_t_B1_B2_1_1_r', 'i_t_B1_B2_1_1_i', 'i_t_B1_B2_1_2_r', 'i_t_B1_B2_1_2_i', 'i_t_B1_B2_2_0_r', 'i_t_B1_B2_2_0_i', 'i_t_B1_B2_2_1_r', 'i_t_B1_B2_2_1_i', 'i_t_B1_B2_2_2_r', 'i_t_B1_B2_2_2_i', 'i_t_B1_B2_2_3_r', 'i_t_B1_B2_2_3_i', 'i_vsc_B1_a_m', 'i_vsc_B1_b_m', 'i_vsc_B1_c_m', 'p_B1', 'q_B1', 'xi_freq', 'u_freq'] 
+        self.x_list = ['xi_freq'] 
+        self.y_run_list = ['V_B1_0_r', 'V_B1_0_i', 'V_B1_1_r', 'V_B1_1_i', 'V_B1_2_r', 'V_B1_2_i', 'V_B2_0_r', 'V_B2_0_i', 'V_B2_1_r', 'V_B2_1_i', 'V_B2_2_r', 'V_B2_2_i', 'V_B2_3_r', 'V_B2_3_i', 'V_B3_0_r', 'V_B3_0_i', 'V_B3_1_r', 'V_B3_1_i', 'V_B3_2_r', 'V_B3_2_i', 'V_B3_3_r', 'V_B3_3_i', 'i_load_B3_a_r', 'i_load_B3_a_i', 'i_load_B3_b_r', 'i_load_B3_b_i', 'i_load_B3_c_r', 'i_load_B3_c_i', 'i_load_B3_n_r', 'i_load_B3_n_i', 'i_vsc_B1_a_r', 'i_vsc_B1_b_r', 'i_vsc_B1_c_r', 'i_vsc_B1_a_i', 'i_vsc_B1_b_i', 'i_vsc_B1_c_i', 'omega_coi', 'p_agc'] 
         self.xy_list = self.x_list + self.y_run_list 
-        self.y_ini_list = ['v_B3_a_r', 'v_B3_a_i', 'v_B3_b_r', 'v_B3_b_i', 'v_B3_c_r', 'v_B3_c_i', 'v_B3_n_r', 'v_B3_n_i', 'v_B2_a_r', 'v_B2_a_i', 'v_B2_b_r', 'v_B2_b_i', 'v_B2_c_r', 'v_B2_c_i', 'v_B2_n_r', 'v_B2_n_i', 'i_load_B3_a_r', 'i_load_B3_a_i', 'i_load_B3_b_r', 'i_load_B3_b_i', 'i_load_B3_c_r', 'i_load_B3_c_i', 'i_load_B3_n_r', 'i_load_B3_n_i'] 
+        self.y_ini_list = ['V_B1_0_r', 'V_B1_0_i', 'V_B1_1_r', 'V_B1_1_i', 'V_B1_2_r', 'V_B1_2_i', 'V_B2_0_r', 'V_B2_0_i', 'V_B2_1_r', 'V_B2_1_i', 'V_B2_2_r', 'V_B2_2_i', 'V_B2_3_r', 'V_B2_3_i', 'V_B3_0_r', 'V_B3_0_i', 'V_B3_1_r', 'V_B3_1_i', 'V_B3_2_r', 'V_B3_2_i', 'V_B3_3_r', 'V_B3_3_i', 'i_load_B3_a_r', 'i_load_B3_a_i', 'i_load_B3_b_r', 'i_load_B3_b_i', 'i_load_B3_c_r', 'i_load_B3_c_i', 'i_load_B3_n_r', 'i_load_B3_n_i', 'i_vsc_B1_a_r', 'i_vsc_B1_b_r', 'i_vsc_B1_c_r', 'i_vsc_B1_a_i', 'i_vsc_B1_b_i', 'i_vsc_B1_c_i', 'omega_coi', 'p_agc'] 
         self.xy_ini_list = self.x_list + self.y_ini_list 
         self.t = 0.0
         self.it = 0
@@ -117,14 +142,21 @@ class grid_3bus4wire_class:
         self.sp_jac_ini_ia, self.sp_jac_ini_ja, self.sp_jac_ini_nia, self.sp_jac_ini_nja = sp_jac_ini_vectors()
         data = np.array(self.sp_jac_ini_ia,dtype=np.float64)
         #self.sp_jac_ini = sspa.csr_matrix((data, self.sp_jac_ini_ia, self.sp_jac_ini_ja), shape=(self.sp_jac_ini_nia,self.sp_jac_ini_nja))
-        self.sp_jac_ini = sspa.load_npz('grid_3bus4wire_sp_jac_ini_num.npz')
+           
+        if self.dae_file_mode == 'enviroment':
+            fobj = BytesIO(pkgutil.get_data(__name__, f'./grid_3bus4wire_sp_jac_ini_num.npz'))
+            self.sp_jac_ini = sspa.load_npz(fobj)
+        else:
+            self.sp_jac_ini = sspa.load_npz(f'./{self.matrices_folder}/grid_3bus4wire_sp_jac_ini_num.npz')
+            
+            
         self.jac_ini = self.sp_jac_ini.toarray()
 
-        self.J_ini_d = np.array(self.sp_jac_ini_ia)*0.0
-        self.J_ini_i = np.array(self.sp_jac_ini_ia)
-        self.J_ini_p = np.array(self.sp_jac_ini_ja)
+        #self.J_ini_d = np.array(self.sp_jac_ini_ia)*0.0
+        #self.J_ini_i = np.array(self.sp_jac_ini_ia)
+        #self.J_ini_p = np.array(self.sp_jac_ini_ja)
         de_jac_ini_eval(self.jac_ini,x,y,self.u_ini,self.p,self.Dt)
-        sp_jac_ini_eval(self.J_ini_d,x,y,self.u_ini,self.p,self.Dt) 
+        sp_jac_ini_eval(self.sp_jac_ini.data,x,y,self.u_ini,self.p,self.Dt) 
         self.fill_factor_ini,self.drop_tol_ini,self.drop_rule_ini = 100,1e-10,'basic'       
 
 
@@ -132,10 +164,14 @@ class grid_3bus4wire_class:
         self.jac_run = np.zeros((self.N_x+self.N_y,self.N_x+self.N_y))
         self.sp_jac_run_ia, self.sp_jac_run_ja, self.sp_jac_run_nia, self.sp_jac_run_nja = sp_jac_run_vectors()
         data = np.array(self.sp_jac_run_ia,dtype=np.float64)
-        #self.sp_jac_run = sspa.csr_matrix((data, self.sp_jac_run_ia, self.sp_jac_run_ja), shape=(self.sp_jac_run_nia,self.sp_jac_run_nja))
-        self.sp_jac_run = sspa.load_npz('grid_3bus4wire_sp_jac_run_num.npz')
-        self.jac_run = self.sp_jac_run.toarray()
 
+        if self.dae_file_mode == 'enviroment':
+            fobj = BytesIO(pkgutil.get_data(__name__, './grid_3bus4wire_sp_jac_run_num.npz'))
+            self.sp_jac_run = sspa.load_npz(fobj)
+        else:
+            self.sp_jac_run = sspa.load_npz(f'./{self.matrices_folder}/grid_3bus4wire_sp_jac_run_num.npz')
+        self.jac_run = self.sp_jac_run.toarray()            
+           
         self.J_run_d = np.array(self.sp_jac_run_ia)*0.0
         self.J_run_i = np.array(self.sp_jac_run_ia)
         self.J_run_p = np.array(self.sp_jac_run_ja)
@@ -147,14 +183,23 @@ class grid_3bus4wire_class:
         self.sp_jac_trap_ia, self.sp_jac_trap_ja, self.sp_jac_trap_nia, self.sp_jac_trap_nja = sp_jac_trap_vectors()
         data = np.array(self.sp_jac_trap_ia,dtype=np.float64)
         #self.sp_jac_trap = sspa.csr_matrix((data, self.sp_jac_trap_ia, self.sp_jac_trap_ja), shape=(self.sp_jac_trap_nia,self.sp_jac_trap_nja))
-        self.sp_jac_trap = sspa.load_npz('grid_3bus4wire_sp_jac_trap_num.npz')
+       
+    
+
+        if self.dae_file_mode == 'enviroment':
+            fobj = BytesIO(pkgutil.get_data(__name__, './grid_3bus4wire_sp_jac_trap_num.npz'))
+            self.sp_jac_trap = sspa.load_npz(fobj)
+        else:
+            self.sp_jac_trap = sspa.load_npz(f'./{self.matrices_folder}/grid_3bus4wire_sp_jac_trap_num.npz')
+            
+
         self.jac_trap = self.sp_jac_trap.toarray()
         
-        self.J_trap_d = np.array(self.sp_jac_trap_ia)*0.0
-        self.J_trap_i = np.array(self.sp_jac_trap_ia)
-        self.J_trap_p = np.array(self.sp_jac_trap_ja)
+        #self.J_trap_d = np.array(self.sp_jac_trap_ia)*0.0
+        #self.J_trap_i = np.array(self.sp_jac_trap_ia)
+        #self.J_trap_p = np.array(self.sp_jac_trap_ja)
         de_jac_trap_eval(self.jac_trap,x,y,self.u_run,self.p,self.Dt)
-        sp_jac_trap_eval(self.J_trap_d,x,y,self.u_run,self.p,self.Dt)
+        sp_jac_trap_eval(self.sp_jac_trap.data,x,y,self.u_run,self.p,self.Dt)
         self.fill_factor_trap,self.drop_tol_trap,self.drop_rule_trap = 100,1e-10,'basic' 
    
 
@@ -162,12 +207,19 @@ class grid_3bus4wire_class:
 
         
         self.max_it,self.itol,self.store = 50,1e-8,1 
-        self.lmax_it,self.ltol,self.ldamp=50,1e-8,1.0
+        self.lmax_it,self.ltol,self.ldamp= 50,1e-8,1.0
         self.mode = 0 
 
         self.lmax_it_ini,self.ltol_ini,self.ldamp_ini=50,1e-8,1.0
 
+        self.sp_Fu_run = sspa.load_npz(f'./{self.matrices_folder}/grid_3bus4wire_Fu_run_num.npz')
+        self.sp_Gu_run = sspa.load_npz(f'./{self.matrices_folder}/grid_3bus4wire_Gu_run_num.npz')
+        self.sp_Hx_run = sspa.load_npz(f'./{self.matrices_folder}/grid_3bus4wire_Hx_run_num.npz')
+        self.sp_Hy_run = sspa.load_npz(f'./{self.matrices_folder}/grid_3bus4wire_Hy_run_num.npz')
+        self.sp_Hu_run = sspa.load_npz(f'./{self.matrices_folder}/grid_3bus4wire_Hu_run_num.npz')        
         
+        self.ss_solver = 2
+        self.lsolver = 2
  
         
 
@@ -214,8 +266,9 @@ class grid_3bus4wire_class:
         it_store = self.it_store
         xy = self.xy
         u = self.u_run
+        z = self.z
         
-        t,it,it_store,xy = daesolver(t,t_end,it,it_store,xy,u,p,
+        t,it,it_store,xy = daesolver(t,t_end,it,it_store,xy,u,p,z,
                                   self.jac_trap,
                                   self.Time,
                                   self.X,
@@ -233,6 +286,7 @@ class grid_3bus4wire_class:
         self.it = it
         self.it_store = it_store
         self.xy = xy
+        self.z = z
  
     def runsp(self,t_end,up_dict):
         for item in up_dict:
@@ -434,7 +488,7 @@ class grid_3bus4wire_class:
                            self.N_x,self.N_y,
                            max_it=self.max_it,tol=self.itol)
         
-        if it < self.max_it:
+        if it < self.max_it-1:
             
             self.xy_ini = xy_ini
             self.N_iters = it
@@ -443,7 +497,7 @@ class grid_3bus4wire_class:
             
             self.ini_convergence = True
             
-        if it >= self.max_it:
+        if it >= self.max_it-1:
             print(f'Maximum number of iterations (max_it = {self.max_it}) reached without convergence.')
             self.ini_convergence = False
             
@@ -485,7 +539,7 @@ class grid_3bus4wire_class:
                 self.xy_0[self.y_ini_list.index(item)+self.N_x] = xy_0_dict[item]            
 
     def load_params(self,data_input):
-
+    
         if type(data_input) == str:
             json_file = data_input
             self.json_file = json_file
@@ -493,18 +547,10 @@ class grid_3bus4wire_class:
             data = json.loads(self.json_data)
         elif type(data_input) == dict:
             data = data_input
-
+    
         self.data = data
         for item in self.data:
-            self.struct[0][item] = self.data[item]
-            if item in self.params_list:
-                self.params_values_list[self.params_list.index(item)] = self.data[item]
-            elif item in self.inputs_ini_list:
-                self.inputs_ini_values_list[self.inputs_ini_list.index(item)] = self.data[item]
-            elif item in self.inputs_run_list:
-                self.inputs_run_values_list[self.inputs_run_list.index(item)] = self.data[item]
-            else: 
-                print(f'parameter or input {item} not found')
+            self.set_value(item, self.data[item])
 
     def save_params(self,file_name = 'parameters.json'):
         params_dict = {}
@@ -546,9 +592,9 @@ class grid_3bus4wire_class:
     
     def eval_preconditioner_trap(self):
     
-        sp_jac_trap_eval(self.J_trap_d,self.x,self.y_run,self.u_run,self.p,self.Dt)
+        sp_jac_trap_eval(self.sp_jac_trap.data,self.x,self.y_run,self.u_run,self.p,self.Dt)
     
-        self.sp_jac_trap.data = self.J_trap_d 
+        #self.sp_jac_trap.data = self.J_trap_d 
         
         csc_sp_jac_trap = sspa.csc_matrix(self.sp_jac_trap)
 
@@ -578,11 +624,11 @@ class grid_3bus4wire_class:
         it_store = self.it_store
         xy = self.xy
         u = self.u_run
+        z = self.z
         self.iparams_run = np.zeros(10,dtype=np.float64)
     
-        t,it,it_store,xy = spdaesolver(t,t_end,it,it_store,xy,u,p,
-                                  self.jac_trap,
-                                  self.J_trap_d,self.J_trap_i,self.J_trap_p,
+        t,it,it_store,xy = spdaesolver(t,t_end,it,it_store,xy,u,p,z,
+                                  self.sp_jac_trap.data,self.sp_jac_trap.indices,self.sp_jac_trap.indptr,
                                   self.P_trap_d,self.P_trap_i,self.P_trap_p,self.perm_trap_r,self.perm_trap_c,
                                   self.Time,
                                   self.X,
@@ -596,12 +642,15 @@ class grid_3bus4wire_class:
                                   self.decimation,
                                   self.iparams_run,
                                   max_it=self.max_it,itol=self.max_it,store=self.store,
-                                  lmax_it=self.lmax_it,ltol=self.ltol,ldamp=self.ldamp,mode=self.mode)
+                                  lmax_it=self.lmax_it,ltol=self.ltol,ldamp=self.ldamp,mode=self.mode,
+                                  lsolver = self.lsolver)
     
         self.t = t
         self.it = it
         self.it_store = it_store
         self.xy = xy
+        self.z = z
+
             
     def spini(self,up_dict,xy_0={}):
     
@@ -638,8 +687,8 @@ class grid_3bus4wire_class:
             print(f'Maximum number of iterations (max_it = {self.max_it}) reached without convergence.')
             self.ini_convergence = False
             
-        #jac_run_ss_eval_xy(self.jac_run,self.x,self.y_run,self.u_run,self.p)
-        #jac_run_ss_eval_up(self.jac_run,self.x,self.y_run,self.u_run,self.p)
+        #jac_run_eval_xy(self.jac_run,self.x,self.y_run,self.u_run,self.p)
+        #jac_run_eval_up(self.jac_run,self.x,self.y_run,self.u_run,self.p)
         
         return self.ini_convergence
 
@@ -648,13 +697,13 @@ class grid_3bus4wire_class:
         J_d,J_i,J_p = csr2pydae(self.sp_jac_ini)
         
         xy_ini,it,iparams = spsstate(self.xy,self.u_ini,self.p,
-                 J_d,J_i,J_p,
+                 self.sp_jac_ini.data,self.sp_jac_ini.indices,self.sp_jac_ini.indptr,
                  self.P_d,self.P_i,self.P_p,self.perm_r,self.perm_c,
                  self.N_x,self.N_y,
                  max_it=self.max_it,tol=self.itol,
                  lmax_it=self.lmax_it_ini,
                  ltol=self.ltol_ini,
-                 ldamp=self.ldamp)
+                 ldamp=self.ldamp,solver=self.ss_solver)
 
  
         self.xy_ini = xy_ini
@@ -666,11 +715,207 @@ class grid_3bus4wire_class:
     #def import_cffi(self):
         
 
+    def eval_jac_u2z(self):
+
+        '''
+
+        0 =   J_run * xy + FG_u * u
+        z = Hxy_run * xy + H_u * u
+
+        xy = -1/J_run * FG_u * u
+        z = -Hxy_run/J_run * FG_u * u + H_u * u
+        z = (-Hxy_run/J_run * FG_u + H_u ) * u 
+        '''
+        
+        sp_Fu_run_eval(self.sp_Fu_run.data,self.x,self.y_run,self.u_run,self.p,self.Dt)
+        sp_Gu_run_eval(self.sp_Gu_run.data,self.x,self.y_run,self.u_run,self.p,self.Dt)
+        sp_H_jacs_run_eval(self.sp_Hx_run.data,
+                        self.sp_Hy_run.data,
+                        self.sp_Hu_run.data,
+                        self.x,self.y_run,self.u_run,self.p,self.Dt)
+        sp_jac_run = self.sp_jac_run
+        sp_jac_run_eval(sp_jac_run.data,
+                        self.x,self.y_run,
+                        self.u_run,self.p,
+                        self.Dt)
+
+
+
+        Hxy_run = sspa.bmat([[self.sp_Hx_run,self.sp_Hy_run]])
+        FGu_run = sspa.bmat([[self.sp_Fu_run],[self.sp_Gu_run]])
         
 
+        #((sspa.linalg.spsolve(s.sp_jac_ini,-Hxy_run)) @ FGu_run + sp_Hu_run )@s.u_ini
+
+        self.jac_u2z = Hxy_run @ sspa.linalg.spsolve(self.sp_jac_run,-FGu_run) + self.sp_Hu_run  
+        
+        
+    def step(self,t_end,up_dict):
+        for item in up_dict:
+            self.set_value(item,up_dict[item])
+
+        t = self.t
+        p = self.p
+        it = self.it
+        it_store = self.it_store
+        xy = self.xy
+        u = self.u_run
+        z = self.z
+
+        t,it,xy = daestep(t,t_end,it,
+                          xy,u,p,z,
+                          self.jac_trap,
+                          self.iters,
+                          self.Dt,
+                          self.N_x,
+                          self.N_y,
+                          self.N_z,
+                          max_it=self.max_it,itol=self.itol,store=self.store)
+
+        self.t = t
+        self.it = it
+        self.it_store = it_store
+        self.xy = xy
+        self.z = z
            
             
+    def save_run(self,file_name):
+        np.savez(file_name,Time=self.Time,
+             X=self.X,Y=self.Y,Z=self.Z,
+             x_list = self.x_list,
+             y_ini_list = self.y_ini_list,
+             y_run_list = self.y_run_list,
+             u_ini_list=self.u_ini_list,
+             u_run_list=self.u_run_list,  
+             z_list=self.outputs_list, 
+            )
+        
+    def load_run(self,file_name):
+        data = np.load(f'{file_name}.npz')
+        self.Time = data['Time']
+        self.X = data['X']
+        self.Y = data['Y']
+        self.Z = data['Z']
+        self.x_list = list(data['x_list'] )
+        self.y_run_list = list(data['y_run_list'] )
+        self.outputs_list = list(data['z_list'] )
+        
+    def full_jacs_eval(self):
+        N_x = self.N_x
+        N_y = self.N_y
+        N_xy = N_x + N_y
+    
+        sp_jac_run = self.sp_jac_run
+        sp_Fu = self.sp_Fu_run
+        sp_Gu = self.sp_Gu_run
+        sp_Hx = self.sp_Hx_run
+        sp_Hy = self.sp_Hy_run
+        sp_Hu = self.sp_Hu_run
+        
+        x = self.xy[0:N_x]
+        y = self.xy[N_x:]
+        u = self.u_run
+        p = self.p
+        Dt = self.Dt
+    
+        sp_jac_run_eval(sp_jac_run.data,x,y,u,p,Dt)
+        
+        self.Fx = sp_jac_run[0:N_x,0:N_x]
+        self.Fy = sp_jac_run[ 0:N_x,N_x:]
+        self.Gx = sp_jac_run[ N_x:,0:N_x]
+        self.Gy = sp_jac_run[ N_x:, N_x:]
+        
+        sp_Fu_run_eval(sp_Fu.data,x,y,u,p,Dt)
+        sp_Gu_run_eval(sp_Gu.data,x,y,u,p,Dt)
+        sp_H_jacs_run_eval(sp_Hx.data,sp_Hy.data,sp_Hu.data,x,y,u,p,Dt)
+        
+        self.Fu = sp_Fu
+        self.Gu = sp_Gu
+        self.Hx = sp_Hx
+        self.Hy = sp_Hy
+        self.Hu = sp_Hu
 
+
+@numba.njit() 
+def daestep(t,t_end,it,xy,u,p,z,jac_trap,iters,Dt,N_x,N_y,N_z,max_it=50,itol=1e-8,store=1): 
+
+
+    fg = np.zeros((N_x+N_y,1),dtype=np.float64)
+    fg_i = np.zeros((N_x+N_y),dtype=np.float64)
+    x = xy[:N_x]
+    y = xy[N_x:]
+    fg = np.zeros((N_x+N_y,),dtype=np.float64)
+    f = fg[:N_x]
+    g = fg[N_x:]
+    #h = np.zeros((N_z),dtype=np.float64)
+    
+    f_ptr=ffi.from_buffer(np.ascontiguousarray(f))
+    g_ptr=ffi.from_buffer(np.ascontiguousarray(g))
+    z_ptr=ffi.from_buffer(np.ascontiguousarray(z))
+    x_ptr=ffi.from_buffer(np.ascontiguousarray(x))
+    y_ptr=ffi.from_buffer(np.ascontiguousarray(y))
+    u_ptr=ffi.from_buffer(np.ascontiguousarray(u))
+    p_ptr=ffi.from_buffer(np.ascontiguousarray(p))
+
+    jac_trap_ptr=ffi.from_buffer(np.ascontiguousarray(jac_trap))
+    
+    #de_jac_trap_num_eval(jac_trap_ptr,x_ptr,y_ptr,u_ptr,p_ptr,Dt)    
+    de_jac_trap_up_eval(jac_trap_ptr,x_ptr,y_ptr,u_ptr,p_ptr,Dt) 
+    de_jac_trap_xy_eval(jac_trap_ptr,x_ptr,y_ptr,u_ptr,p_ptr,Dt) 
+    
+    if it == 0:
+        f_run_eval(f_ptr,x_ptr,y_ptr,u_ptr,p_ptr,Dt)
+        g_run_eval(g_ptr,x_ptr,y_ptr,u_ptr,p_ptr,Dt)
+        h_eval(z_ptr,x_ptr,y_ptr,u_ptr,p_ptr,Dt)
+        it_store = 0  
+
+    while t<t_end: 
+        it += 1
+        t += Dt
+
+        f_run_eval(f_ptr,x_ptr,y_ptr,u_ptr,p_ptr,Dt)
+        g_run_eval(g_ptr,x_ptr,y_ptr,u_ptr,p_ptr,Dt)
+
+        x_0 = np.copy(x) 
+        y_0 = np.copy(y) 
+        f_0 = np.copy(f) 
+        g_0 = np.copy(g) 
+            
+        for iti in range(max_it):
+            f_run_eval(f_ptr,x_ptr,y_ptr,u_ptr,p_ptr,Dt)
+            g_run_eval(g_ptr,x_ptr,y_ptr,u_ptr,p_ptr,Dt)
+            de_jac_trap_xy_eval(jac_trap_ptr,x_ptr,y_ptr,u_ptr,p_ptr,Dt) 
+
+            f_n_i = x - x_0 - 0.5*Dt*(f+f_0) 
+
+            fg_i[:N_x] = f_n_i
+            fg_i[N_x:] = g
+            
+            Dxy_i = np.linalg.solve(-jac_trap,fg_i) 
+
+            x += Dxy_i[:N_x]
+            y += Dxy_i[N_x:] 
+            
+            #print(Dxy_i)
+
+            # iteration stop
+            max_relative = 0.0
+            for it_var in range(N_x+N_y):
+                abs_value = np.abs(xy[it_var])
+                if abs_value < 0.001:
+                    abs_value = 0.001
+                relative_error = np.abs(Dxy_i[it_var])/abs_value
+
+                if relative_error > max_relative: max_relative = relative_error
+
+            if max_relative<itol:
+                break
+                
+        h_eval(z_ptr,x_ptr,y_ptr,u_ptr,p_ptr,Dt)
+        xy[:N_x] = x
+        xy[N_x:] = y
+        
+    return t,it,xy
 
 
 def daesolver_sp(t,t_end,it,it_store,xy,u,p,sp_jac_trap,T,X,Y,Z,iters,Dt,N_x,N_y,N_z,decimation,max_it=50,itol=1e-8,store=1): 
@@ -765,6 +1010,60 @@ def sprichardson(A_d,A_i,A_p,b,P_d,P_i,P_p,perm_r,perm_c,x,iparams,damp=1.0,max_
     iparams[0] = it
     return x
     
+@numba.njit()
+def spconjgradm(A_d,A_i,A_p,b,P_d,P_i,P_p,perm_r,perm_c,x,iparams,max_it=100,tol=1e-3, damp=None):
+    """
+    A function to solve [A]{x} = {b} linear equation system with the 
+    preconditioned conjugate gradient method.
+    More at: http://en.wikipedia.org/wiki/Conjugate_gradient_method
+    ========== Parameters ==========
+    A_d,A_i,A_p : sparse matrix 
+        components in CRS form A_d = A_crs.data, A_i = A_crs.indices, A_p = A_crs.indptr.
+    b : vector
+        The right hand side (RHS) vector of the system.
+    x : vector
+        The starting guess for the solution.
+    P_d,P_i,P_p,perm_r,perm_c: preconditioner LU matrix
+        components in scipy.spilu form P_d,P_i,P_p,perm_r,perm_c = slu2pydae(M)
+        with M = scipy.sparse.linalg.spilu(A_csc) 
+
+    """  
+    N   = len(b)
+    Ax  = np.zeros(N)
+    Ap  = np.zeros(N)
+    App = np.zeros(N)
+    pAp = np.zeros(N)
+    z   = np.zeros(N)
+    
+    spMvmul(N,A_d,A_i,A_p,x,Ax)
+    r = -(Ax - b)
+    z = splu_solve(P_d,P_i,P_p,perm_r,perm_c,r) #z = M.solve(r)
+    p = z
+    zsold = 0.0
+    for it in range(N):  # zsold = np.dot(np.transpose(z), z)
+        zsold += z[it]*z[it]
+    for i in range(max_it):
+        spMvmul(N,A_d,A_i,A_p,p,App)  # #App = np.dot(A, p)
+        Ap = splu_solve(P_d,P_i,P_p,perm_r,perm_c,App) #Ap = M.solve(App)
+        pAp = 0.0
+        for it in range(N):
+            pAp += p[it]*Ap[it]
+
+        alpha = zsold / pAp
+        x = x + alpha*p
+        z = z - alpha*Ap
+        zz = 0.0
+        for it in range(N):  # z.T@z
+            zz += z[it]*z[it]
+        zsnew = zz
+        if np.sqrt(zsnew) < tol:
+            break
+            
+        p = z + (zsnew/zsold)*p
+        zsold = zsnew
+    iparams[0] = i
+
+    return x
 
 
 @numba.njit()
@@ -773,7 +1072,7 @@ def spsstate(xy,u,p,
              P_d,P_i,P_p,perm_r,perm_c,
              N_x,N_y,
              max_it=50,tol=1e-8,
-             lmax_it=20,ltol=1e-8,ldamp=1.0):
+             lmax_it=20,ltol=1e-8,ldamp=1.0, solver=2):
     
    
     x = xy[:N_x]
@@ -791,7 +1090,7 @@ def spsstate(xy,u,p,
     p_c_ptr=ffi.from_buffer(np.ascontiguousarray(p))
     J_d_ptr=ffi.from_buffer(np.ascontiguousarray(J_d))
 
-    sp_jac_ini_num_eval(J_d_ptr,x_c_ptr,y_c_ptr,u_c_ptr,p_c_ptr,1.0)
+    #sp_jac_ini_num_eval(J_d_ptr,x_c_ptr,y_c_ptr,u_c_ptr,p_c_ptr,1.0)
     sp_jac_ini_up_eval(J_d_ptr,x_c_ptr,y_c_ptr,u_c_ptr,p_c_ptr,1.0)
     
     #sp_jac_ini_eval_up(J_d,x,y,u,p,0.0)
@@ -813,9 +1112,15 @@ def spsstate(xy,u,p,
         
         fg[:N_x] = f
         fg[N_x:] = g
+        
+        if solver==1:
                
-        Dxy = sprichardson(J_d,J_i,J_p,-fg,P_d,P_i,P_p,perm_r,perm_c,Dxy,iparams,damp=ldamp,max_it=lmax_it,tol=ltol)
+            Dxy = sprichardson(J_d,J_i,J_p,-fg,P_d,P_i,P_p,perm_r,perm_c,Dxy,iparams,damp=ldamp,max_it=lmax_it,tol=ltol)
    
+        if solver==2:
+            
+            Dxy = spconjgradm(J_d,J_i,J_p,-fg,P_d,P_i,P_p,perm_r,perm_c,Dxy,iparams,damp=ldamp,max_it=lmax_it,tol=ltol)
+            
         xy += Dxy
         #if np.max(np.abs(fg))<tol: break
         if np.linalg.norm(fg,np.inf)<tol: break
@@ -825,7 +1130,7 @@ def spsstate(xy,u,p,
 
     
 @numba.njit() 
-def daesolver(t,t_end,it,it_store,xy,u,p,jac_trap,T,X,Y,Z,iters,Dt,N_x,N_y,N_z,decimation,max_it=50,itol=1e-8,store=1): 
+def daesolver(t,t_end,it,it_store,xy,u,p,z,jac_trap,T,X,Y,Z,iters,Dt,N_x,N_y,N_z,decimation,max_it=50,itol=1e-8,store=1): 
 
 
     fg = np.zeros((N_x+N_y,1),dtype=np.float64)
@@ -835,11 +1140,11 @@ def daesolver(t,t_end,it,it_store,xy,u,p,jac_trap,T,X,Y,Z,iters,Dt,N_x,N_y,N_z,d
     fg = np.zeros((N_x+N_y,),dtype=np.float64)
     f = fg[:N_x]
     g = fg[N_x:]
-    h = np.zeros((N_z),dtype=np.float64)
+    #h = np.zeros((N_z),dtype=np.float64)
     
     f_ptr=ffi.from_buffer(np.ascontiguousarray(f))
     g_ptr=ffi.from_buffer(np.ascontiguousarray(g))
-    h_ptr=ffi.from_buffer(np.ascontiguousarray(h))
+    z_ptr=ffi.from_buffer(np.ascontiguousarray(z))
     x_ptr=ffi.from_buffer(np.ascontiguousarray(x))
     y_ptr=ffi.from_buffer(np.ascontiguousarray(y))
     u_ptr=ffi.from_buffer(np.ascontiguousarray(u))
@@ -847,19 +1152,19 @@ def daesolver(t,t_end,it,it_store,xy,u,p,jac_trap,T,X,Y,Z,iters,Dt,N_x,N_y,N_z,d
 
     jac_trap_ptr=ffi.from_buffer(np.ascontiguousarray(jac_trap))
     
-    de_jac_trap_num_eval(jac_trap_ptr,x_ptr,y_ptr,u_ptr,p_ptr,Dt)    
+    #de_jac_trap_num_eval(jac_trap_ptr,x_ptr,y_ptr,u_ptr,p_ptr,Dt)    
     de_jac_trap_up_eval(jac_trap_ptr,x_ptr,y_ptr,u_ptr,p_ptr,Dt) 
     de_jac_trap_xy_eval(jac_trap_ptr,x_ptr,y_ptr,u_ptr,p_ptr,Dt) 
     
     if it == 0:
         f_run_eval(f_ptr,x_ptr,y_ptr,u_ptr,p_ptr,Dt)
         g_run_eval(g_ptr,x_ptr,y_ptr,u_ptr,p_ptr,Dt)
-        h_eval(h_ptr,x_ptr,y_ptr,u_ptr,p_ptr,Dt)
+        h_eval(z_ptr,x_ptr,y_ptr,u_ptr,p_ptr,Dt)
         it_store = 0  
         T[0] = t 
         X[0,:] = x  
         Y[0,:] = y  
-        Z[0,:] = h  
+        Z[0,:] = z  
 
     while t<t_end: 
         it += 1
@@ -903,7 +1208,7 @@ def daesolver(t,t_end,it,it_store,xy,u,p,jac_trap,T,X,Y,Z,iters,Dt,N_x,N_y,N_z,d
             if max_relative<itol:
                 break
                 
-        h_eval(h_ptr,x_ptr,y_ptr,u_ptr,p_ptr,Dt)
+        h_eval(z_ptr,x_ptr,y_ptr,u_ptr,p_ptr,Dt)
         xy[:N_x] = x
         xy[N_x:] = y
         
@@ -913,33 +1218,32 @@ def daesolver(t,t_end,it,it_store,xy,u,p,jac_trap,T,X,Y,Z,iters,Dt,N_x,N_y,N_z,d
                 T[it_store+1] = t 
                 X[it_store+1,:] = x 
                 Y[it_store+1,:] = y
-                Z[it_store+1,:] = h
+                Z[it_store+1,:] = z
                 iters[it_store+1] = iti
                 it_store += 1 
 
     return t,it,it_store,xy
     
 @numba.njit() 
-def spdaesolver(t,t_end,it,it_store,xy,u,p,jac_trap,
+def spdaesolver(t,t_end,it,it_store,xy,u,p,z,
                 J_d,J_i,J_p,
                 P_d,P_i,P_p,perm_r,perm_c,
                 T,X,Y,Z,iters,Dt,N_x,N_y,N_z,decimation,
                 iparams,
                 max_it=50,itol=1e-8,store=1,
-                lmax_it=20,ltol=1e-4,ldamp=1.0,mode=0):
+                lmax_it=20,ltol=1e-4,ldamp=1.0,mode=0,lsolver=2):
 
-    fg = np.zeros((N_x+N_y,1),dtype=np.float64)
     fg_i = np.zeros((N_x+N_y),dtype=np.float64)
     x = xy[:N_x]
     y = xy[N_x:]
     fg = np.zeros((N_x+N_y,),dtype=np.float64)
     f = fg[:N_x]
     g = fg[N_x:]
-    h = np.zeros((N_z),dtype=np.float64)
+    z = np.zeros((N_z),dtype=np.float64)
     Dxy_i_0 = np.zeros(N_x+N_y,dtype=np.float64) 
     f_ptr=ffi.from_buffer(np.ascontiguousarray(f))
     g_ptr=ffi.from_buffer(np.ascontiguousarray(g))
-    h_ptr=ffi.from_buffer(np.ascontiguousarray(h))
+    z_ptr=ffi.from_buffer(np.ascontiguousarray(z))
     x_ptr=ffi.from_buffer(np.ascontiguousarray(x))
     y_ptr=ffi.from_buffer(np.ascontiguousarray(y))
     u_ptr=ffi.from_buffer(np.ascontiguousarray(u))
@@ -947,19 +1251,19 @@ def spdaesolver(t,t_end,it,it_store,xy,u,p,jac_trap,
 
     J_d_ptr=ffi.from_buffer(np.ascontiguousarray(J_d))
     
-    sp_jac_trap_num_eval(J_d_ptr,x_ptr,y_ptr,u_ptr,p_ptr,Dt)    
+    #sp_jac_trap_num_eval(J_d_ptr,x_ptr,y_ptr,u_ptr,p_ptr,Dt)    
     sp_jac_trap_up_eval( J_d_ptr,x_ptr,y_ptr,u_ptr,p_ptr,Dt) 
     sp_jac_trap_xy_eval( J_d_ptr,x_ptr,y_ptr,u_ptr,p_ptr,Dt) 
     
     if it == 0:
         f_run_eval(f_ptr,x_ptr,y_ptr,u_ptr,p_ptr,Dt)
         g_run_eval(g_ptr,x_ptr,y_ptr,u_ptr,p_ptr,Dt)
-        h_eval(h_ptr,x_ptr,y_ptr,u_ptr,p_ptr,Dt)
+        h_eval(z_ptr,x_ptr,y_ptr,u_ptr,p_ptr,Dt)
         it_store = 0  
         T[0] = t 
         X[0,:] = x  
         Y[0,:] = y  
-        Z[0,:] = h  
+        Z[0,:] = z 
 
     while t<t_end: 
         it += 1
@@ -984,8 +1288,12 @@ def spdaesolver(t,t_end,it,it_store,xy,u,p,jac_trap,
             fg_i[N_x:] = g
             
             #Dxy_i = np.linalg.solve(-jac_trap,fg_i) 
-            Dxy_i = sprichardson(J_d,J_i,J_p,-fg_i,P_d,P_i,P_p,perm_r,perm_c,
-                                 Dxy_i_0,iparams,damp=ldamp,max_it=lmax_it,tol=ltol)
+            if lsolver == 1:
+                Dxy_i = sprichardson(J_d,J_i,J_p,-fg_i,P_d,P_i,P_p,perm_r,perm_c,
+                                     Dxy_i_0,iparams,damp=ldamp,max_it=lmax_it,tol=ltol)
+            if lsolver == 2:
+                Dxy_i = spconjgradm(J_d,J_i,J_p,-fg_i,P_d,P_i,P_p,perm_r,perm_c,
+                                     Dxy_i_0,iparams,damp=ldamp,max_it=lmax_it,tol=ltol)                
 
             x += Dxy_i[:N_x]
             y += Dxy_i[N_x:] 
@@ -1005,7 +1313,7 @@ def spdaesolver(t,t_end,it,it_store,xy,u,p,jac_trap,
             if max_relative<itol:
                 break
                 
-        h_eval(h_ptr,x_ptr,y_ptr,u_ptr,p_ptr,Dt)
+        h_eval(z_ptr,x_ptr,y_ptr,u_ptr,p_ptr,Dt)
         xy[:N_x] = x
         xy[N_x:] = y
         
@@ -1015,7 +1323,7 @@ def spdaesolver(t,t_end,it,it_store,xy,u,p,jac_trap,
                 T[it_store+1] = t 
                 X[it_store+1,:] = x 
                 Y[it_store+1,:] = y
-                Z[it_store+1,:] = h
+                Z[it_store+1,:] = z
                 iters[it_store+1] = iti
                 it_store += 1 
 
@@ -1303,7 +1611,7 @@ def sp_jac_run_eval(sp_jac_run,x,y,u,p,Dt):
     u_c_ptr=ffi.from_buffer(np.ascontiguousarray(u))
     p_c_ptr=ffi.from_buffer(np.ascontiguousarray(p))
 
-    sp_jac_run_num_eval(sp_jac_run_ptr,x_c_ptr,y_c_ptr,u_c_ptr,p_c_ptr,Dt)
+    sp_jac_run_num_eval( sp_jac_run_ptr,x_c_ptr,y_c_ptr,u_c_ptr,p_c_ptr,Dt)
     sp_jac_run_up_eval( sp_jac_run_ptr,x_c_ptr,y_c_ptr,u_c_ptr,p_c_ptr,Dt)
     sp_jac_run_xy_eval( sp_jac_run_ptr,x_c_ptr,y_c_ptr,u_c_ptr,p_c_ptr,Dt)
     
@@ -1416,7 +1724,7 @@ def sstate(xy,u,p,jac_ini_ss,N_x,N_y,max_it=50,tol=1e-8):
     p_c_ptr=ffi.from_buffer(np.ascontiguousarray(p))
     jac_ini_ss_ptr=ffi.from_buffer(np.ascontiguousarray(jac_ini_ss))
 
-    de_jac_ini_num_eval(jac_ini_ss_ptr,x_c_ptr,y_c_ptr,u_c_ptr,p_c_ptr,1.0)
+    #de_jac_ini_num_eval(jac_ini_ss_ptr,x_c_ptr,y_c_ptr,u_c_ptr,p_c_ptr,1.0)
     de_jac_ini_up_eval(jac_ini_ss_ptr,x_c_ptr,y_c_ptr,u_c_ptr,p_c_ptr,1.0)
 
     for it in range(max_it):
@@ -1474,26 +1782,163 @@ def c_h_eval(z,x,y,u,p,Dt):
     
     return z
 
+@numba.njit("(float64[:],float64[:],float64[:],float64[:],float64[:],float64)")
+def sp_Fu_run_eval(jac,x,y,u,p,Dt):   
+    '''
+    Computes the dense full initialization jacobian:
+    
+    jac_ini = [[Fx_ini, Fy_ini],
+               [Gx_ini, Gy_ini]]
+                
+    for the given x,y,u,p vectors and Dt time increment.
+    
+    Parameters
+    ----------
+    de_jac_ini : (N, N) array_like
+                  Input data.
+    x : (N_x,) array_like
+        Vector with dynamical states.
+    y : (N_y,) array_like
+        Vector with algebraic states (ini problem).
+    u : (N_u,) array_like
+        Vector with inputs (ini problem). 
+    p : (N_p,) array_like
+        Vector with parameters. 
+        
+    with N = N_x+N_y
+ 
+    Returns
+    -------
+    
+    de_jac_ini : (N, N) array_like
+                  Updated matrix.    
+    
+    '''
+    
+    jac_ptr=ffi.from_buffer(np.ascontiguousarray(jac))
+    x_c_ptr=ffi.from_buffer(np.ascontiguousarray(x))
+    y_c_ptr=ffi.from_buffer(np.ascontiguousarray(y))
+    u_c_ptr=ffi.from_buffer(np.ascontiguousarray(u))
+    p_c_ptr=ffi.from_buffer(np.ascontiguousarray(p))
+
+    sp_Fu_run_up_eval( jac_ptr,x_c_ptr,y_c_ptr,u_c_ptr,p_c_ptr,Dt)
+    sp_Fu_run_xy_eval( jac_ptr,x_c_ptr,y_c_ptr,u_c_ptr,p_c_ptr,Dt)
+    
+    #return jac
+
+@numba.njit("(float64[:],float64[:],float64[:],float64[:],float64[:],float64)")
+def sp_Gu_run_eval(jac,x,y,u,p,Dt):   
+    '''
+    Computes the dense full initialization jacobian:
+    
+    jac_ini = [[Fx_ini, Fy_ini],
+               [Gx_ini, Gy_ini]]
+                
+    for the given x,y,u,p vectors and Dt time increment.
+    
+    Parameters
+    ----------
+    de_jac_ini : (N, N) array_like
+                  Input data.
+    x : (N_x,) array_like
+        Vector with dynamical states.
+    y : (N_y,) array_like
+        Vector with algebraic states (ini problem).
+    u : (N_u,) array_like
+        Vector with inputs (ini problem). 
+    p : (N_p,) array_like
+        Vector with parameters. 
+        
+    with N = N_x+N_y
+ 
+    Returns
+    -------
+    
+    de_jac_ini : (N, N) array_like
+                  Updated matrix.    
+    
+    '''
+    
+    jac_ptr=ffi.from_buffer(np.ascontiguousarray(jac))
+    x_c_ptr=ffi.from_buffer(np.ascontiguousarray(x))
+    y_c_ptr=ffi.from_buffer(np.ascontiguousarray(y))
+    u_c_ptr=ffi.from_buffer(np.ascontiguousarray(u))
+    p_c_ptr=ffi.from_buffer(np.ascontiguousarray(p))
+
+    sp_Gu_run_up_eval( jac_ptr,x_c_ptr,y_c_ptr,u_c_ptr,p_c_ptr,Dt)
+    sp_Gu_run_xy_eval( jac_ptr,x_c_ptr,y_c_ptr,u_c_ptr,p_c_ptr,Dt)
+    
+    #return jac
+
+@numba.njit("(float64[:],float64[:],float64[:],float64[:],float64[:],float64[:],float64[:],float64)")
+def sp_H_jacs_run_eval(H_x,H_y,H_u,x,y,u,p,Dt):   
+    '''
+    Computes the dense full initialization jacobian:
+    
+    jac_ini = [[Fx_ini, Fy_ini],
+               [Gx_ini, Gy_ini]]
+                
+    for the given x,y,u,p vectors and Dt time increment.
+    
+    Parameters
+    ----------
+    de_jac_ini : (N, N) array_like
+                  Input data.
+    x : (N_x,) array_like
+        Vector with dynamical states.
+    y : (N_y,) array_like
+        Vector with algebraic states (ini problem).
+    u : (N_u,) array_like
+        Vector with inputs (ini problem). 
+    p : (N_p,) array_like
+        Vector with parameters. 
+        
+    with N = N_x+N_y
+ 
+    Returns
+    -------
+    
+    de_jac_ini : (N, N) array_like
+                  Updated matrix.    
+    
+    '''
+    
+    H_x_ptr=ffi.from_buffer(np.ascontiguousarray(H_x))
+    H_y_ptr=ffi.from_buffer(np.ascontiguousarray(H_y))
+    H_u_ptr=ffi.from_buffer(np.ascontiguousarray(H_u))
+
+    x_c_ptr=ffi.from_buffer(np.ascontiguousarray(x))
+    y_c_ptr=ffi.from_buffer(np.ascontiguousarray(y))
+    u_c_ptr=ffi.from_buffer(np.ascontiguousarray(u))
+    p_c_ptr=ffi.from_buffer(np.ascontiguousarray(p))
+
+    sp_Hx_run_up_eval( H_x_ptr,x_c_ptr,y_c_ptr,u_c_ptr,p_c_ptr,Dt)
+    sp_Hx_run_xy_eval( H_x_ptr,x_c_ptr,y_c_ptr,u_c_ptr,p_c_ptr,Dt)
+    sp_Hy_run_up_eval( H_y_ptr,x_c_ptr,y_c_ptr,u_c_ptr,p_c_ptr,Dt)
+    sp_Hy_run_xy_eval( H_y_ptr,x_c_ptr,y_c_ptr,u_c_ptr,p_c_ptr,Dt)
+    sp_Hu_run_up_eval( H_u_ptr,x_c_ptr,y_c_ptr,u_c_ptr,p_c_ptr,Dt)
+    sp_Hu_run_xy_eval( H_u_ptr,x_c_ptr,y_c_ptr,u_c_ptr,p_c_ptr,Dt)
+
 def sp_jac_ini_vectors():
 
-    sp_jac_ini_ia = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 18, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 19, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 20, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 21, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 22, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 23, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 24, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 1, 2, 7, 8, 17, 18, 3, 4, 7, 8, 19, 20, 5, 6, 7, 8, 21, 22, 1, 2, 7, 8, 17, 18, 3, 4, 7, 8, 19, 20, 5, 6, 7, 8, 21, 22, 17, 19, 21, 23, 18, 20, 22, 24]
-    sp_jac_ini_ja = [0, 1, 18, 35, 52, 69, 86, 103, 120, 137, 153, 169, 185, 201, 217, 233, 249, 265, 271, 277, 283, 289, 295, 301, 305, 309]
-    sp_jac_ini_nia = 25
-    sp_jac_ini_nja = 25
+    sp_jac_ini_ia = [0, 37, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 31, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 34, 1, 2, 3, 4, 5, 6, 9, 10, 11, 12, 32, 1, 2, 3, 4, 5, 6, 9, 10, 11, 12, 35, 1, 2, 3, 4, 5, 6, 7, 8, 11, 12, 33, 1, 2, 3, 4, 5, 6, 7, 8, 11, 12, 36, 1, 2, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 1, 2, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 1, 2, 3, 4, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 1, 2, 3, 4, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 24, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 25, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 26, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 27, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 28, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 29, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 30, 15, 16, 21, 22, 23, 24, 17, 18, 21, 22, 25, 26, 19, 20, 21, 22, 27, 28, 15, 16, 21, 22, 23, 24, 17, 18, 21, 22, 25, 26, 19, 20, 21, 22, 27, 28, 23, 25, 27, 29, 24, 26, 28, 30, 1, 31, 34, 3, 32, 35, 5, 33, 36, 2, 31, 34, 4, 32, 35, 6, 33, 36, 37, 0, 37, 38]
+    sp_jac_ini_ja = [0, 2, 13, 24, 35, 46, 57, 68, 88, 108, 128, 148, 168, 188, 204, 220, 237, 254, 271, 288, 305, 322, 339, 356, 362, 368, 374, 380, 386, 392, 396, 400, 403, 406, 409, 412, 415, 418, 419, 422]
+    sp_jac_ini_nia = 39
+    sp_jac_ini_nja = 39
     return sp_jac_ini_ia, sp_jac_ini_ja, sp_jac_ini_nia, sp_jac_ini_nja 
 
 def sp_jac_run_vectors():
 
-    sp_jac_run_ia = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 18, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 19, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 20, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 21, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 22, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 23, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 24, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 1, 2, 7, 8, 17, 18, 3, 4, 7, 8, 19, 20, 5, 6, 7, 8, 21, 22, 1, 2, 7, 8, 17, 18, 3, 4, 7, 8, 19, 20, 5, 6, 7, 8, 21, 22, 17, 19, 21, 23, 18, 20, 22, 24]
-    sp_jac_run_ja = [0, 1, 18, 35, 52, 69, 86, 103, 120, 137, 153, 169, 185, 201, 217, 233, 249, 265, 271, 277, 283, 289, 295, 301, 305, 309]
-    sp_jac_run_nia = 25
-    sp_jac_run_nja = 25
+    sp_jac_run_ia = [0, 37, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 31, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 34, 1, 2, 3, 4, 5, 6, 9, 10, 11, 12, 32, 1, 2, 3, 4, 5, 6, 9, 10, 11, 12, 35, 1, 2, 3, 4, 5, 6, 7, 8, 11, 12, 33, 1, 2, 3, 4, 5, 6, 7, 8, 11, 12, 36, 1, 2, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 1, 2, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 1, 2, 3, 4, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 1, 2, 3, 4, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 24, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 25, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 26, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 27, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 28, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 29, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 30, 15, 16, 21, 22, 23, 24, 17, 18, 21, 22, 25, 26, 19, 20, 21, 22, 27, 28, 15, 16, 21, 22, 23, 24, 17, 18, 21, 22, 25, 26, 19, 20, 21, 22, 27, 28, 23, 25, 27, 29, 24, 26, 28, 30, 1, 31, 34, 3, 32, 35, 5, 33, 36, 2, 31, 34, 4, 32, 35, 6, 33, 36, 37, 0, 37, 38]
+    sp_jac_run_ja = [0, 2, 13, 24, 35, 46, 57, 68, 88, 108, 128, 148, 168, 188, 204, 220, 237, 254, 271, 288, 305, 322, 339, 356, 362, 368, 374, 380, 386, 392, 396, 400, 403, 406, 409, 412, 415, 418, 419, 422]
+    sp_jac_run_nia = 39
+    sp_jac_run_nja = 39
     return sp_jac_run_ia, sp_jac_run_ja, sp_jac_run_nia, sp_jac_run_nja 
 
 def sp_jac_trap_vectors():
 
-    sp_jac_trap_ia = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 18, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 19, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 20, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 21, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 22, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 23, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 24, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 1, 2, 7, 8, 17, 18, 3, 4, 7, 8, 19, 20, 5, 6, 7, 8, 21, 22, 1, 2, 7, 8, 17, 18, 3, 4, 7, 8, 19, 20, 5, 6, 7, 8, 21, 22, 17, 19, 21, 23, 18, 20, 22, 24]
-    sp_jac_trap_ja = [0, 1, 18, 35, 52, 69, 86, 103, 120, 137, 153, 169, 185, 201, 217, 233, 249, 265, 271, 277, 283, 289, 295, 301, 305, 309]
-    sp_jac_trap_nia = 25
-    sp_jac_trap_nja = 25
+    sp_jac_trap_ia = [0, 37, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 31, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 34, 1, 2, 3, 4, 5, 6, 9, 10, 11, 12, 32, 1, 2, 3, 4, 5, 6, 9, 10, 11, 12, 35, 1, 2, 3, 4, 5, 6, 7, 8, 11, 12, 33, 1, 2, 3, 4, 5, 6, 7, 8, 11, 12, 36, 1, 2, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 1, 2, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 1, 2, 3, 4, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 1, 2, 3, 4, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 24, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 25, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 26, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 27, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 28, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 29, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 30, 15, 16, 21, 22, 23, 24, 17, 18, 21, 22, 25, 26, 19, 20, 21, 22, 27, 28, 15, 16, 21, 22, 23, 24, 17, 18, 21, 22, 25, 26, 19, 20, 21, 22, 27, 28, 23, 25, 27, 29, 24, 26, 28, 30, 1, 31, 34, 3, 32, 35, 5, 33, 36, 2, 31, 34, 4, 32, 35, 6, 33, 36, 37, 0, 37, 38]
+    sp_jac_trap_ja = [0, 2, 13, 24, 35, 46, 57, 68, 88, 108, 128, 148, 168, 188, 204, 220, 237, 254, 271, 288, 305, 322, 339, 356, 362, 368, 374, 380, 386, 392, 396, 400, 403, 406, 409, 412, 415, 418, 419, 422]
+    sp_jac_trap_nia = 39
+    sp_jac_trap_nja = 39
     return sp_jac_trap_ia, sp_jac_trap_ja, sp_jac_trap_nia, sp_jac_trap_nja 
