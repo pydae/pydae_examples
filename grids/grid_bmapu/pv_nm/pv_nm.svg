@@ -21,11 +21,11 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="1.0000001"
-     inkscape:cx="804.89199"
-     inkscape:cy="339.94319"
+     inkscape:zoom="1.4142137"
+     inkscape:cx="402.0871"
+     inkscape:cy="207.70334"
      inkscape:document-units="px"
-     inkscape:current-layer="layer1"
+     inkscape:current-layer="g130547"
      showgrid="true"
      fit-margin-top="0"
      fit-margin-left="0"
@@ -45,14 +45,14 @@
      inkscape:snap-bbox-midpoints="false"
      inkscape:snap-bbox-edge-midpoints="false"
      inkscape:pagecheckerboard="0"
-     showborder="true"
+     showborder="false"
      inkscape:document-rotation="0">
     <inkscape:grid
        type="xygrid"
        id="grid5974"
        originx="481.4569"
        originy="252.5"
-       visible="true" />
+       visible="false" />
   </sodipodi:namedview>
   <defs
      id="defs83920">
@@ -1608,7 +1608,7 @@
            y="416.38223"
            x="247.46724"
            id="tspan10223-6-7-7-4"
-           sodipodi:role="line">LVMM02</tspan></text>
+           sodipodi:role="line">LVMM01</tspan></text>
       <text
          id="text10225-0-7-7"
          y="241.38225"
@@ -1623,7 +1623,7 @@
            y="241.38225"
            x="245.3481"
            id="tspan10223-6-1-5"
-           sodipodi:role="line">MVMM02</tspan></text>
+           sodipodi:role="line">MVMM01</tspan></text>
       <text
          id="text10225-0-6-0-6-6"
          y="416.38223"

@@ -12,5 +12,5 @@ syns:[
          H:5.0,D:1.0,
          Omega_b:314.1592653589793,omega_s:1.0,K_sec:0.0,
          K_delta:0.0}],
-genapes:[{bus:"2",S_n:1e9,F_n:50.0,X_v:0.001,R_v:0.0,K_delta:0.001,K_alpha:1e-6}]
+sources:[{type:"genape",bus:"2",S_n:1e9,F_n:50.0,X_v:0.001,R_v:0.0,K_delta:0.001,K_alpha:1e-6}]
 }

@@ -1,6 +1,6 @@
 {
 system:{name:"k12p6", S_base:100e6, K_p_agc:0.01, K_i_agc:0.0001},       
-buses:[{name:"1", P_W:    0.0, Q_var:  0.0, U_kV:20.0},
+buses:[{name:"1", P_W:    0.0, Q_var:  0.0, U_kV:20.0},  
        {name:"2", P_W:    0.0, Q_var:  0.0, U_kV:20.0},
        {name:"3", P_W:    0.0, Q_var:  0.0, U_kV:20.0},
        {name:"4", P_W:    0.0, Q_var:  0.0, U_kV:20.0},
@@ -61,5 +61,6 @@ syns:[
        avr:{type:"sexs", K_a:100.0, T_a:0.1, T_b:0.1, T_e:0.1, E_min:-10.0, E_max:10.0, v_ref:1.01},
        gov:{type:"tgov1", Droop:0.05, T_1:1.0, T_2:1.0, T_3:1.0, D_t:0.0, p_c:0.8, K_sec:0.0},
        K_delta:0.0},
-    ]
+    ],
+sources:[]
 }
